@@ -1,0 +1,341 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   ORBIT IQ COLOR SYSTEM
+   ======================================== */
+
+:root {
+  /* Brand Colors */
+  --color-primary-50: #f0fdfa;
+  --color-primary-100: #ccfbf1;
+  --color-primary-200: #99f6e4;
+  --color-primary-300: #5eead4;
+  --color-primary-400: #2dd4bf;
+  --color-primary-500: #0F7173;
+  --color-primary-600: #0d5f61;
+  --color-primary-700: #0b4d4f;
+  --color-primary-800: #093b3d;
+  --color-primary-900: #07292b;
+
+  --color-secondary-50: #eff6ff;
+  --color-secondary-100: #dbeafe;
+  --color-secondary-200: #bfdbfe;
+  --color-secondary-300: #93c5fd;
+  --color-secondary-400: #60a5fa;
+  --color-secondary-500: #4D6CFA;
+  --color-secondary-600: #3b5ce6;
+  --color-secondary-700: #2d4bd1;
+  --color-secondary-800: #1e3a8a;
+  --color-secondary-900: #1e40af;
+
+  --color-accent-50: #f0fdfa;
+  --color-accent-100: #ccfbf1;
+  --color-accent-200: #99f6e4;
+  --color-accent-300: #5eead4;
+  --color-accent-400: #2dd4bf;
+  --color-accent-500: #0B5563;
+  --color-accent-600: #0a4a57;
+  --color-accent-700: #083f4b;
+  --color-accent-800: #06343f;
+  --color-accent-900: #042933;
+
+  /* Semantic Colors */
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
+  --color-success-400: #4ade80;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+  --color-success-800: #166534;
+  --color-success-900: #14532d;
+
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+
+  --color-error-50: #fef2f2;
+  --color-error-100: #fee2e2;
+  --color-error-200: #fecaca;
+  --color-error-300: #fca5a5;
+  --color-error-400: #f87171;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+  --color-error-700: #b91c1c;
+  --color-error-800: #991b1b;
+  --color-error-900: #7f1d1d;
+
+  --color-info-50: #eff6ff;
+  --color-info-100: #dbeafe;
+  --color-info-200: #bfdbfe;
+  --color-info-300: #93c5fd;
+  --color-info-400: #60a5fa;
+  --color-info-500: #3b82f6;
+  --color-info-600: #2563eb;
+  --color-info-700: #1d4ed8;
+  --color-info-800: #1e40af;
+  --color-info-900: #1e3a8a;
+
+  /* Surface Colors */
+  --color-background: #F7F0F0;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #FBF7F4;
+  --color-surface-elevated: #FFFFFF;
+
+  /* Text Colors */
+  --color-text-primary: #050404;
+  --color-text-secondary: #230C0F;
+  --color-text-muted: #6b7280;
+  --color-text-inverse: #FFFFFF;
+  --color-text-placeholder: #9ca3af;
+
+  /* Status Colors */
+  --color-status-active: var(--color-success-500);
+  --color-status-inactive: var(--color-error-500);
+  --color-status-pending: var(--color-warning-500);
+
+  /* Border Colors */
+  --color-border-light: #e5e7eb;
+  --color-border-medium: #d1d5db;
+  --color-border-dark: #9ca3af;
+  --color-border-focus: var(--color-primary-500);
+
+  /* Gray Scale */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+}
+
+/* Dark Theme (Future Implementation) */
+[data-theme="dark"] {
+  --color-background: #1a1a1a;
+  --color-surface: #2d2d2d;
+  --color-text-primary: #ffffff;
+}
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-background text-text-primary;
+  }
+}
+
+@layer components {
+  /* ========================================
+     BUTTON COMPONENTS
+     ======================================== */
+  
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200;
+  }
+  
+  .btn-primary {
+    @apply btn bg-primary-500 text-text-inverse hover:bg-primary-600 focus:ring-primary-500 shadow-lg hover:shadow-xl;
+  }
+  
+  /* Dark theme specific primary button text color - Night Mode only */
+  [data-theme="nightMode"] .btn-primary {
+    color: rgb(55 65 81 / var(--tw-text-opacity, 1)) !important;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-secondary-500 text-text-inverse hover:bg-secondary-600 focus:ring-secondary-500 shadow-lg hover:shadow-xl;
+  }
+  
+  .btn-outline {
+    @apply btn bg-transparent text-primary-500 border-primary-500 hover:bg-primary-50 focus:ring-primary-500;
+  }
+  
+  .btn-danger {
+    @apply btn bg-error-500 text-text-inverse hover:bg-error-600 focus:ring-error-500 shadow-lg hover:shadow-xl;
+  }
+  
+  .btn-success {
+    @apply btn bg-success-500 text-text-inverse hover:bg-success-600 focus:ring-success-500 shadow-lg hover:shadow-xl;
+  }
+  
+  .btn-warning {
+    @apply btn bg-warning-500 text-text-inverse hover:bg-warning-600 focus:ring-warning-500 shadow-lg hover:shadow-xl;
+  }
+  
+  /* ========================================
+     FORM COMPONENTS
+     ======================================== */
+  
+  .input {
+    @apply block w-full px-4 py-3 border border-border-light rounded-lg shadow-sm placeholder-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-surface transition-all duration-200;
+  }
+  
+  .input-error {
+    @apply input border-error-500 focus:ring-error-500 focus:border-error-500;
+  }
+  
+  .input-success {
+    @apply input border-success-500 focus:ring-success-500 focus:border-success-500;
+  }
+  
+  /* ========================================
+     CARD COMPONENTS
+     ======================================== */
+  
+  .card {
+    @apply bg-surface rounded-xl shadow-lg border border-border-light hover:shadow-xl transition-all duration-300;
+  }
+  
+  .card-elevated {
+    @apply bg-surface-elevated rounded-xl shadow-2xl border border-border-light;
+  }
+  
+  .card-interactive {
+    @apply card cursor-pointer hover:scale-[1.02] hover:shadow-2xl;
+  }
+  
+  /* ========================================
+     NAVIGATION COMPONENTS
+     ======================================== */
+  
+  .sidebar {
+    @apply bg-surface border-r border-border-light h-full shadow-lg;
+  }
+  
+  .nav-item {
+    @apply flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200;
+  }
+  
+  .nav-item-collapsed {
+    @apply flex items-center justify-center px-2 py-3 text-sm font-medium rounded-lg transition-all duration-200 w-full min-h-[44px];
+  }
+  
+  .nav-item-active {
+    @apply nav-item bg-primary-100 text-primary-800 border-r-2 border-primary-500;
+  }
+  
+  .nav-item-inactive {
+    @apply nav-item text-text-secondary;
+  }
+  
+  .nav-item-inactive:hover {
+    @apply bg-primary-50 text-primary-700;
+  }
+  
+  /* ========================================
+     AUTH COMPONENTS
+     ======================================== */
+  
+  .auth-container {
+    @apply min-h-screen bg-gradient-to-br from-primary-50 via-background to-secondary-50 flex items-center justify-center p-4;
+  }
+  
+  .auth-card {
+    @apply bg-surface rounded-2xl shadow-2xl p-8 w-full max-w-md border border-border-light;
+  }
+  
+  /* ========================================
+     STATUS COMPONENTS
+     ======================================== */
+  
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .status-active {
+    @apply status-badge bg-success-100 text-success-800 border border-success-200;
+  }
+  
+  .status-inactive {
+    @apply status-badge bg-error-100 text-error-800 border border-error-200;
+  }
+  
+  .status-pending {
+    @apply status-badge bg-warning-100 text-warning-800 border border-warning-200;
+  }
+  
+  /* ========================================
+     ALERT COMPONENTS
+     ======================================== */
+  
+  .alert {
+    @apply p-4 rounded-lg border;
+  }
+  
+  .alert-success {
+    @apply alert bg-success-50 border-success-200 text-success-700;
+  }
+  
+  .alert-warning {
+    @apply alert bg-warning-50 border-warning-200 text-warning-700;
+  }
+  
+  .alert-error {
+    @apply alert bg-error-50 border-error-200 text-error-700;
+  }
+  
+  .alert-info {
+    @apply alert bg-info-50 border-info-200 text-info-700;
+  }
+  
+  /* ========================================
+     UTILITY COMPONENTS
+     ======================================== */
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent;
+  }
+  
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-sm border border-white/20;
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-xl;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+
+  /* ========================================
+     NAVIGATION UTILITIES
+     ======================================== */
+  
+  .nav-high-contrast {
+    @apply bg-primary-100 text-primary-800 border-r-2 border-primary-500;
+  }
+  
+  .nav-hover-high-contrast {
+    @apply hover:bg-primary-50 hover:text-primary-700;
+  }
+
+  /* Organization Settings Navigation */
+  .org-nav-active {
+    @apply bg-primary-100 text-primary-800 border-r-2 border-primary-500;
+  }
+  
+  .org-nav-inactive {
+    @apply text-text-secondary;
+  }
+  
+  .org-nav-inactive:hover {
+    @apply bg-primary-50 text-primary-700;
+  }
+}
