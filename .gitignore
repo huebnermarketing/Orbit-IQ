@@ -18,3 +18,4 @@ backend/storage/framework/*
 backend/storage/logs/*
 backend/bootstrap/cache/*
 backend/.env
+backend/storage/framework/views/*
