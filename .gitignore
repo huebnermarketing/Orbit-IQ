@@ -2,8 +2,6 @@ backend/.env
 backend/storage/logs/*.log
 frontend/.env
 frontend/node_modules
-backend/storage/framework/cache
-backend/storage/framework/sessions
 backend/vendor
 SETUP.md
 BUSINESS_REQUIREMENTS_DOCUMENT.md
@@ -20,3 +18,4 @@ backend/bootstrap/cache/*
 backend/.env
 backend/storage/framework/views/*
 backend/storage/framework/views/*.php
+
