@@ -24,7 +24,6 @@ class TestTeamsSeeder extends Seeder
                 'color' => '#E34F26', // HTML orange
                 'is_active' => true,
                 'sort_order' => 1,
-                'workspace_id' => null, // No workspace dependency for now
                 'owner_id' => $owner->id
             ],
             [
@@ -33,7 +32,6 @@ class TestTeamsSeeder extends Seeder
                 'color' => '#777BB4', // PHP purple
                 'is_active' => true,
                 'sort_order' => 2,
-                'workspace_id' => null,
                 'owner_id' => $owner->id
             ],
             [
@@ -42,7 +40,6 @@ class TestTeamsSeeder extends Seeder
                 'color' => '#FF6B6B', // Design red
                 'is_active' => true,
                 'sort_order' => 3,
-                'workspace_id' => null,
                 'owner_id' => $owner->id
             ],
             [
@@ -51,7 +48,6 @@ class TestTeamsSeeder extends Seeder
                 'color' => '#4ECDC4', // QA teal
                 'is_active' => true,
                 'sort_order' => 4,
-                'workspace_id' => null,
                 'owner_id' => $owner->id
             ],
             [
@@ -60,7 +56,6 @@ class TestTeamsSeeder extends Seeder
                 'color' => '#45B7D1', // DevOps blue
                 'is_active' => true,
                 'sort_order' => 5,
-                'workspace_id' => null,
                 'owner_id' => $owner->id
             ]
         ];
@@ -72,7 +67,7 @@ class TestTeamsSeeder extends Seeder
             $users = User::where('id', '>', 1)->inRandomOrder()->limit(rand(2, 4))->get();
             
             foreach ($users as $index => $user) {
-                $role = $index === 0 ? 'lead' : 'member'; // First user is lead
+                $role = $index === 0 ? 'admin' : 'member'; // First user is admin
                 $team->members()->attach($user->id, ['role' => $role]);
             }
         }

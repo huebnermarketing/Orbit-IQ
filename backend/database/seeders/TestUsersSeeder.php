@@ -155,17 +155,19 @@ class TestUsersSeeder extends Seeder
         ];
 
         foreach ($testUsers as $userData) {
-            // Create the user
-            $user = User::create([
-                'name' => $userData['name'],
-                'email' => $userData['email'],
-                'password' => $userData['password'],
-                'role' => $userData['role'],
-                'timezone' => $userData['timezone'],
-                'email_verified_at' => now(),
-            ]);
+            // Create or update the user
+            $user = User::updateOrCreate(
+                ['email' => $userData['email']],
+                [
+                    'name' => $userData['name'],
+                    'password' => $userData['password'],
+                    'role' => $userData['role'],
+                    'timezone' => $userData['timezone'],
+                    'email_verified_at' => now(),
+                ]
+            );
 
-            // Attach organization roles
+            // Sync organization roles (this will replace existing roles)
             if (!empty($userData['organization_roles'])) {
                 $roleIds = collect($userData['organization_roles'])
                     ->filter() // Remove null values
@@ -173,7 +175,7 @@ class TestUsersSeeder extends Seeder
                     ->toArray();
                 
                 if (!empty($roleIds)) {
-                    $user->organizationRoles()->attach($roleIds);
+                    $user->organizationRoles()->sync($roleIds);
                 }
             }
         }
