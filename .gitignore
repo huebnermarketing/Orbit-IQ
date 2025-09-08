@@ -10,3 +10,11 @@ BUSINESS_REQUIREMENTS_DOCUMENT.md
 COLOR_STYLE_GUIDE.md
 PROJECT_STATUS.md
 DEPLOYMENT_GUIDE.md
+backend/vendor/
+backend/node_modules/
+backend/storage/*.key
+backend/storage/app/public
+backend/storage/framework/*
+backend/storage/logs/*
+backend/bootstrap/cache/*
+backend/.env
