@@ -20,6 +20,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->boolean('is_system_defined')->default(false);
             $table->boolean('is_locked')->default(false);
+            $table->json('permissions')->nullable();
             $table->timestamps();
         });
     }
