@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('organization_roles', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->unique();
+            $table->text('description')->nullable();
+            $table->string('color')->default('#6B7280');
+            $table->integer('sort_order')->default(0);
+            $table->boolean('is_active')->default(true);
+            $table->boolean('is_system_defined')->default(false);
             $table->timestamps();
         });
     }
