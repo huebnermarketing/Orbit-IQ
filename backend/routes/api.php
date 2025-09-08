@@ -66,6 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('users/{user}', [App\Http\Controllers\Admin\UserManagementController::class, 'destroy']);
         Route::post('users/{user}/reset-password', [App\Http\Controllers\Admin\UserManagementController::class, 'resetPassword']);
         Route::get('users/am-users', [App\Http\Controllers\Admin\UserManagementController::class, 'getAMUsers']);
+        Route::get('users/pm-users', [App\Http\Controllers\Admin\UserManagementController::class, 'getPMUsers']);
         
         // Organization routes
         Route::get('organization/profile', [App\Http\Controllers\Admin\OrganizationController::class, 'getProfile']);

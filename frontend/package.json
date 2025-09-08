@@ -11,6 +11,8 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^41.4.2",
+    "@ckeditor/ckeditor5-vue": "^7.3.0",
     "@vueuse/core": "^10.7.0",
     "autoprefixer": "^10.4.16",
     "axios": "^1.6.2",

@@ -5,3 +5,8 @@ frontend/node_modules
 backend/storage/framework/cache
 backend/storage/framework/sessions
 backend/vendor
+SETUP.md
+BUSINESS_REQUIREMENTS_DOCUMENT.md
+COLOR_STYLE_GUIDE.md
+PROJECT_STATUS.md
+DEPLOYMENT_GUIDE.md
