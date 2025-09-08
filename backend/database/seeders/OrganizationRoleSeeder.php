@@ -52,7 +52,10 @@ class OrganizationRoleSeeder extends Seeder
         ];
 
         foreach ($roles as $roleData) {
-            OrganizationRole::create($roleData);
+            OrganizationRole::updateOrCreate(
+                ['name' => $roleData['name']],
+                $roleData
+            );
         }
     }
 }
