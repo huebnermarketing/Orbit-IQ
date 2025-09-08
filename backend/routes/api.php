@@ -78,7 +78,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('organization-roles/{organizationRole}/users', [App\Http\Controllers\Admin\OrganizationRoleController::class, 'users']);
         
         // Teams routes
-        Route::apiResource('teams', App\Http\Controllers\Admin\TeamController::class);
+        Route::apiResource('teams', App\Http\Controllers\Admin\TeamController::class)->names([
+            'index' => 'admin.teams.index',
+            'store' => 'admin.teams.store',
+            'show' => 'admin.teams.show',
+            'update' => 'admin.teams.update',
+            'destroy' => 'admin.teams.destroy'
+        ]);
         Route::post('teams/{team}/members', [App\Http\Controllers\Admin\TeamController::class, 'addMembers']);
         Route::delete('teams/{team}/members', [App\Http\Controllers\Admin\TeamController::class, 'removeMembers']);
         Route::put('teams/{team}/members/{user}', [App\Http\Controllers\Admin\TeamController::class, 'updateMemberRole']);
