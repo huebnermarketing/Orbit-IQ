@@ -308,4 +308,16 @@ class UserManagementController extends Controller
 
         return response()->json($amUsers);
     }
+
+    /**
+     * Get PM users for project assignment
+     */
+    public function getPMUsers()
+    {
+        $pmUsers = User::whereHas('organizationRoles', function ($query) {
+            $query->where('name', 'PM');
+        })->select('id', 'name', 'email')->get();
+
+        return response()->json($pmUsers);
+    }
 }

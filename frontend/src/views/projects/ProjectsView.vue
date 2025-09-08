@@ -256,78 +256,8 @@ const tableColumns = ref([
   { key: 'pm', label: 'Project Manager', visible: true }
 ])
 
-// Mock data for now
-const projects = ref([
-  {
-    id: 1,
-    name: 'Website Redesign',
-    project_number: 'PRJ-001',
-    description: 'Complete redesign of the company website with modern UI/UX',
-    status: 'active',
-    priority: 'high',
-    project_type: 'Web Development',
-    client_name: 'TechCorp Inc.',
-    subclient_name: 'Marketing Division',
-    hours_utilized: 45,
-    hours_quoted: 100,
-    due_date: '2024-02-15',
-    created_at: '2024-01-01',
-    updated_at: '2024-01-20',
-    am_name: 'John Smith',
-    am_email: 'john.smith@company.com',
-    pm_name: 'Sarah Johnson',
-    pm_email: 'sarah.johnson@company.com',
-    progress: 65,
-    team_members_count: 5,
-    tasks_count: 12
-  },
-  {
-    id: 2,
-    name: 'Mobile App Development',
-    project_number: 'PRJ-002',
-    description: 'Develop a cross-platform mobile application for iOS and Android',
-    status: 'planning',
-    priority: 'medium',
-    project_type: 'Mobile Development',
-    client_name: 'StartupXYZ',
-    subclient_name: null,
-    hours_utilized: 15,
-    hours_quoted: 200,
-    due_date: '2024-03-30',
-    created_at: '2024-01-15',
-    updated_at: '2024-01-18',
-    am_name: 'Mike Wilson',
-    am_email: 'mike.wilson@company.com',
-    pm_name: null,
-    pm_email: null,
-    progress: 20,
-    team_members_count: 8,
-    tasks_count: 25
-  },
-  {
-    id: 3,
-    name: 'Database Migration',
-    project_number: 'PRJ-003',
-    description: 'Migrate legacy database to new cloud infrastructure',
-    status: 'completed',
-    priority: 'urgent',
-    project_type: 'Infrastructure',
-    client_name: 'Enterprise Solutions',
-    subclient_name: 'IT Department',
-    hours_utilized: 80,
-    hours_quoted: 80,
-    due_date: '2024-01-20',
-    created_at: '2023-12-01',
-    updated_at: '2024-01-20',
-    am_name: 'Lisa Brown',
-    am_email: 'lisa.brown@company.com',
-    pm_name: 'David Lee',
-    pm_email: 'david.lee@company.com',
-    progress: 100,
-    team_members_count: 3,
-    tasks_count: 8
-  }
-])
+// Projects data - will be loaded from API
+const projects = ref([])
 
 // Computed properties
 const filteredProjects = computed(() => {
