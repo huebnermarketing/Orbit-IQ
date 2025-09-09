@@ -18,6 +18,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Health check routes (public)
+Route::get('/health', [App\Http\Controllers\HealthController::class, 'health']);
+Route::get('/health/detailed', [App\Http\Controllers\HealthController::class, 'detailed']);
+
 // Authentication routes
 Route::prefix('auth')->group(function () {
     Route::post('register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
