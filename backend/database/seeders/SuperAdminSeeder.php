@@ -23,6 +23,7 @@ class SuperAdminSeeder extends Seeder
                 'role' => 'super_admin',
                 'email_verified_at' => now(),
                 'timezone' => 'UTC',
+                'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]
