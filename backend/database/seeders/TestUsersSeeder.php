@@ -164,6 +164,7 @@ class TestUsersSeeder extends Seeder
                     'role' => $userData['role'],
                     'timezone' => $userData['timezone'],
                     'email_verified_at' => now(),
+                    'is_active' => true,
                 ]
             );
 
