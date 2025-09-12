@@ -73,7 +73,7 @@ class UserManagementController extends Controller
             $sortOrder = 'asc';
         }
 
-        $users = $query->with(['organizationRole', 'organizationRoles', 'assignedAMs', 'assignedPMs'])
+        $users = $query->with(['organizationRole', 'organizationRoles', 'assignedPM'])
                       ->orderBy($sortBy, $sortOrder)
                       ->paginate($request->get('per_page', 15));
 
@@ -104,7 +104,7 @@ class UserManagementController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|in:' . implode(',', $allowedRoles),
             'organization_role_ids' => 'nullable|array',
-            'organization_role_ids.*' => 'exists:organization_roles,id|not_in:19', // Prevent Client role (ID: 19)
+            'organization_role_ids.*' => 'exists:organization_roles,id|not_in:14', // Prevent Client role (ID: 14)
             'assigned_am_ids' => 'nullable|array',
             'assigned_am_ids.*' => 'exists:users,id',
             'timezone' => 'sometimes|string|max:255',
@@ -137,9 +137,10 @@ class UserManagementController extends Controller
             $user->organizationRoles()->attach($request->organization_role_ids);
         }
 
-        // Attach AMs to PM
-        if ($request->has('assigned_am_ids') && is_array($request->assigned_am_ids)) {
-            $user->assignedAMs()->attach($request->assigned_am_ids);
+        // Set assigned PM for AM users
+        if ($request->has('assigned_pm_id') && $request->assigned_pm_id) {
+            $user->assigned_pm_id = $request->assigned_pm_id;
+            $user->save();
         }
 
         return response()->json([
@@ -176,9 +177,8 @@ class UserManagementController extends Controller
             'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $user->id,
             'role' => 'sometimes|in:' . implode(',', $allowedRoles),
             'organization_role_ids' => 'nullable|array',
-            'organization_role_ids.*' => 'exists:organization_roles,id|not_in:19', // Prevent Client role (ID: 19)
-            'assigned_am_ids' => 'nullable|array',
-            'assigned_am_ids.*' => 'exists:users,id',
+            'organization_role_ids.*' => 'exists:organization_roles,id|not_in:14', // Prevent Client role (ID: 14)
+            'assigned_pm_id' => 'nullable|exists:users,id',
             'timezone' => 'sometimes|string|max:255',
             'is_active' => 'sometimes|boolean',
         ]);
@@ -196,7 +196,7 @@ class UserManagementController extends Controller
         }
 
         // Check if user is a client-linked user (has client organization role)
-        $isClientLinkedUser = $user->organizationRoles()->where('organization_role_id', 19)->exists();
+        $isClientLinkedUser = $user->organizationRoles()->where('organization_role_id', 14)->exists();
         
         // Prevent role changes for client-linked users
         if ($isClientLinkedUser) {
@@ -224,9 +224,10 @@ class UserManagementController extends Controller
             $user->organizationRoles()->sync($request->organization_role_ids ?? []);
         }
 
-        // Update PM-AM assignments
-        if ($request->has('assigned_am_ids')) {
-            $user->assignedAMs()->sync($request->assigned_am_ids ?? []);
+        // Update assigned PM for AM users
+        if ($request->has('assigned_pm_id')) {
+            $user->assigned_pm_id = $request->assigned_pm_id;
+            $user->save();
         }
 
         return response()->json([
@@ -304,7 +305,7 @@ class UserManagementController extends Controller
     {
         $amUsers = User::whereHas('organizationRoles', function ($query) {
             $query->where('name', 'AM');
-        })->select('id', 'name', 'email')->get();
+        })->with('assignedPMs')->select('id', 'name', 'email')->get();
 
         return response()->json($amUsers);
     }

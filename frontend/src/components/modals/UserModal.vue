@@ -127,48 +127,55 @@
                 Organization Roles
                 <span v-if="isClientLinkedUser" class="text-xs text-gray-500 ml-2">(Fixed for client users)</span>
               </label>
-              <div class="space-y-2 max-h-32 overflow-y-auto border border-gray-200 rounded-lg p-3" :class="{ 'opacity-50': isClientLinkedUser }">
+              
+              <!-- For client users, show only the Client role as read-only -->
+              <div v-if="isClientLinkedUser" class="space-y-2 border border-gray-200 rounded-lg p-3 bg-gray-50">
+                <div class="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    :value="14"
+                    checked
+                    disabled
+                    class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  />
+                  <span class="text-sm text-text-primary font-medium">Client</span>
+                  <span class="text-xs text-gray-500">(Automatically assigned)</span>
+                </div>
+              </div>
+              
+              <!-- For regular users, show all available roles -->
+              <div v-else class="space-y-2 max-h-32 overflow-y-auto border border-gray-200 rounded-lg p-3">
                 <label 
                   v-for="orgRole in availableOrganizationRoles" 
                   :key="orgRole.id"
                   class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
-                  :class="{ 'cursor-not-allowed': isClientLinkedUser }"
                 >
                   <input
                     type="checkbox"
                     :value="orgRole.id"
                     v-model="form.organization_role_ids"
-                    :disabled="isClientLinkedUser"
                     class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                   />
                   <span class="text-sm text-text-primary">{{ orgRole.name }}</span>
                 </label>
               </div>
+              
               <p class="text-xs text-text-secondary mt-1">
-                <span v-if="isClientLinkedUser">Organization role is automatically set to Client</span>
+                <span v-if="isClientLinkedUser">Organization role is automatically set to Client and cannot be changed</span>
                 <span v-else>Select one or more organization roles (Client role is reserved for client persons)</span>
               </p>
             </div>
 
-            <!-- AM Assignment (for PM users) -->
-            <div v-if="isPMSelected">
-              <label class="block text-sm font-medium text-text-primary mb-2">Assigned AMs</label>
-              <div class="space-y-2 max-h-32 overflow-y-auto border border-gray-200 rounded-lg p-3">
-                <label 
-                  v-for="am in amUsers" 
-                  :key="am.id"
-                  class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
-                >
-                  <input
-                    type="checkbox"
-                    :value="am.id"
-                    v-model="form.assigned_am_ids"
-                    class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                  />
-                  <span class="text-sm text-text-primary">{{ am.name }} ({{ am.email }})</span>
-                </label>
-              </div>
-              <p class="text-xs text-text-secondary mt-1">Select one or more AMs to assign to this PM</p>
+            <!-- PM Assignment (for AM users) -->
+            <div v-if="isAMSelected">
+              <label class="block text-sm font-medium text-text-primary mb-2">Assigned PM</label>
+              <select v-model="form.assigned_pm_id" class="input">
+                <option value="">Select PM (optional)</option>
+                <option v-for="pm in pmUsers" :key="pm.id" :value="pm.id">
+                  {{ pm.name }} ({{ pm.email }})
+                </option>
+              </select>
+              <p class="text-xs text-text-secondary mt-1">Select a PM to assign to this AM</p>
             </div>
 
             <!-- Timezone -->
@@ -244,7 +251,7 @@ const form = reactive({
   password_confirmation: '',
   role: 'user',
   organization_role_ids: [],
-  assigned_am_ids: [],
+  assigned_pm_id: '',
   timezone: 'UTC',
   is_active: true
 })
@@ -252,6 +259,7 @@ const form = reactive({
 const currentUser = computed(() => authStore.user)
 const organizationRoles = ref<any[]>([])
 const amUsers = ref<any[]>([])
+const pmUsers = ref<any[]>([])
 
 const canCreateSuperAdmin = computed(() => {
   return currentUser.value?.role === 'super_admin'
@@ -264,13 +272,20 @@ const isPMSelected = computed(() => {
   })
 })
 
+const isAMSelected = computed(() => {
+  return form.organization_role_ids.some((roleId: any) => {
+    const role = organizationRoles.value.find((r: any) => r.id === roleId)
+    return role?.name === 'AM'
+  })
+})
+
 const isClientLinkedUser = computed(() => {
-  // Check if user has client organization role (ID 19)
+  // Check if user has client organization role (ID 14)
   if (props.user?.organization_roles) {
-    return props.user.organization_roles.some((role: any) => role.id === 19)
+    return props.user.organization_roles.some((role: any) => role.id === 14)
   }
-  // Fallback: check if user has organization_role_id set to 19 (client role)
-  return props.user?.organization_role_id === 19
+  // Fallback: check if user has organization_role_id set to 14 (client role)
+  return props.user?.organization_role_id === 14
 })
 
 const canEditEmail = computed(() => {
@@ -279,8 +294,8 @@ const canEditEmail = computed(() => {
 })
 
 const availableOrganizationRoles = computed(() => {
-  // Filter out the Client role (ID: 19) as it's reserved for client persons
-  return organizationRoles.value.filter((role: any) => role.id !== 19)
+  // Filter out the Client role (ID: 14) as it's reserved for client persons
+  return organizationRoles.value.filter((role: any) => role.id !== 14)
 })
 
 const timezones = computed(() => {
@@ -296,7 +311,8 @@ onMounted(async () => {
   // Load organization roles and AM users
   await Promise.all([
     loadOrganizationRoles(),
-    loadAMUsers()
+    loadAMUsers(),
+    loadPMUsers()
   ])
   
   if (props.isEdit && props.user) {
@@ -304,7 +320,7 @@ onMounted(async () => {
     form.email = props.user.email || ''
     form.role = props.user.role || 'user'
     form.organization_role_ids = props.user.organization_roles?.map((role: any) => role.id) || []
-    form.assigned_am_ids = props.user.assigned_ams?.map((am: any) => am.id) || []
+    form.assigned_pm_id = props.user.assigned_pm_id || ''
     form.timezone = props.user.timezone || 'UTC'
     form.is_active = props.user.is_active !== undefined ? props.user.is_active : true
   }
@@ -328,6 +344,15 @@ const loadAMUsers = async () => {
   }
 }
 
+const loadPMUsers = async () => {
+  try {
+    const response = await authApi.getPMUsers()
+    pmUsers.value = response
+  } catch (error) {
+    console.error('Failed to load PM users:', error)
+  }
+}
+
 const handleSubmit = async () => {
   loading.value = true
   error.value = ''
@@ -339,7 +364,7 @@ const handleSubmit = async () => {
         email: form.email,
         role: form.role,
         organization_role_ids: form.organization_role_ids,
-        assigned_am_ids: form.assigned_am_ids,
+        assigned_pm_id: form.assigned_pm_id,
         timezone: form.timezone,
         is_active: form.is_active
       })

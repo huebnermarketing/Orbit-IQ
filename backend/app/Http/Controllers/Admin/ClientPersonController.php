@@ -40,7 +40,9 @@ class ClientPersonController extends Controller
                 'max:255',
                 Rule::unique('client_persons')->where(function ($query) use ($client) {
                     return $query->where('client_id', $client->id);
-                })
+                }),
+                Rule::unique('users', 'email'), // Prevent same email in users table
+                Rule::unique('client_persons', 'email') // Prevent same email across all clients
             ],
             'phone' => 'nullable|string|max:20',
         ]);
@@ -102,7 +104,9 @@ class ClientPersonController extends Controller
                 'max:255',
                 Rule::unique('client_persons')->where(function ($query) use ($client) {
                     return $query->where('client_id', $client->id);
-                })->ignore($clientPerson->id)
+                })->ignore($clientPerson->id),
+                Rule::unique('users', 'email'), // Prevent same email in users table
+                Rule::unique('client_persons', 'email')->ignore($clientPerson->id) // Prevent same email across all clients
             ],
             'phone' => 'nullable|string|max:20',
             'status' => 'required|in:pending,active,inactive',
@@ -134,6 +138,33 @@ class ClientPersonController extends Controller
                 'message' => 'Cannot change email for activated users. Only super admin can modify email addresses.',
                 'errors' => ['email' => ['Email cannot be changed for activated users']]
             ], 422);
+        }
+
+        // Custom validation: prevent system role and organization role changes for client users
+        if ($isUserActivated && $clientPerson->user_id) {
+            $user = $clientPerson->user;
+            if ($user) {
+                // Check if user has Client organization role
+                $hasClientRole = $user->organizationRoles()->where('organization_role_id', 14)->exists();
+                
+                if ($hasClientRole) {
+                    // Prevent any system role changes for client users
+                    if ($request->has('role') && $request->role !== 'user') {
+                        return response()->json([
+                            'message' => 'Cannot change system role for client users. Client users must have "user" role.',
+                            'errors' => ['role' => ['System role cannot be changed for client users']]
+                        ], 422);
+                    }
+                    
+                    // Prevent any organization role changes for client users
+                    if ($request->has('organization_role_ids')) {
+                        return response()->json([
+                            'message' => 'Cannot change organization roles for client users. Client users are automatically assigned the Client role.',
+                            'errors' => ['organization_role_ids' => ['Organization roles cannot be changed for client users']]
+                        ], 422);
+                    }
+                }
+            }
         }
 
         if ($validator->fails()) {
@@ -248,13 +279,13 @@ class ClientPersonController extends Controller
             'email' => $clientPerson->email,
             'password' => Hash::make($request->password),
             'role' => 'user', // System role
-            'organization_role_id' => 19, // Client org role
+            'organization_role_id' => 14, // Client org role (ID: 14)
             'is_active' => true,
             'email_verified_at' => now(),
         ]);
 
         // Attach the client organization role to the user
-        $user->organizationRoles()->attach(19);
+        $user->organizationRoles()->attach(14);
 
         // Mark client person as active and link to user
         $clientPerson->markAsActive($user);
