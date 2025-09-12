@@ -157,6 +157,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the assigned PM for this AM user
+     */
+    public function assignedPM(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_pm_id');
+    }
+
+    /**
      * Check if user has a specific organization role
      */
     public function hasOrganizationRole($roleName): bool

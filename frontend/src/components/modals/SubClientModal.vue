@@ -24,7 +24,9 @@
           <form @submit.prevent="handleSubmit" class="space-y-4">
             <!-- Sub-Client Name -->
             <div>
-              <label class="block text-sm font-medium text-text-primary mb-2">Sub-Client Name</label>
+              <label class="block text-sm font-medium text-text-primary mb-2">
+                Sub-Client Name <span class="text-error-500">*</span>
+              </label>
               <input
                 v-model="form.name"
                 type="text"
@@ -41,8 +43,7 @@
                 v-model="form.email"
                 type="email"
                 class="input"
-                placeholder="Enter email address"
-                required
+                placeholder="Enter email address (optional)"
               />
             </div>
 
@@ -53,7 +54,7 @@
                 v-model="form.phone"
                 type="tel"
                 class="input"
-                placeholder="Enter phone number"
+                placeholder="Enter phone number (optional)"
               />
             </div>
 
@@ -64,7 +65,7 @@
                 v-model="form.website"
                 type="url"
                 class="input"
-                placeholder="Enter website URL"
+                placeholder="Enter website URL (optional)"
               />
             </div>
 

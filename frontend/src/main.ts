@@ -4,7 +4,6 @@ import router from './router'
 import App from './App.vue'
 import './assets/css/main.css'
 import { themeManager } from './utils/theme'
-
 // Initialize theme system immediately
 const currentTheme = themeManager.getCurrentTheme();
 themeManager.applyTheme(currentTheme);

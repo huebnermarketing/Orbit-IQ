@@ -40,7 +40,7 @@ class SubClientController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
             'website' => 'nullable|url|max:255',
         ]);
@@ -52,7 +52,13 @@ class SubClientController extends Controller
             ], 422);
         }
 
-        $subClient = $client->subClients()->create($validator->validated());
+        // Convert empty strings to null for optional fields
+        $validatedData = $validator->validated();
+        $validatedData['email'] = !empty($validatedData['email']) ? $validatedData['email'] : null;
+        $validatedData['phone'] = !empty($validatedData['phone']) ? $validatedData['phone'] : null;
+        $validatedData['website'] = !empty($validatedData['website']) ? $validatedData['website'] : null;
+
+        $subClient = $client->subClients()->create($validatedData);
 
         return response()->json($subClient, 201);
     }
@@ -88,7 +94,7 @@ class SubClientController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
             'website' => 'nullable|url|max:255',
         ]);
@@ -100,7 +106,13 @@ class SubClientController extends Controller
             ], 422);
         }
 
-        $subClient->update($validator->validated());
+        // Convert empty strings to null for optional fields
+        $validatedData = $validator->validated();
+        $validatedData['email'] = !empty($validatedData['email']) ? $validatedData['email'] : null;
+        $validatedData['phone'] = !empty($validatedData['phone']) ? $validatedData['phone'] : null;
+        $validatedData['website'] = !empty($validatedData['website']) ? $validatedData['website'] : null;
+
+        $subClient->update($validatedData);
 
         return response()->json($subClient);
     }

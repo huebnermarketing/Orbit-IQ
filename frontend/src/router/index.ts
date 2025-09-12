@@ -73,6 +73,12 @@ const router = createRouter({
       name: 'ClientPasswordSetup',
       component: () => import('@/views/auth/ClientPasswordSetupView.vue'),
       meta: { requiresGuest: true }
+    },
+    {
+      path: '/quill-playground',
+      name: 'QuillPlayground',
+      component: () => import('@/views/QuillPlayground.vue'),
+      meta: { requiresAuth: true }
     }
   ]
 })
