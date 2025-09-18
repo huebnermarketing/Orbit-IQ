@@ -306,7 +306,18 @@ class UserManagementController extends Controller
     {
         $amUsers = User::whereHas('organizationRoles', function ($query) {
             $query->where('name', 'AM');
-        })->with('assignedPMs')->select('id', 'name', 'email')->get();
+        })->with('assignedPM:id,name,email')->select('id', 'name', 'email', 'assigned_pm_id')->get();
+
+        // Transform the data to match frontend expectations
+        $amUsers->transform(function ($am) {
+            // Create assigned_p_ms array from the assignedPM relationship
+            if ($am->assignedPM) {
+                $am->assigned_p_ms = [$am->assignedPM->toArray()];
+            } else {
+                $am->assigned_p_ms = [];
+            }
+            return $am;
+        });
 
         return response()->json($amUsers);
     }
