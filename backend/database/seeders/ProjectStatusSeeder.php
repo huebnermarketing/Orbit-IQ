@@ -14,6 +14,17 @@ class ProjectStatusSeeder extends Seeder
     public function run(): void
     {
         $defaultStatuses = [
+            // Quote Category
+            [
+                'name' => 'Quote',
+                'category' => 'quote',
+                'color' => '#3B82F6', // Blue
+                'is_system_defined' => true,
+                'is_locked' => true,
+                'is_active' => true,
+                'sort_order' => 1,
+            ],
+            
             // ToDo Category
             [
                 'name' => 'ToDo',
@@ -22,7 +33,7 @@ class ProjectStatusSeeder extends Seeder
                 'is_system_defined' => true,
                 'is_locked' => true,
                 'is_active' => true,
-                'sort_order' => 1,
+                'sort_order' => 2,
             ],
             [
                 'name' => 'Hold',
@@ -31,7 +42,7 @@ class ProjectStatusSeeder extends Seeder
                 'is_system_defined' => true,
                 'is_locked' => true,
                 'is_active' => true,
-                'sort_order' => 2,
+                'sort_order' => 3,
             ],
 
             // In Progress Category
@@ -42,7 +53,7 @@ class ProjectStatusSeeder extends Seeder
                 'is_system_defined' => true,
                 'is_locked' => true,
                 'is_active' => true,
-                'sort_order' => 1,
+                'sort_order' => 4,
             ],
             [
                 'name' => 'Client Round',
@@ -51,7 +62,7 @@ class ProjectStatusSeeder extends Seeder
                 'is_system_defined' => true,
                 'is_locked' => true,
                 'is_active' => true,
-                'sort_order' => 2,
+                'sort_order' => 5,
             ],
             [
                 'name' => 'Post Launch',
@@ -60,7 +71,7 @@ class ProjectStatusSeeder extends Seeder
                 'is_system_defined' => true,
                 'is_locked' => true,
                 'is_active' => true,
-                'sort_order' => 3,
+                'sort_order' => 6,
             ],
 
             // Completed Category
@@ -71,7 +82,7 @@ class ProjectStatusSeeder extends Seeder
                 'is_system_defined' => true,
                 'is_locked' => true,
                 'is_active' => true,
-                'sort_order' => 1,
+                'sort_order' => 7,
             ],
             [
                 'name' => 'Archived',
@@ -80,7 +91,7 @@ class ProjectStatusSeeder extends Seeder
                 'is_system_defined' => true,
                 'is_locked' => true,
                 'is_active' => true,
-                'sort_order' => 2,
+                'sort_order' => 8,
             ],
         ];
 
@@ -88,7 +99,6 @@ class ProjectStatusSeeder extends Seeder
             ProjectStatus::updateOrCreate(
                 [
                     'name' => $status['name'],
-                    'category' => $status['category'],
                 ],
                 $status
             );

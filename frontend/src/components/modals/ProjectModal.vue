@@ -1,25 +1,25 @@
 <template>
   <div v-if="show" class="fixed inset-0 z-50 overflow-hidden">
-    <!-- Background overlay -->
-    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="$emit('close')"></div>
+      <!-- Background overlay -->
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="$emit('close')"></div>
 
     <!-- Full screen modal -->
     <div class="fixed inset-0 flex items-center justify-center p-0">
       <div class="bg-surface w-full h-full flex flex-col shadow-xl">
         <!-- Header -->
         <div class="flex items-center justify-between px-6 py-4 border-b border-border-light">
-          <h3 class="text-2xl font-bold text-text-primary">
-            {{ isEdit ? 'Edit Project' : 'Create New Project' }}
-          </h3>
-          <button
-            @click="$emit('close')"
-            class="text-text-muted hover:text-text-primary transition-colors"
-          >
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-        </div>
+            <h3 class="text-2xl font-bold text-text-primary">
+              {{ isEdit ? 'Edit Project' : 'Create New Project' }}
+            </h3>
+            <button
+              @click="$emit('close')"
+              class="text-text-muted hover:text-text-primary transition-colors"
+            >
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
 
         <!-- Main Content - 50/50 Split -->
         <div class="flex-1 flex overflow-hidden">
@@ -43,7 +43,7 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-text-primary mb-2">
-                  Project Number <span class="text-error-500">*</span>
+                  Project Number <span class="text-error-500">*</span> <span class="text-xs text-text-muted">(6-digit number (auto-generated, can be modified))</span> 
                 </label>
                 <input
                   v-model="form.project_number"
@@ -52,7 +52,7 @@
                   class="input"
                   placeholder="Auto-generated"
                 />
-                <p class="text-xs text-text-muted mt-1">6-digit number (auto-generated, can be modified)</p>
+                <!-- <p class="text-xs text-text-muted mt-1">6-digit number (auto-generated, can be modified)</p> -->
               </div>
             </div>
 
@@ -139,21 +139,65 @@
                 <label class="block text-sm font-medium text-text-primary mb-2">
                   Start Date
                 </label>
-                <input
-                  v-model="form.start_date"
-                  type="date"
-                  class="input"
-                />
+                <div class="relative">
+                  <input
+                    v-model="form.start_date"
+                    type="date"
+                    class="input cursor-pointer hover:border-primary-400 focus:border-primary-500 focus:ring-primary-500"
+                    placeholder="Select start date"
+                    @click="$event.target.showPicker?.()"
+                  />
+                  <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg class="w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
+                </div>
               </div>
               <div>
                 <label class="block text-sm font-medium text-text-primary mb-2">
                   Due Date
                 </label>
-                <input
-                  v-model="form.due_date"
-                  type="date"
-                  class="input"
-                />
+                <div class="relative">
+                  <input
+                    v-model="form.due_date"
+                    type="date"
+                    class="input cursor-pointer hover:border-primary-400 focus:border-primary-500 focus:ring-primary-500"
+                    placeholder="Select due date"
+                    @click="$event.target.showPicker?.()"
+                  />
+                  <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg class="w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project Status and Project Type -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-text-primary mb-2">
+                  Project Status
+                </label>
+                <select v-model="form.project_status_id" class="input">
+                  <option value="">Select Project Status</option>
+                  <option v-for="status in projectStatuses" :key="status.id" :value="status.id">
+                    {{ status.name }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-text-primary mb-2">
+                  Project Type
+                </label>
+                <select v-model="form.project_type_id" class="input">
+                  <option value="">Select Project Type</option>
+                  <option v-for="type in projectTypes" :key="type.id" :value="type.id">
+                    {{ type.name }}
+                  </option>
+                </select>
               </div>
             </div>
 
@@ -203,11 +247,11 @@
                     @blur="hideClientTeamDropdown"
                   />
                   <div v-if="showClientTeamDropdown" class="absolute z-10 w-full mt-1 bg-surface border border-border-light rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                    <div v-for="user in filteredClientUsers" :key="user.id" 
+                    <div v-for="person in filteredClientUsers" :key="person.id" 
                          class="px-4 py-2 hover:bg-surface-alt cursor-pointer flex items-center justify-between"
-                         @click="toggleClientUser(user)">
-                      <span>{{ user.name }} ({{ user.email }})</span>
-                      <input type="checkbox" :checked="form.client_team.includes(user.id)" class="ml-2" />
+                         @click="toggleClientUser(person)">
+                      <span>{{ person.name }} ({{ person.email }})</span>
+                      <input type="checkbox" :checked="form.client_team.includes(person.id)" class="ml-2" />
                     </div>
                   </div>
                 </div>
@@ -319,7 +363,7 @@
               </button>
             </div>
           </form>
-          </div>
+        </div>
 
           <!-- Right Side - Project Description -->
           <div class="w-1/2 p-6 border-l border-border-light">
@@ -644,6 +688,8 @@ const internalUsers = ref([])
 const clientUsers = ref([])
 const userGroups = ref([])
 const teams = ref([])
+const projectStatuses = ref([])
+const projectTypes = ref([])
 
 // Search states
 const internalTeamSearch = ref('')
@@ -667,6 +713,8 @@ const form = reactive<Project>({
   hour_type: '',
   am_id: '',
   pm_id: '',
+  project_type_id: '',
+  project_status_id: '',
   start_date: '',
   due_date: '',
   internal_team: [],
@@ -741,7 +789,7 @@ const filteredTeams = computed(() => {
 
 // Helper functions
 const getInternalUserById = (id: string) => internalUsers.value.find(user => user.id === id)
-const getClientUserById = (id: string) => clientUsers.value.find(user => user.id === id)
+const getClientUserById = (id: string) => clientUsers.value.find(person => person.id === id)
 const getUserGroupById = (id: string) => userGroups.value.find(group => group.id === id)
 const getTeamById = (id: string) => teams.value.find(team => team.id === id)
 
@@ -760,6 +808,9 @@ const onClientChange = async () => {
       console.log('Sub-clients response:', subClientsResponse)
       // The API returns the data directly, not wrapped in a data property
       subClients.value = subClientsResponse || []
+      
+      // Load client persons for the selected client
+      await loadClientUsers(form.client_id)
       
       console.log('Loading client details for client:', form.client_id)
       // Load client details to get primary account manager
@@ -790,6 +841,7 @@ const onClientChange = async () => {
     }
   } else {
     subClients.value = []
+    clientUsers.value = []
   }
 }
 
@@ -857,6 +909,8 @@ const toggleUserGroup = (group: any) => {
   } else {
     form.user_groups.push(group.id)
   }
+  // Auto-populate internal team with group members
+  updateInternalTeamFromGroupsAndTeams()
 }
 
 const removeUserGroup = (groupId: string) => {
@@ -864,6 +918,8 @@ const removeUserGroup = (groupId: string) => {
   if (index > -1) {
     form.user_groups.splice(index, 1)
   }
+  // Auto-populate internal team with group members
+  updateInternalTeamFromGroupsAndTeams()
 }
 
 const toggleTeam = (team: any) => {
@@ -873,6 +929,8 @@ const toggleTeam = (team: any) => {
   } else {
     form.teams.push(team.id)
   }
+  // Auto-populate internal team with team members
+  updateInternalTeamFromGroupsAndTeams()
 }
 
 const removeTeam = (teamId: string) => {
@@ -880,6 +938,36 @@ const removeTeam = (teamId: string) => {
   if (index > -1) {
     form.teams.splice(index, 1)
   }
+  // Auto-populate internal team with team members
+  updateInternalTeamFromGroupsAndTeams()
+}
+
+// Auto-populate internal team from selected groups and teams
+const updateInternalTeamFromGroupsAndTeams = () => {
+  const memberIds = new Set<string>()
+  
+  // Add members from selected user groups
+  form.user_groups.forEach(groupId => {
+    const group = userGroups.value.find(g => g.id === groupId)
+    if (group && group.users) {
+      group.users.forEach((user: any) => {
+        memberIds.add(user.id)
+      })
+    }
+  })
+  
+  // Add members from selected teams
+  form.teams.forEach(teamId => {
+    const team = teams.value.find(t => t.id === teamId)
+    if (team && team.members) {
+      team.members.forEach((member: any) => {
+        memberIds.add(member.id)
+      })
+    }
+  })
+  
+  // Update internal team with unique member IDs
+  form.internal_team = Array.from(memberIds)
 }
 
 // Dropdown visibility handlers
@@ -940,19 +1028,34 @@ const loadPMUsers = async () => {
 
 const loadInternalUsers = async () => {
   try {
-    const response = await authApi.getUsers({ role: 'user' })
-    internalUsers.value = response.data || []
+    // Load all users except those with client role (organization_role_id = 14)
+    const response = await authApi.getUsers()
+    const allUsers = response.data || []
+    
+    // Filter out users with client organization role
+    internalUsers.value = allUsers.filter(user => {
+      // Check if user has client organization role (ID = 14)
+      const hasClientRole = user.organization_roles?.some(role => role.organization_role_id === 14)
+      return !hasClientRole
+    })
   } catch (error) {
     console.error('Failed to load internal users:', error)
   }
 }
 
-const loadClientUsers = async () => {
+const loadClientUsers = async (clientId?: string) => {
   try {
-    const response = await authApi.getUsers({ role: 'client' })
-    clientUsers.value = response.data || []
+    if (!clientId) {
+      clientUsers.value = []
+      return
+    }
+    
+    // Load client persons for the selected client
+    const response = await clientApi.getClientPersons(clientId)
+    clientUsers.value = response || []
   } catch (error) {
     console.error('Failed to load client users:', error)
+    clientUsers.value = []
   }
 }
 
@@ -967,10 +1070,37 @@ const loadUserGroups = async () => {
 
 const loadTeams = async () => {
   try {
+    console.log('Loading teams...')
     const response = await authApi.getTeams()
-    teams.value = response.data || []
+    console.log('Teams API response:', response)
+    teams.value = response || []
+    console.log('Teams value set to:', teams.value)
   } catch (error) {
     console.error('Failed to load teams:', error)
+  }
+}
+
+const loadProjectStatuses = async () => {
+  try {
+    const response = await authApi.getProjectStatuses()
+    projectStatuses.value = response.data || []
+    
+    // Set default status to "Quote" if it exists
+    const quoteStatus = projectStatuses.value.find((status: any) => status.name === 'Quote')
+    if (quoteStatus && !form.project_status_id) {
+      form.project_status_id = quoteStatus.id
+    }
+  } catch (error) {
+    console.error('Failed to load project statuses:', error)
+  }
+}
+
+const loadProjectTypes = async () => {
+  try {
+    const response = await authApi.getProjectTypes()
+    projectTypes.value = response.data || []
+  } catch (error) {
+    console.error('Failed to load project types:', error)
   }
 }
 
@@ -1027,9 +1157,10 @@ onMounted(async () => {
     loadAMUsers(),
     loadPMUsers(),
     loadInternalUsers(),
-    loadClientUsers(),
     loadUserGroups(),
-    loadTeams()
+    loadTeams(),
+    loadProjectStatuses(),
+    loadProjectTypes()
   ])
 })
 
@@ -1061,17 +1192,42 @@ const handleSubmit = async () => {
   loading.value = true
 
   try {
-    // TODO: Implement API call
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
+    console.log('Submitting project data:', form)
     
-    const projectData: Project = {
+    // Prepare the data for API submission
+    const projectData = {
       ...form,
-      id: props.isEdit ? props.project?.id : Date.now() // Mock ID
+      // Convert empty strings to null for optional fields
+      sub_client_id: form.sub_client_id || null,
+      am_id: form.am_id || null,
+      pm_id: form.pm_id || null,
+      project_type_id: form.project_type_id || null,
+      project_status_id: form.project_status_id || null,
+      start_date: form.start_date || null,
+      due_date: form.due_date || null,
     }
 
-    emit('saved', projectData)
-  } catch (err) {
-    error.value = 'Failed to save project. Please try again.'
+    let response
+    if (props.isEdit && props.project?.id) {
+      // Update existing project
+      response = await authApi.put(`/projects/${props.project.id}`, projectData)
+    } else {
+      // Create new project
+      response = await authApi.post('/projects', projectData)
+    }
+    
+    console.log('Project saved successfully:', response)
+    emit('saved', response.project || response)
+  } catch (err: any) {
+    console.error('Failed to save project:', err)
+    if (err.response?.data?.errors) {
+      // Handle validation errors
+      const errors = err.response.data.errors
+      const firstError = Object.values(errors)[0]
+      error.value = Array.isArray(firstError) ? firstError[0] : firstError
+    } else {
+      error.value = err.response?.data?.message || 'Failed to save project. Please try again.'
+    }
   } finally {
     loading.value = false
   }

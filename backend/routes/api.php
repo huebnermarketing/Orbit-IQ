@@ -69,6 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('users/{user}', [App\Http\Controllers\Admin\UserManagementController::class, 'update']);
         Route::delete('users/{user}', [App\Http\Controllers\Admin\UserManagementController::class, 'destroy']);
         Route::post('users/{user}/reset-password', [App\Http\Controllers\Admin\UserManagementController::class, 'resetPassword']);
+        Route::post('users/upload-avatar', [App\Http\Controllers\Admin\UserManagementController::class, 'uploadAvatar']);
         Route::get('users/am-users', [App\Http\Controllers\Admin\UserManagementController::class, 'getAMUsers']);
         Route::get('users/pm-users', [App\Http\Controllers\Admin\UserManagementController::class, 'getPMUsers']);
         
@@ -130,6 +131,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('clients/{client}/sub-clients/{subClient}', [App\Http\Controllers\Admin\SubClientController::class, 'update']);
         Route::delete('clients/{client}/sub-clients/{subClient}', [App\Http\Controllers\Admin\SubClientController::class, 'destroy']);
     });
+
+    // Project routes
+    Route::apiResource('projects', App\Http\Controllers\ProjectController::class);
+    
+    // Task routes
+    Route::apiResource('tasks', App\Http\Controllers\TaskController::class);
+    Route::post('tasks/bulk-update', [App\Http\Controllers\TaskController::class, 'bulkUpdate']);
 });
 
 // Public routes for client password setup

@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             // Test data seeders (only for development)
             TestUsersSeeder::class,
             TestTeamsSeeder::class,
+            TaskSeeder::class,
         ]);
     }
 }

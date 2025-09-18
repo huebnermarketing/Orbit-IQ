@@ -143,6 +143,13 @@ export const authApi = {
   resetUserPassword: (id: string, passwordData: any): Promise<any> =>
     api.post(`/admin/users/${id}/reset-password`, passwordData).then(res => res.data),
 
+  uploadAvatar: (formData: FormData): Promise<any> =>
+    api.post('/admin/users/upload-avatar', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }).then(res => res.data),
+
   // Organization API methods
   getOrganizationProfile: (): Promise<any> =>
     api.get('/admin/organization/profile').then(res => res.data),
@@ -173,8 +180,24 @@ export const authApi = {
   // AM Users API method
   getAMUsers: (): Promise<any> => api.get('/admin/users/am-users').then(res => res.data),
 
+  // Projects API methods
+  getProjects: (params?: any): Promise<any> => {
+    const queryString = params ? '?' + new URLSearchParams(params).toString() : ''
+    return api.get(`/projects${queryString}`).then(res => res.data)
+  },
+  createProject: (projectData: any): Promise<any> => api.post('/projects', projectData).then(res => res.data),
+  updateProject: (id: string, projectData: any): Promise<any> => api.put(`/projects/${id}`, projectData).then(res => res.data),
+  deleteProject: (id: string): Promise<any> => api.delete(`/projects/${id}`).then(res => res.data),
+  getProject: (id: string): Promise<any> => api.get(`/projects/${id}`).then(res => res.data),
+
+  // Project Status API methods
+  getProjectStatuses: (): Promise<any> => api.get('/admin/project-statuses').then(res => res.data),
+  
+  // Project Type API methods
+  getProjectTypes: (): Promise<any> => api.get('/admin/project-types').then(res => res.data),
+
   // Teams API methods
-  getTeams: (): Promise<any> => api.get('/admin/teams').then(res => res.data),
+  getTeams: (): Promise<any> => api.get('/admin/teams').then(res => res.data || res),
   createTeam: (teamData: any): Promise<any> => api.post('/admin/teams', teamData).then(res => res.data),
   updateTeam: (id: string, teamData: any): Promise<any> => api.put(`/admin/teams/${id}`, teamData).then(res => res.data),
   deleteTeam: (id: string): Promise<any> => api.delete(`/admin/teams/${id}`).then(res => res.data),
@@ -266,6 +289,32 @@ export const taskStatusApi = {
   getTaskStatus: (id: string): Promise<any> => api.get(`/admin/task-statuses/${id}`).then(res => res.data),
   getGroupedByCategory: (): Promise<any> => api.get('/admin/task-statuses/grouped-by-category').then(res => res.data),
   getCategoryOptions: (): Promise<any> => api.get('/admin/task-statuses/category-options').then(res => res.data)
+}
+
+// Project API
+export const projectApi = {
+  getProjects: (params?: any): Promise<any> => {
+    const queryString = params ? '?' + new URLSearchParams(params).toString() : ''
+    return api.get(`/projects${queryString}`).then(res => res.data)
+  },
+  createProject: (projectData: any): Promise<any> => api.post('/projects', projectData).then(res => res.data),
+  updateProject: (id: string, projectData: any): Promise<any> => api.put(`/projects/${id}`, projectData).then(res => res.data),
+  deleteProject: (id: string): Promise<any> => api.delete(`/projects/${id}`).then(res => res.data),
+  getProject: (id: string): Promise<any> => api.get(`/projects/${id}`).then(res => res.data)
+}
+
+// Task API
+export const taskApi = {
+  getTasks: (params?: any): Promise<any> => {
+    const queryString = params ? '?' + new URLSearchParams(params).toString() : ''
+    return api.get(`/tasks${queryString}`).then(res => res.data)
+  },
+  createTask: (taskData: any): Promise<any> => api.post('/tasks', taskData).then(res => res.data),
+  updateTask: (id: string, taskData: any): Promise<any> => api.put(`/tasks/${id}`, taskData).then(res => res.data),
+  deleteTask: (id: string): Promise<any> => api.delete(`/tasks/${id}`).then(res => res.data),
+  getTask: (id: string): Promise<any> => api.get(`/tasks/${id}`).then(res => res.data),
+  bulkUpdateTasks: (taskIds: string[], updates: any): Promise<any> => 
+    api.post('/tasks/bulk-update', { task_ids: taskIds, updates }).then(res => res.data)
 }
 
 // Client password setup API (public endpoint)

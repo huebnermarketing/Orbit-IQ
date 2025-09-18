@@ -147,11 +147,14 @@ class UserGroupController extends Controller
     }
 
     /**
-     * Get all active users for dropdown selection.
+     * Get all active users for dropdown selection (excluding client role users).
      */
     public function getActiveUsers()
     {
         $users = User::where('is_active', true)
+                    ->whereDoesntHave('organizationRoles', function ($query) {
+                        $query->where('organization_role_id', 14); // Exclude client role (ID = 14)
+                    })
                     ->select('id', 'name', 'email')
                     ->orderBy('name')
                     ->get();

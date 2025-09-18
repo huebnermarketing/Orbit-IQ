@@ -165,7 +165,7 @@
                           class="w-full h-full object-cover"
                         />
                         <span v-else class="text-white font-medium text-xs">
-                          {{ user?.name?.charAt(0)?.toUpperCase() || 'U' }}
+                          {{ getInitials(user?.name) }}
                         </span>
                       </div>
                       
@@ -212,7 +212,7 @@
                       class="w-full h-full object-cover"
                     />
                     <span v-else class="text-white font-medium text-xs">
-                      {{ getUserById(memberId)?.name?.charAt(0)?.toUpperCase() || 'U' }}
+                      {{ getInitials(getUserById(memberId)?.name) }}
                     </span>
                   </div>
                   <span class="text-gray-700">{{ getUserById(memberId)?.name || 'Unknown User' }}</span>
@@ -255,6 +255,7 @@
 <script setup lang="ts">
 import { ref, reactive, watch, computed, onMounted, onUnmounted } from 'vue'
 import { authApi } from '@/utils/api'
+import { getInitials } from '@/utils/helpers'
 
 interface Props {
   team?: any

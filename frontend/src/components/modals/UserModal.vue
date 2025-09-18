@@ -22,6 +22,17 @@
           </div>
 
           <form @submit.prevent="handleSubmit" class="space-y-4">
+            <!-- Profile Photo Upload -->
+            <div class="flex justify-center mb-6">
+              <AvatarUpload
+                :avatar-url="form.avatar ? `/storage/${form.avatar}` : null"
+                :name="form.name"
+                :size="80"
+                @upload="handleAvatarUpload"
+                @error="handleAvatarError"
+              />
+            </div>
+
             <!-- Name -->
             <div>
               <label class="block text-sm font-medium text-text-primary mb-2">Full Name</label>
@@ -228,6 +239,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { authApi } from '@/utils/api'
+import AvatarUpload from '@/components/common/AvatarUpload.vue'
 
 interface Props {
   user?: any
@@ -253,7 +265,8 @@ const form = reactive({
   organization_role_ids: [],
   assigned_pm_id: '',
   timezone: 'UTC',
-  is_active: true
+  is_active: true,
+  avatar: ''
 })
 
 const currentUser = computed(() => authStore.user)
@@ -323,6 +336,7 @@ onMounted(async () => {
     form.assigned_pm_id = props.user.assigned_pm_id || ''
     form.timezone = props.user.timezone || 'UTC'
     form.is_active = props.user.is_active !== undefined ? props.user.is_active : true
+    form.avatar = props.user.avatar || ''
   }
 })
 
@@ -353,6 +367,27 @@ const loadPMUsers = async () => {
   }
 }
 
+const handleAvatarUpload = async (file: File) => {
+  try {
+    const formData = new FormData()
+    formData.append('avatar', file)
+    
+    const response = await authApi.uploadAvatar(formData)
+    
+    if (response.avatar) {
+      form.avatar = response.avatar
+    }
+  } catch (error) {
+    console.error('Failed to upload avatar:', error)
+    throw error
+  }
+}
+
+const handleAvatarError = (error: string) => {
+  console.error('Avatar upload error:', error)
+  // You could show a toast notification here
+}
+
 const handleSubmit = async () => {
   loading.value = true
   error.value = ''
@@ -366,7 +401,8 @@ const handleSubmit = async () => {
         organization_role_ids: form.organization_role_ids,
         assigned_pm_id: form.assigned_pm_id,
         timezone: form.timezone,
-        is_active: form.is_active
+        is_active: form.is_active,
+        avatar: form.avatar
       })
     } else {
       await authApi.createUser(form)

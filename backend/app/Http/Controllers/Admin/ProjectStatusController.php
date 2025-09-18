@@ -84,7 +84,7 @@ class ProjectStatusController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'category' => 'required|in:todo,in_progress,closed',
+            'category' => 'required|in:quote,todo,in_progress,closed',
             'color' => 'required|string|regex:/^#[0-9A-Fa-f]{6}$/',
             'is_active' => 'sometimes|boolean',
             'sort_order' => 'sometimes|integer|min:0',
@@ -148,7 +148,7 @@ class ProjectStatusController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'category' => 'required|in:todo,in_progress,closed',
+            'category' => 'required|in:quote,todo,in_progress,closed',
             'color' => 'required|string|regex:/^#[0-9A-Fa-f]{6}$/',
             'is_active' => 'sometimes|boolean',
             'sort_order' => 'sometimes|integer|min:0',

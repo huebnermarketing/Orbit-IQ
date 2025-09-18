@@ -3,7 +3,11 @@ import { createPinia } from 'pinia'
 import router from './router'
 import App from './App.vue'
 import './assets/css/main.css'
+import '@fortawesome/fontawesome-free/css/all.css'
 import { themeManager } from './utils/theme'
+
+// Import Quill CSS
+import 'quill/dist/quill.snow.css'
 // Initialize theme system immediately
 const currentTheme = themeManager.getCurrentTheme();
 themeManager.applyTheme(currentTheme);
