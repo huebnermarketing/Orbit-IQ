@@ -15,7 +15,7 @@
               />
               <div v-else class="w-full h-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
                 <span class="text-white font-bold text-xl">
-                  {{ client?.company_name?.charAt(0)?.toUpperCase() || 'C' }}
+                  {{ getCompanyInitials(client?.company_name) }}
                 </span>
               </div>
             </div>
@@ -235,7 +235,7 @@
                             class="w-full h-full object-cover"
                           />
                           <span v-else class="text-white font-bold text-lg">
-                            {{ client.primary_account_manager.name?.charAt(0)?.toUpperCase() || 'U' }}
+                            {{ getInitials(client.primary_account_manager.name) }}
                           </span>
                         </div>
                         <div class="flex-1">
@@ -279,7 +279,7 @@
                               class="w-full h-full object-cover"
                             />
                             <span v-else class="text-white font-bold text-sm">
-                              {{ manager.name?.charAt(0)?.toUpperCase() || 'U' }}
+                              {{ getInitials(manager.name) }}
                             </span>
                           </div>
                           <div class="flex-1">
@@ -347,6 +347,7 @@ import ClientModal from '@/components/modals/ClientModal.vue'
 import ClientPersonsTab from '@/components/clients/ClientPersonsTab.vue'
 import SubClientsTab from '@/components/client-detail/SubClientsTab.vue'
 import { clientApi } from '@/utils/api'
+import { getInitials, getCompanyInitials } from '@/utils/helpers'
 
 const route = useRoute()
 const router = useRouter()

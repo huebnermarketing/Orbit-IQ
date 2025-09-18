@@ -285,7 +285,7 @@
                               class="w-full h-full object-cover"
                             />
                             <span v-else class="text-white font-medium text-sm">
-                              {{ user.name?.charAt(0)?.toUpperCase() || 'U' }}
+                              {{ getInitials(user.name) }}
                             </span>
                           </div>
                           <div class="ml-4">
@@ -457,7 +457,7 @@
                                 class="w-full h-full object-cover"
                               />
                               <span v-else class="text-white font-medium text-xs">
-                                {{ user.name?.charAt(0)?.toUpperCase() || 'U' }}
+                                {{ getInitials(user.name) }}
                               </span>
                             </div>
                             <div 
@@ -654,7 +654,7 @@
                                 class="w-full h-full object-cover"
                               />
                               <span v-else class="text-white font-medium text-xs">
-                                {{ member.name?.charAt(0)?.toUpperCase() || 'U' }}
+                                {{ getInitials(member.name) }}
                               </span>
                             </div>
                             <div 
@@ -799,7 +799,7 @@
                                 class="w-full h-full object-cover"
                               />
                               <span v-else class="text-white font-medium text-xs">
-                                {{ user.name?.charAt(0)?.toUpperCase() || 'U' }}
+                                {{ getInitials(user.name) }}
                               </span>
                             </div>
                             <div 
@@ -970,7 +970,7 @@
                             />
                             <div v-else class="w-full h-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
                               <span class="text-white font-bold text-sm">
-                                {{ client.company_name?.charAt(0)?.toUpperCase() || 'C' }}
+                                {{ getCompanyInitials(client.company_name) }}
                               </span>
                             </div>
                           </div>
@@ -996,7 +996,7 @@
                               class="w-full h-full object-cover"
                             />
                             <span v-else class="text-white font-medium text-sm">
-                              {{ client.primary_account_manager.name?.charAt(0)?.toUpperCase() || 'U' }}
+                              {{ getInitials(client.primary_account_manager.name) }}
                             </span>
                           </div>
                           <div class="ml-3">
@@ -1366,7 +1366,7 @@
                   class="w-full h-full object-cover"
                 />
                 <span v-else class="text-white font-medium text-sm">
-                  {{ user.name?.charAt(0)?.toUpperCase() || 'U' }}
+                  {{ getInitials(user.name) }}
                 </span>
               </div>
               <div class="flex-1 min-w-0">
@@ -1397,6 +1397,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { authApi, clientApi, projectTypeApi } from '@/utils/api'
 import { getContrastColor } from '@/utils/colors'
+import { getInitials, getCompanyInitials } from '@/utils/helpers'
 import * as XLSX from 'xlsx'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import UserModal from '@/components/modals/UserModal.vue'

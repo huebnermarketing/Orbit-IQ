@@ -88,7 +88,7 @@
                 <div class="flex items-center">
                   <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center overflow-hidden shadow-md">
                     <span class="text-white font-bold text-sm">
-                      {{ person.name?.charAt(0)?.toUpperCase() || 'U' }}
+                      {{ getInitials(person.name) }}
                     </span>
                   </div>
                   <div class="ml-4">
@@ -181,6 +181,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { clientApi } from '@/utils/api'
+import { getInitials } from '@/utils/helpers'
 import ClientPersonModal from '@/components/modals/ClientPersonModal.vue'
 
 interface Props {

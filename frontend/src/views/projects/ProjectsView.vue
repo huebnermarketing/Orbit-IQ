@@ -138,29 +138,38 @@
 
                 <!-- Client/Subclient -->
                 <td v-if="isColumnVisible('client')" class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-text-primary">{{ project.client_name }}</div>
-                  <div v-if="project.subclient_name" class="text-sm text-text-muted">{{ project.subclient_name }}</div>
+                  <div class="text-sm font-medium text-text-primary">{{ project.client?.company_name }}</div>
+                  <div v-if="project.sub_client?.name" class="text-sm text-text-muted">{{ project.sub_client.name }}</div>
                 </td>
 
-                <!-- Hours Utilized vs Quoted -->
-                <td v-if="isColumnVisible('hours')" class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-text-primary">{{ project.hours_utilized }} hrs</div>
-                  <div class="text-sm text-text-muted">{{ project.hours_quoted }} hrs quoted</div>
+                <!-- Funding Source -->
+                <td v-if="isColumnVisible('funding')" class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-text-primary capitalize">{{ project.funding_source }}</div>
+                  <div class="text-sm text-text-muted capitalize">{{ project.hour_type }}</div>
                 </td>
 
                 <!-- Project Status -->
                 <td v-if="isColumnVisible('status')" class="px-6 py-4 whitespace-nowrap">
                   <span
-                    :class="getStatusBadgeClass(project.status)"
+                    v-if="project.project_status"
+                    :style="{ backgroundColor: project.project_status.color, color: 'white' }"
                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                   >
-                    {{ project.status }}
+                    {{ project.project_status.name }}
                   </span>
+                  <span v-else class="text-sm text-text-muted">No Status</span>
                 </td>
 
                 <!-- Project Type -->
                 <td v-if="isColumnVisible('type')" class="px-6 py-4 whitespace-nowrap">
-                  <span class="text-sm text-text-primary">{{ project.project_type }}</span>
+                  <span
+                    v-if="project.project_type"
+                    :style="{ backgroundColor: project.project_type.color, color: 'white' }"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                  >
+                    {{ project.project_type.name }}
+                  </span>
+                  <span v-else class="text-sm text-text-muted">N/A</span>
                 </td>
 
                 <!-- Created Date -->
@@ -180,30 +189,43 @@
 
                 <!-- Account Manager -->
                 <td v-if="isColumnVisible('am')" class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center">
+                  <div v-if="project.account_manager" class="flex items-center">
                     <div class="flex-shrink-0 h-8 w-8">
-                      <div class="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
-                        <span class="text-xs font-medium text-primary-600">{{ getInitials(project.am_name) }}</span>
+                      <div class="h-8 w-8 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center overflow-hidden">
+                        <img 
+                          v-if="project.account_manager.avatar" 
+                          :src="`/storage/${project.account_manager.avatar}`" 
+                          :alt="project.account_manager.name"
+                          class="w-full h-full object-cover"
+                        />
+                        <span v-else class="text-xs font-medium text-white">{{ getInitials(project.account_manager.name) }}</span>
                       </div>
                     </div>
                     <div class="ml-3">
-                      <div class="text-sm font-medium text-text-primary">{{ project.am_name }}</div>
-                      <div class="text-sm text-text-muted">{{ project.am_email }}</div>
+                      <div class="text-sm font-medium text-text-primary">{{ project.account_manager.name }}</div>
+                      <div class="text-sm text-text-muted">{{ project.account_manager.email }}</div>
                     </div>
                   </div>
+                  <span v-else class="text-sm text-text-muted">Not assigned</span>
                 </td>
 
                 <!-- Project Manager -->
                 <td v-if="isColumnVisible('pm')" class="px-6 py-4 whitespace-nowrap">
-                  <div v-if="project.pm_name" class="flex items-center">
+                  <div v-if="project.project_manager" class="flex items-center">
                     <div class="flex-shrink-0 h-8 w-8">
-                      <div class="h-8 w-8 rounded-full bg-secondary-100 flex items-center justify-center">
-                        <span class="text-xs font-medium text-secondary-600">{{ getInitials(project.pm_name) }}</span>
+                      <div class="h-8 w-8 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center overflow-hidden">
+                        <img 
+                          v-if="project.project_manager.avatar" 
+                          :src="`/storage/${project.project_manager.avatar}`" 
+                          :alt="project.project_manager.name"
+                          class="w-full h-full object-cover"
+                        />
+                        <span v-else class="text-xs font-medium text-white">{{ getInitials(project.project_manager.name) }}</span>
                       </div>
                     </div>
                     <div class="ml-3">
-                      <div class="text-sm font-medium text-text-primary">{{ project.pm_name }}</div>
-                      <div class="text-sm text-text-muted">{{ project.pm_email }}</div>
+                      <div class="text-sm font-medium text-text-primary">{{ project.project_manager.name }}</div>
+                      <div class="text-sm text-text-muted">{{ project.project_manager.email }}</div>
                     </div>
                   </div>
                   <span v-else class="text-sm text-text-muted">Not assigned</span>
@@ -231,6 +253,8 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import ProjectModal from '@/components/modals/ProjectModal.vue'
+import { authApi } from '@/utils/api'
+import { getInitials } from '@/utils/helpers'
 
 const router = useRouter()
 
@@ -246,7 +270,7 @@ const priorityFilter = ref('')
 const tableColumns = ref([
   { key: 'name', label: 'Project Name', visible: true },
   { key: 'client', label: 'Client/Subclient', visible: true },
-  { key: 'hours', label: 'Hours Utilized/Quoted', visible: true },
+  { key: 'funding', label: 'Funding Source', visible: true },
   { key: 'status', label: 'Status', visible: true },
   { key: 'type', label: 'Project Type', visible: true },
   { key: 'created_date', label: 'Created Date', visible: true },
@@ -268,17 +292,13 @@ const filteredProjects = computed(() => {
     filtered = filtered.filter(project =>
       project.name.toLowerCase().includes(query) ||
       project.project_number.toLowerCase().includes(query) ||
-      project.client_name.toLowerCase().includes(query) ||
-      project.description.toLowerCase().includes(query)
+      project.client?.company_name.toLowerCase().includes(query) ||
+      (project.description && project.description.toLowerCase().includes(query))
     )
   }
 
   if (statusFilter.value) {
-    filtered = filtered.filter(project => project.status === statusFilter.value)
-  }
-
-  if (priorityFilter.value) {
-    filtered = filtered.filter(project => project.priority === priorityFilter.value)
+    filtered = filtered.filter(project => project.project_status?.name === statusFilter.value)
   }
 
   return filtered
@@ -289,25 +309,8 @@ const visibleColumns = computed(() => {
 })
 
 // Methods
-const getStatusBadgeClass = (status: string) => {
-  const classes = {
-    planning: 'bg-warning-100 text-warning-800',
-    active: 'bg-success-100 text-success-800',
-    'on-hold': 'bg-info-100 text-info-800',
-    completed: 'bg-gray-100 text-gray-800'
-  }
-  return classes[status as keyof typeof classes] || 'bg-gray-100 text-gray-800'
-}
-
-const getPriorityBadgeClass = (priority: string) => {
-  const classes = {
-    low: 'bg-success-100 text-success-800',
-    medium: 'bg-warning-100 text-warning-800',
-    high: 'bg-error-100 text-error-800',
-    urgent: 'bg-red-100 text-red-800'
-  }
-  return classes[priority as keyof typeof classes] || 'bg-gray-100 text-gray-800'
-}
+// Note: Status and type colors are now dynamically loaded from the database
+// No need for hardcoded badge classes
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -322,14 +325,7 @@ const isColumnVisible = (columnKey: string) => {
   return column ? column.visible : false
 }
 
-const getInitials = (name: string) => {
-  return name
-    .split(' ')
-    .map(word => word.charAt(0))
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-}
+// getInitials function is now imported from utils/helpers
 
 const saveColumnPreferences = () => {
   const preferences = tableColumns.value.reduce((acc, column) => {
@@ -359,9 +355,23 @@ const viewProject = (projectId: number) => {
   router.push(`/project/${projectId}`)
 }
 
+const loadProjects = async () => {
+  loading.value = true
+  try {
+    const response = await authApi.getProjects()
+    projects.value = response.data || []
+    console.log('Projects loaded:', projects.value)
+  } catch (error) {
+    console.error('Failed to load projects:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
 const handleProjectSaved = (project: any) => {
-  // TODO: Add new project to the list
   console.log('Project saved:', project)
+  // Add the new project to the list
+  projects.value.unshift(project)
   showCreateModal.value = false
 }
 
@@ -385,8 +395,8 @@ onMounted(() => {
   // Add click outside listener
   document.addEventListener('click', handleClickOutside)
   
-  // TODO: Load projects from API
-  loading.value = false
+  // Load projects from API
+  loadProjects()
 })
 
 onUnmounted(() => {

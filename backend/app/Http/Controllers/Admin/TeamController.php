@@ -11,11 +11,12 @@ use Illuminate\Support\Facades\Validator;
 class TeamController extends Controller
 {
     /**
-     * Get all teams with members count
+     * Get all teams with members
      */
     public function index()
     {
-        $teams = Team::withCount('members')
+        $teams = Team::with(['members'])
+                    ->withCount('members')
                     ->ordered()
                     ->get();
 
@@ -229,11 +230,14 @@ class TeamController extends Controller
     }
 
     /**
-     * Get all users for team assignment
+     * Get all users for team assignment (excluding client role users)
      */
     public function getUsers()
     {
         $users = User::with(['organizationRoles'])
+                    ->whereDoesntHave('organizationRoles', function ($query) {
+                        $query->where('organization_role_id', 14); // Exclude client role (ID = 14)
+                    })
                     ->select('id', 'name', 'email')
                     ->orderBy('name')
                     ->get();

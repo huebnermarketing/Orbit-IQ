@@ -130,6 +130,7 @@ class UserManagementController extends Controller
             'organization_role_id' => $request->organization_role_id, // Keep for backward compatibility
             'timezone' => $request->timezone ?? 'UTC',
             'email_verified_at' => now(),
+            'avatar' => $request->avatar,
         ]);
 
         // Attach multiple organization roles
@@ -217,7 +218,7 @@ class UserManagementController extends Controller
             ], 422);
         }
 
-        $user->update($request->only(['name', 'email', 'role', 'organization_role_id', 'timezone', 'is_active']));
+        $user->update($request->only(['name', 'email', 'role', 'organization_role_id', 'timezone', 'is_active', 'avatar']));
 
         // Update multiple organization roles
         if ($request->has('organization_role_ids')) {
@@ -320,5 +321,52 @@ class UserManagementController extends Controller
         })->select('id', 'name', 'email')->get();
 
         return response()->json($pmUsers);
+    }
+
+    /**
+     * Upload avatar for user management
+     */
+    public function uploadAvatar(Request $request)
+    {
+        $currentUser = $request->user();
+        
+        // Check if user can manage users
+        if (!$currentUser->canManageUsers()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120', // 5MB max
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation errors',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            // Get the uploaded file
+            $file = $request->file('avatar');
+            
+            // Generate unique filename
+            $filename = 'avatar_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            
+            // Store the file in storage/app/public/avatars
+            $path = $file->storeAs('avatars', $filename, 'public');
+            
+            return response()->json([
+                'message' => 'Avatar uploaded successfully',
+                'avatar' => $path, // This will be the relative path like 'avatars/filename.jpg'
+                'avatar_url' => asset('storage/' . $path)
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to upload avatar',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
