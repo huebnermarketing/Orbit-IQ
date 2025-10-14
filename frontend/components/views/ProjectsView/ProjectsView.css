@@ -1,0 +1,127 @@
+/* Table Container */
+table {
+  width: 100%;
+}
+
+/* Table Header */
+thead {
+  background-color: var(--color-surface-alt);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+th {
+  padding: 0.75rem 1.5rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Table Body */
+tbody {
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border-light);
+}
+
+tbody tr {
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+tbody tr:hover {
+  background-color: var(--color-surface-alt);
+}
+
+td {
+  padding: 1rem 1.5rem;
+}
+
+/* Status Badges */
+.inline-flex[class*="bg-"] {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Avatar Styles */
+.h-8.w-8.rounded-full {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: linear-gradient(to bottom right, var(--color-primary-500), var(--color-secondary-500));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.h-8.w-8.rounded-full span {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: white;
+}
+
+/* Column Visibility Menu */
+.absolute.w-48 {
+  right: 0;
+  margin-top: 0.5rem;
+  width: 12rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+/* Empty State */
+.text-center.py-12 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  text-align: center;
+}
+
+/* Loading State */
+.animate-spin {
+  animation: spin 1s linear infinite;
+  border-radius: 9999px;
+  height: 2rem;
+  width: 2rem;
+  border-bottom-width: 2px;
+  border-color: var(--color-primary-600);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Project Name Link */
+.text-primary-600 {
+  color: var(--color-primary-600);
+  transition: color 0.2s;
+}
+
+.text-primary-600:hover {
+  color: var(--color-primary-800);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .overflow-x-auto {
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+  }
+  
+  table {
+    min-width: max-content;
+  }
+}

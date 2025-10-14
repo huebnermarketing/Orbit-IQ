@@ -1,0 +1,12 @@
+/* Settings Navigation */
+.settings-nav-item {
+  @apply w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors;
+}
+
+.settings-nav-item-active {
+  @apply bg-primary-50 text-primary-700;
+}
+
+.settings-nav-item-inactive {
+  @apply text-text-secondary hover:bg-surface-alt hover:text-text-primary;
+}

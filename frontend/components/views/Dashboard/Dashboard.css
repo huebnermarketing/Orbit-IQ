@@ -1,0 +1,54 @@
+/* Welcome Header */
+.welcome-header {
+  @apply bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl p-8 text-white;
+  @apply flex items-center justify-between;
+}
+
+.header-icon {
+  @apply w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center;
+}
+
+/* Stats Grid */
+.stats-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8;
+}
+
+/* Stat Icons */
+.stat-icon-secondary {
+  @apply p-3 bg-secondary-100 rounded-lg;
+}
+
+.stat-icon-accent {
+  @apply p-3 bg-accent-100 rounded-lg;
+}
+
+.stat-icon-success {
+  @apply p-3 bg-green-100 rounded-lg;
+}
+
+/* Action Grid */
+.action-grid {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-8;
+}
+
+/* Activity Item */
+.activity-item {
+  @apply flex items-center space-x-3 p-3 bg-gray-50 rounded-lg;
+}
+
+.activity-icon-primary {
+  @apply w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center;
+}
+
+/* Quick Action Button */
+.quick-action-btn {
+  @apply w-full flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg transition-colors;
+}
+
+.action-icon-secondary {
+  @apply w-8 h-8 bg-secondary-100 rounded-lg flex items-center justify-center;
+}
+
+.action-icon-accent {
+  @apply w-8 h-8 bg-accent-100 rounded-lg flex items-center justify-center;
+}

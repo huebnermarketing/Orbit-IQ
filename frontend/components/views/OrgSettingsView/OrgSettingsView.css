@@ -1,0 +1,153 @@
+/* Tab Navigation */
+.lg\:col-span-2 nav button {
+  @apply transition-all duration-200;
+}
+
+.lg\:col-span-2 nav button:hover {
+  @apply transform scale-105;
+}
+
+/* Active Tab Styling */
+.bg-primary-100.text-primary-800 {
+  @apply shadow-sm;
+}
+
+/* Card Sections */
+.card {
+  @apply transition-shadow duration-200;
+}
+
+.card:hover {
+  @apply shadow-md;
+}
+
+/* Form Inputs */
+.input {
+  @apply transition-all duration-200;
+}
+
+.input:focus {
+  @apply ring-2 ring-primary-500 border-primary-500;
+}
+
+/* Logo Upload Section */
+.w-20.h-20 {
+  @apply transition-transform duration-200;
+}
+
+.w-20.h-20:hover {
+  @apply transform scale-105;
+}
+
+/* Success/Error Messages */
+.bg-green-50 {
+  @apply animate-fade-in;
+}
+
+.bg-red-50 {
+  @apply animate-fade-in;
+}
+
+/* Table Styles */
+table {
+  @apply w-full;
+}
+
+table thead {
+  @apply bg-surface-alt;
+}
+
+table tbody tr {
+  @apply hover:bg-surface-alt transition-colors;
+}
+
+table tbody td {
+  @apply px-6 py-4;
+}
+
+/* User Avatar */
+.w-10.h-10.rounded-full {
+  @apply transition-transform duration-200;
+}
+
+.w-10.h-10.rounded-full:hover {
+  @apply transform scale-110;
+}
+
+/* Action Buttons */
+.btn-primary,
+.btn-outline {
+  @apply transition-all duration-200;
+}
+
+.btn-primary:hover,
+.btn-outline:hover {
+  @apply transform -translate-y-1 shadow-lg;
+}
+
+/* Status Badges */
+.bg-green-100.text-green-800,
+.bg-red-100.text-red-800,
+.bg-primary-100.text-primary-800 {
+  @apply transition-all duration-200;
+}
+
+/* Icon Buttons */
+.fa-edit,
+.fa-trash {
+  @apply transition-transform duration-200;
+}
+
+button:hover .fa-edit,
+button:hover .fa-trash {
+  @apply transform scale-110;
+}
+
+/* Empty State */
+.text-center.py-12 {
+  @apply animate-fade-in;
+}
+
+/* Responsive Grid */
+@media (max-width: 1024px) {
+  .lg\:col-span-2 {
+    @apply col-span-12;
+  }
+  
+  .lg\:col-span-10 {
+    @apply col-span-12;
+  }
+}
+
+/* Animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Custom Scrollbar for Tables */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 8px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  @apply bg-surface-alt rounded;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  @apply bg-primary-300 rounded;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary-400;
+}

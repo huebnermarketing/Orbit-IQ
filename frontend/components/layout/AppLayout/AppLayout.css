@@ -1,0 +1,70 @@
+/* Sidebar Styles */
+.sidebar {
+  @apply bg-surface border-r border-border-light;
+}
+
+/* Navigation Items */
+.nav-item {
+  @apply flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200;
+}
+
+.nav-item-collapsed {
+  @apply flex items-center justify-center p-3 text-sm font-medium rounded-lg transition-all duration-200;
+}
+
+.nav-item-active {
+  @apply bg-primary-50 text-primary-700;
+}
+
+.nav-item-inactive {
+  @apply text-text-secondary hover:bg-surface-alt hover:text-text-primary;
+}
+
+/* Gradient Text */
+.gradient-text {
+  @apply bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent;
+}
+
+/* Search Bar Styles */
+input[type="text"]:focus {
+  @apply ring-2 ring-primary-500 border-transparent;
+}
+
+/* Notification Badge */
+.notification-badge {
+  @apply absolute -top-1 -right-1 bg-error-500 text-white text-xs font-medium rounded-full h-5 w-5 flex items-center justify-center;
+}
+
+/* Profile Dropdown */
+.profile-dropdown {
+  @apply absolute bottom-full mb-2 bg-surface border border-border-light rounded-lg shadow-lg z-50;
+}
+
+/* Search Results */
+.search-results {
+  @apply absolute top-full mt-2 w-full bg-surface border border-border-light rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto;
+}
+
+/* Custom Scrollbar */
+.overflow-y-auto::-webkit-scrollbar {
+  @apply w-2;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  @apply bg-surface-alt rounded;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  @apply bg-border-light rounded hover:bg-text-muted;
+}
+
+/* Animation for dropdowns */
+.fade-enter-active,
+.fade-leave-active {
+  @apply transition-opacity duration-200;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  @apply opacity-0;
+}

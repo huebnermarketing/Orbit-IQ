@@ -1,0 +1,31 @@
+.theme-option {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border-width: 1px;
+  cursor: pointer;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+.theme-option-active {
+  border-color: var(--color-primary-500);
+  background-color: var(--color-primary-50);
+}
+
+.theme-option-inactive {
+  border-color: var(--color-border-light);
+}
+
+.theme-option-inactive:hover {
+  border-color: var(--color-primary-300);
+  background-color: rgb(249 250 251);
+}
+
+.theme-selector {
+  padding: 1rem;
+  background-color: var(--color-surface);
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: var(--color-border-light);
+}

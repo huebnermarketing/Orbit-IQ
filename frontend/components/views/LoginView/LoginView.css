@@ -1,0 +1,68 @@
+@keyframes blob {
+  0% {
+    @apply translate-x-0 translate-y-0 scale-100;
+  }
+  33% {
+    @apply translate-x-[30px] -translate-y-[50px] scale-110;
+  }
+  66% {
+    @apply -translate-x-[20px] translate-y-[20px] scale-90;
+  }
+  100% {
+    @apply translate-x-0 translate-y-0 scale-100;
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+@keyframes fade-in {
+  from {
+    @apply opacity-0 translate-y-[10px];
+  }
+  to {
+    @apply opacity-100 translate-y-0;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4), 0 0 40px rgba(168, 85, 247, 0.2), 0 0 60px rgba(168, 85, 247, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.6), 0 0 60px rgba(168, 85, 247, 0.4), 0 0 90px rgba(168, 85, 247, 0.2);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+::-webkit-scrollbar {
+  @apply w-[6px];
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-white/10 rounded-[3px];
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-white/30 rounded-[3px];
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-white/50;
+}
