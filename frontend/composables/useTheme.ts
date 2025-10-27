@@ -1,10 +1,15 @@
 /**
  * Theme Management Utility
- * 
+ *
  * This utility provides functions to manage themes and color schemes
  * for the Orbit IQ platform. It allows for dynamic theme switching
  * and provides type-safe theme configurations.
  */
+// import { useAuthStore } from '~/stores/auth'
+//     const authStore = useAuthStore()
+
+// Import Vue composables
+// import { ref, readonly, onMounted, onUnmounted } from 'vue';
 
 export interface ThemeConfig {
   name: string;
@@ -80,7 +85,7 @@ export const themes: Record<string, ThemeConfig> = {
       'border-light': '#e5e7eb',
       'border-medium': '#d1d5db',
       'border-dark': '#9ca3af',
-    }
+    },
   },
   ocean: {
     name: 'ocean',
@@ -97,7 +102,7 @@ export const themes: Record<string, ThemeConfig> = {
       'border-light': '#e5e7eb',
       'border-medium': '#d1d5db',
       'border-dark': '#9ca3af',
-    }
+    },
   },
   forest: {
     name: 'forest',
@@ -114,7 +119,7 @@ export const themes: Record<string, ThemeConfig> = {
       'border-light': '#e5e7eb',
       'border-medium': '#d1d5db',
       'border-dark': '#9ca3af',
-    }
+    },
   },
   sunset: {
     name: 'sunset',
@@ -131,7 +136,7 @@ export const themes: Record<string, ThemeConfig> = {
       'border-light': '#e5e7eb',
       'border-medium': '#d1d5db',
       'border-dark': '#9ca3af',
-    }
+    },
   },
   royal: {
     name: 'royal',
@@ -148,7 +153,7 @@ export const themes: Record<string, ThemeConfig> = {
       'border-light': '#e5e7eb',
       'border-medium': '#d1d5db',
       'border-dark': '#9ca3af',
-    }
+    },
   },
   darkBlue: {
     name: 'darkBlue',
@@ -165,7 +170,7 @@ export const themes: Record<string, ThemeConfig> = {
       'border-light': '#e5e7eb',
       'border-medium': '#d1d5db',
       'border-dark': '#9ca3af',
-    }
+    },
   },
   nightMode: {
     name: 'nightMode',
@@ -182,8 +187,8 @@ export const themes: Record<string, ThemeConfig> = {
       'border-light': '#404040',
       'border-medium': '#606060',
       'border-dark': '#808080',
-    }
-  }
+    },
+  },
 };
 
 // Generate color palette from base color
@@ -200,7 +205,7 @@ export function generateColorPalette(baseColor: string): ColorPalette['primary']
     800: darken(baseColor, 0.3),
     900: darken(baseColor, 0.4),
   };
-  
+
   return colors;
 }
 
@@ -211,13 +216,15 @@ function lighten(color: string, amount: number): string {
   const r = parseInt(hex.substr(0, 2), 16);
   const g = parseInt(hex.substr(2, 2), 16);
   const b = parseInt(hex.substr(4, 2), 16);
-  
+
   // Lighten by mixing with white
   const newR = Math.round(r + (255 - r) * amount);
   const newG = Math.round(g + (255 - g) * amount);
   const newB = Math.round(b + (255 - b) * amount);
-  
-  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+
+  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB
+    .toString(16)
+    .padStart(2, '0')}`;
 }
 
 function darken(color: string, amount: number): string {
@@ -226,64 +233,56 @@ function darken(color: string, amount: number): string {
   const r = parseInt(hex.substr(0, 2), 16);
   const g = parseInt(hex.substr(2, 2), 16);
   const b = parseInt(hex.substr(4, 2), 16);
-  
+
   // Darken by reducing RGB values
   const newR = Math.round(r * (1 - amount));
   const newG = Math.round(g * (1 - amount));
   const newB = Math.round(b * (1 - amount));
-  
-  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+
+  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB
+    .toString(16)
+    .padStart(2, '0')}`;
 }
 
 // Theme management functions
-export class ThemeManager {
-  private currentTheme: string = 'default';
-  private storageKey: string = 'orbit-iq-theme';
+const themeManager = (() => {
+  let currentTheme = 'default';
+  const storageKey = 'orbit-iq-theme';
 
-  constructor() {
-    this.loadTheme();
+  function getCurrentTheme() {
+    return currentTheme;
   }
 
-  /**
-   * Get the current theme
-   */
-  getCurrentTheme(): string {
-    return this.currentTheme;
-  }
-
-  /**
-   * Get all available themes
-   */
-  getAvailableThemes(): ThemeConfig[] {
+  function getAvailableThemes() {
     return Object.values(themes);
   }
 
-  /**
-   * Apply a theme
-   */
-  applyTheme(themeName: string): void {
+  function applyTheme(themeName: string) {
     const theme = themes[themeName];
     if (!theme) {
       console.warn(`Theme "${themeName}" not found`);
       return;
     }
-
-    this.currentTheme = themeName;
-    this.updateCSSVariables(theme);
-    this.saveTheme();
-    // this.saveUserThemePreference(themeName);
-    this.notifyThemeChange();
+    currentTheme = themeName;
+    updateCSSVariables(theme);
+    saveTheme();
+    notifyThemeChange();
   }
 
-  /**
-   * Update CSS custom properties
-   */
-  private updateCSSVariables(theme: ThemeConfig): void {
+  function setTheme(themeName: string) {
+    const theme = themes[themeName];
+    if (!theme) {
+      console.warn(`Theme "${themeName}" not found`);
+      return;
+    }
+    currentTheme = themeName;
+    updateCSSVariables(theme);
+  }
+
+  function updateCSSVariables(theme: ThemeConfig) {
     const root = document.documentElement;
-    
-    // Set data attribute for theme detection
     root.setAttribute('data-theme', theme.name);
-    
+
     // Update primary colors
     const primaryPalette = generateColorPalette(theme.colors.primary);
     Object.entries(primaryPalette).forEach(([shade, color]) => {
@@ -317,143 +316,84 @@ export class ThemeManager {
     root.style.setProperty('--color-border-dark', theme.colors['border-dark'] || '#9ca3af');
   }
 
-  /**
-   * Save theme to localStorage
-   */
-  private saveTheme(): void {
+  function saveTheme() {
     try {
-      localStorage.setItem(this.storageKey, this.currentTheme);
+      localStorage.setItem(storageKey, currentTheme);
     } catch (error) {
       console.warn('Failed to save theme to localStorage:', error);
     }
   }
 
-  /**
-   * Load theme from localStorage
-   */
-  private loadTheme(): void {
+  function loadTheme() {
     try {
-      // First check if user is logged in and has a theme preference
-      const userTheme = this.getUserThemePreference();
-      if (userTheme && themes[userTheme]) {
-        this.currentTheme = userTheme;
-        this.applyTheme(userTheme);
-        return;
-      }
-
-      // Fallback to localStorage theme
-      const savedTheme = localStorage.getItem(this.storageKey);
+      const savedTheme = localStorage.getItem(storageKey);
       if (savedTheme && themes[savedTheme]) {
-        this.currentTheme = savedTheme;
-        this.applyTheme(savedTheme);
+        currentTheme = savedTheme;
+        applyTheme(savedTheme);
       } else {
-        // If no saved theme, apply default theme
-        this.currentTheme = 'default';
-        this.applyTheme('default');
+        currentTheme = 'default';
+        applyTheme('default');
       }
     } catch (error) {
       console.warn('Failed to load theme:', error);
-      // Fallback to default theme
-      this.currentTheme = 'default';
-      this.applyTheme('default');
+      currentTheme = 'default';
+      applyTheme('default');
     }
   }
 
-  /**
-   * Get user's theme preference from auth store
-   */
-  private getUserThemePreference(): string | null {
-    try {
-      // Try to get user from localStorage (auth store data)
-      const authData = localStorage.getItem('auth-store');
-      if (authData) {
-        const parsed = JSON.parse(authData);
-        return parsed?.user?.theme_preference || null;
-      }
-      return null;
-    } catch (error) {
-      return null;
-    }
+  function notifyThemeChange() {
+    window.dispatchEvent(
+      new CustomEvent('theme-changed', {
+        detail: { theme: currentTheme },
+      })
+    );
   }
 
-  /**
-   * Save user's theme preference to backend
-   */
-  // private async saveUserThemePreference(themeName: string): Promise<void> {
-    // try {
-    //   // Check if user is logged in
-    //   const token = localStorage.getItem('token');
-    //   if (!token) {
-    //     return; // User not logged in, skip backend save
-    //   }
-
-    //   // Import authApi dynamically to avoid circular dependencies
-    //   const { authApi } = await import('@/utils/api');
-    //   await authApi.updateThemePreference(themeName);
-    // } catch (error) {
-    //   console.warn('Failed to save theme preference to backend:', error);
-    //   // Don't throw error - theme should still be applied locally
-    // }
-  // }
-
-  /**
-   * Notify components of theme change
-   */
-  private notifyThemeChange(): void {
-    // Dispatch custom event for components to listen to
-    window.dispatchEvent(new CustomEvent('theme-changed', {
-      detail: { theme: this.currentTheme }
-    }));
+  function resetToDefault() {
+    applyTheme('default');
   }
 
-  /**
-   * Reset to default theme
-   */
-  resetToDefault(): void {
-    this.applyTheme('default');
-  }
+  loadTheme();
 
-
-}
-
-// Export singleton instance
-export const themeManager = new ThemeManager();
+  return {
+    getCurrentTheme,
+    getAvailableThemes,
+    applyTheme,
+    setTheme,
+    resetToDefault,
+  };
+})();
 
 // Vue composable for theme management
 export function useTheme() {
-  const currentTheme = ref(themeManager.getCurrentTheme());
-  const availableThemes = ref(themeManager.getAvailableThemes());
+  const currentTheme = themeManager.getCurrentTheme();
+  const availableThemes = themeManager.getAvailableThemes();
 
-  const applyTheme = (themeName: string) => {
+  const applyTheme = async (themeName: string) => {
     themeManager.applyTheme(themeName);
-    currentTheme.value = themeName;
+
+    // ✅ Nuxt composables like useNuxtApp() can safely be used here (inside setup)
+    try {
+      const { $authApi } = useNuxtApp();
+      await $authApi.updateThemePreference(themeName);
+    } catch (error) {
+      console.warn('Failed to save theme preference to backend:', error);
+    }
+  };
+
+  const setTheme = (themeName: string) => {
+    themeManager.setTheme(themeName);
   };
 
   const resetTheme = () => {
     themeManager.resetToDefault();
-    currentTheme.value = 'default';
   };
-
-  // Listen for theme changes
-  onMounted(() => {
-    const handleThemeChange = (event: CustomEvent) => {
-      currentTheme.value = event.detail.theme;
-    };
-
-    window.addEventListener('theme-changed', handleThemeChange as EventListener);
-    
-    onUnmounted(() => {
-      window.removeEventListener('theme-changed', handleThemeChange as EventListener);
-    });
-  });
 
   return {
-    currentTheme: readonly(currentTheme),
-    availableThemes: readonly(availableThemes),
+    currentTheme,
+    availableThemes,
     applyTheme,
     resetTheme,
+    setTheme,
   };
 }
-
-// Import Vue composables
-import { ref, readonly, onMounted, onUnmounted } from 'vue';

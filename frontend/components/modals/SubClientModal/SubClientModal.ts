@@ -1,72 +1,67 @@
-import { defineComponent, ref, reactive, onMounted } from 'vue'
+import { defineComponent, ref, reactive, onMounted } from 'vue';
 
 export default defineComponent({
   name: 'SubClientModal',
   props: {
     clientId: {
       type: String,
-      required: true
+      required: true,
     },
     subClient: {
       type: Object,
-      default: null
+      default: null,
     },
     isEdit: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   emits: ['close', 'saved'],
   setup(props, { emit }) {
-    const loading = ref(false)
-    const error = ref('')
+    const { $clientApi } = useNuxtApp();
+    const loading = ref(false);
+    const error = ref('');
 
     const form = reactive({
       name: '',
       email: '',
       phone: '',
-      website: ''
-    })
+      website: '',
+    });
 
     onMounted(() => {
       if (props.isEdit && props.subClient) {
-        form.name = props.subClient.name || ''
-        form.email = props.subClient.email || ''
-        form.phone = props.subClient.phone || ''
-        form.website = props.subClient.website || ''
+        form.name = props.subClient.name || '';
+        form.email = props.subClient.email || '';
+        form.phone = props.subClient.phone || '';
+        form.website = props.subClient.website || '';
       }
-    })
+    });
 
     const handleSubmit = async () => {
-      loading.value = true
-      error.value = ''
+      loading.value = true;
+      error.value = '';
 
       try {
         if (props.isEdit) {
-          await $fetch(`/api/clients/${props.clientId}/sub-clients/${props.subClient.id}`, {
-            method: 'PUT',
-            body: form
-          })
+          await $clientApi.updateSubClient(props.clientId, props.subClient.id, form);
         } else {
-          await $fetch(`/api/clients/${props.clientId}/sub-clients`, {
-            method: 'POST',
-            body: form
-          })
+          await $clientApi.createSubClient(props.clientId, form);
         }
-        
-        emit('saved')
+
+        emit('saved');
       } catch (err: any) {
-        error.value = err.data?.message || 'An error occurred. Please try again.'
+        error.value = err.data?.message || 'An error occurred. Please try again.';
       } finally {
-        loading.value = false
+        loading.value = false;
       }
-    }
+    };
 
     return {
       form,
       loading,
       error,
-      handleSubmit
-    }
-  }
-})
+      handleSubmit,
+    };
+  },
+});

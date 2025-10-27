@@ -1,121 +1,134 @@
-import { ref, reactive, computed, watch } from 'vue'
-import { getContrastColor, getRandomColor } from '@/composables/useHelpers'
+import { ref, reactive, computed, watch, defineComponent } from 'vue';
+import { getContrastColor, getRandomColor } from '@/composables/useHelpers';
 
-interface Props {
-  show: boolean
-  projectStatus?: any
-  isEdit?: boolean
-}
+export default defineComponent({
+  name: 'ProjectStatusModal',
+  props: {
+    show: {
+      type: Boolean,
+      required: true,
+    },
+    projectStatus: {
+      type: Object as () => any,
+      required: false,
+    },
+    isEdit: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+  emits: ['close', 'saved'],
 
-const props = withDefaults(defineProps<Props>(), {
-  isEdit: false
-})
+  setup(props, { emit }) {
+    const { $projectApi } = useNuxtApp();
+    const loading = ref(false);
+    const error = ref('');
 
-const emit = defineEmits(['close', 'saved'])
+    const isLocked = computed(() => props.projectStatus?.is_locked || false);
 
-const loading = ref(false)
-const error = ref('')
+    const form = reactive({
+      name: '',
+      category: '',
+      color: '#3B82F6',
+      is_active: true,
+      sort_order: 0,
+    });
 
-const isLocked = computed(() => props.projectStatus?.is_locked || false)
+    const categoryOptions = {
+      todo: 'ToDo',
+      in_progress: 'In Progress',
+      closed: 'Closed',
+    };
 
-const form = reactive({
-  name: '',
-  category: '',
-  color: '#3B82F6',
-  is_active: true,
-  sort_order: 0
-})
+    const getCategoryLabel = (category: string) => {
+      return categoryOptions[category as keyof typeof categoryOptions] || category;
+    };
 
-const categoryOptions = {
-  todo: 'ToDo',
-  in_progress: 'In Progress',
-  closed: 'Closed'
-}
+    const initializeForm = () => {
+      error.value = '';
 
-const getCategoryLabel = (category: string) => {
-  return categoryOptions[category as keyof typeof categoryOptions] || category
-}
+      if (props.isEdit && props.projectStatus) {
+        form.name = props.projectStatus.name || '';
+        form.category = props.projectStatus.category || '';
+        form.color = props.projectStatus.color || '#3B82F6';
+        form.is_active = props.projectStatus.is_active ?? true;
+        form.sort_order = props.projectStatus.sort_order || 0;
+      } else {
+        form.name = '';
+        form.category = '';
+        form.color = '#3B82F6';
+        form.is_active = true;
+        form.sort_order = 0;
+      }
+    };
 
-const initializeForm = () => {
-  error.value = ''
-  
-  if (props.isEdit && props.projectStatus) {
-    form.name = props.projectStatus.name || ''
-    form.category = props.projectStatus.category || ''
-    form.color = props.projectStatus.color || '#3B82F6'
-    form.is_active = props.projectStatus.is_active ?? true
-    form.sort_order = props.projectStatus.sort_order || 0
-  } else {
-    form.name = ''
-    form.category = ''
-    form.color = '#3B82F6'
-    form.is_active = true
-    form.sort_order = 0
-  }
-}
+    const handleSubmit = async () => {
+      loading.value = true;
+      error.value = '';
 
-const handleSubmit = async () => {
-  loading.value = true
-  error.value = ''
-  
-  try {
-    const statusData = {
-      name: form.name,
-      category: form.category,
-      color: form.color,
-      is_active: form.is_active,
-      sort_order: form.sort_order
-    }
+      try {
+        const statusData = {
+          name: form.name,
+          category: form.category,
+          color: form.color,
+          is_active: form.is_active,
+          sort_order: form.sort_order,
+        };
+        if (props.isEdit && props.projectStatus) {
+          await $projectApi.updateProjectStatus(props.projectStatus.id, statusData);
+        } else {
+          await $projectApi.createProjectStatus(statusData);
+        }
 
-    if (props.isEdit && props.projectStatus) {
-      await $fetch(`/api/project-statuses/${props.projectStatus.id}`, {
-        method: 'PUT',
-        body: statusData
-      })
-    } else {
-      await $fetch('/api/project-statuses', {
-        method: 'POST',
-        body: statusData
-      })
-    }
+        emit('saved');
+        emit('close');
+      } catch (err: any) {
+        console.error('Error saving project status:', err);
 
-    emit('saved')
-    emit('close')
-  } catch (err: any) {
-    console.error('Error saving project status:', err)
-    
-    if (err.data?.errors) {
-      const errors = err.data.errors
-      const errorMessages = Object.values(errors).flat()
-      error.value = errorMessages.join(', ')
-    } else if (err.data?.message) {
-      error.value = err.data.message
-    } else {
-      error.value = 'Failed to save project status. Please try again.'
-    }
-  } finally {
-    loading.value = false
-  }
-}
+        if (err.data?.errors) {
+          const errors = err.data.errors;
+          const errorMessages = Object.values(errors).flat();
+          error.value = errorMessages.join(', ');
+        } else if (err.data?.message) {
+          error.value = err.data.message;
+        } else {
+          error.value = 'Failed to save project status. Please try again.';
+        }
+      } finally {
+        loading.value = false;
+      }
+    };
 
-watch(() => props.show, (newShow) => {
-  if (newShow) {
-    initializeForm()
-  }
-})
+    watch(
+      () => props.show,
+      (newShow) => {
+        if (newShow) {
+          initializeForm();
+        }
+      }
+    );
 
-watch(() => props.projectStatus, () => {
-  if (props.show) {
-    initializeForm()
-  }
-}, { deep: true })
+    watch(
+      () => props.projectStatus,
+      () => {
+        if (props.show) {
+          initializeForm();
+        }
+      },
+      { deep: true }
+    );
 
-export {props,
-  emit,
-  form,
-  loading,
-  error,
-  isLocked,
-  getContrastColor,
-  getRandomColor,handleSubmit,getCategoryLabel
-}
+    return {
+      form,
+      loading,
+      error,
+      isLocked,
+      getContrastColor,
+      getRandomColor,
+      handleSubmit,
+      getCategoryLabel,
+      initializeForm, // Make initializeForm available if needed by template
+    };
+  },
+});

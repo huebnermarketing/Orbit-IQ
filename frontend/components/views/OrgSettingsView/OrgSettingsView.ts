@@ -1,43 +1,44 @@
-import { defineComponent, ref, computed, onMounted,watch } from 'vue'
+import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 
 // Types
 interface User {
-  id: number
-  name: string
-  email: string
-  role: string
-  is_active: boolean
-  created_at: string
-  avatar?: string
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  is_active: boolean;
+  created_at: string;
+  avatar?: string;
 }
 
 interface OrgProfile {
-  name: string
-  description: string
-  email: string
-  phone: string
-  address: string
-  website: string
-  timezone: string
-  logo?: string
+  name: string;
+  description: string;
+  email: string;
+  phone: string;
+  address: string;
+  website: string;
+  timezone: string;
+  logo?: string;
 }
 
 interface Tab {
-  id: string
-  name: string
-  icon: string
+  id: string;
+  name: string;
+  icon: string;
 }
 
 export default defineComponent({
   name: 'OrgSettingsView',
   setup() {
+    const { $organizationApi, $userApi } = useNuxtApp();
     // State
-    const activeTab = ref('org-profile')
-    const users = ref<User[]>([])
-    const searchQuery = ref('')
-    const roleFilter = ref('')
-    const statusFilter = ref('active')
-    
+    const activeTab = ref('org-profile');
+    const users = ref<User[]>([]);
+    const searchQuery = ref('');
+    const roleFilter = ref('');
+    const statusFilter = ref('active');
+
     // Organization Profile
     const orgProfile = ref<OrgProfile>({
       name: '',
@@ -46,244 +47,201 @@ export default defineComponent({
       phone: '',
       address: '',
       website: '',
-      timezone: 'UTC'
-    })
-    
-    const orgProfileLoading = ref(false)
-    const orgProfileSuccess = ref('')
-    const orgProfileError = ref('')
-    
+      timezone: 'UTC',
+    });
+
+    const orgProfileLoading = ref(false);
+    const orgProfileSuccess = ref('');
+    const orgProfileError = ref('');
+
     // Tabs configuration
     const tabs = ref<Tab[]>([
       { id: 'org-profile', name: 'Company Profile', icon: 'fas fa-building' },
       { id: 'users', name: 'Users', icon: 'fas fa-users' },
       { id: 'org-roles', name: 'Organization Roles', icon: 'fas fa-user-tag' },
-      { id: 'teams', name: 'Teams', icon: 'fas fa-users-cog' }
-    ])
+      { id: 'teams', name: 'Teams', icon: 'fas fa-users-cog' },
+    ]);
 
     // Computed
     const filteredUsers = computed(() => {
-      let filtered = users.value
+      let filtered = users.value;
 
       // Search filter
       if (searchQuery.value) {
-        const query = searchQuery.value.toLowerCase()
-        filtered = filtered.filter(user => {
+        const query = searchQuery.value.toLowerCase();
+        filtered = filtered.filter((user) => {
           return (
-            user.name.toLowerCase().includes(query) ||
-            user.email.toLowerCase().includes(query)
-          )
-        })
+            user.name.toLowerCase().includes(query) || user.email.toLowerCase().includes(query)
+          );
+        });
       }
 
       // Role filter
       if (roleFilter.value) {
-        filtered = filtered.filter(user => user.role === roleFilter.value)
+        filtered = filtered.filter((user) => user.role === roleFilter.value);
       }
 
       // Status filter
       if (statusFilter.value) {
-        const isActive = statusFilter.value === 'active'
-        filtered = filtered.filter(user => user.is_active === isActive)
+        const isActive = statusFilter.value === 'active';
+        filtered = filtered.filter((user) => user.is_active === isActive);
       }
 
-      return filtered
-    })
+      return filtered;
+    });
 
     // Methods
     const loadOrgProfile = async () => {
       try {
-        const config = useRuntimeConfig()
-        const token = useCookie('auth_token')
-        
-        const response = await $fetch<{ data: OrgProfile }>(`${config.public.apiBase}/api/organization/profile`, {
-          headers: {
-            'Authorization': `Bearer ${token.value}`,
-            'Accept': 'application/json'
-          }
-        })
-        
+        const response = await $organizationApi.getOrgProfile();
         if (response.data) {
-          orgProfile.value = response.data
+          orgProfile.value = response.data;
         }
       } catch (error) {
-        console.error('Failed to load organization profile:', error)
+        console.error('Failed to load organization profile:', error);
       }
-    }
+    };
 
     const loadUsers = async () => {
       try {
-        const config = useRuntimeConfig()
-        const token = useCookie('auth_token')
-        
-        const response = await $fetch<{ data: User[] }>(`${config.public.apiBase}/api/organization/users`, {
-          headers: {
-            'Authorization': `Bearer ${token.value}`,
-            'Accept': 'application/json'
-          }
-        })
-        
-        users.value = response.data || []
+        const response = await $userApi.getUsers();
+        users.value = response.data || [];
       } catch (error) {
-        console.error('Failed to load users:', error)
-        users.value = []
+        console.error('Failed to load users:', error);
+        users.value = [];
       }
-    }
+    };
 
     const handleOrgProfileSubmit = async () => {
       try {
-        orgProfileLoading.value = true
-        orgProfileSuccess.value = ''
-        orgProfileError.value = ''
-        
-        const config = useRuntimeConfig()
-        const token = useCookie('auth_token')
-        
-        await $fetch(`${config.public.apiBase}/api/organization/profile`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token.value}`,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: orgProfile.value
-        })
-        
-        orgProfileSuccess.value = 'Organization profile updated successfully!'
-        
+        orgProfileLoading.value = true;
+        orgProfileSuccess.value = '';
+        orgProfileError.value = '';
+
+        await $organizationApi.updateOrgProfile(orgProfile.value);
+
+        orgProfileSuccess.value = 'Organization profile updated successfully!';
+
         setTimeout(() => {
-          orgProfileSuccess.value = ''
-        }, 3000)
+          orgProfileSuccess.value = '';
+        }, 3000);
       } catch (error: any) {
-        orgProfileError.value = error.data?.message || 'Failed to update organization profile'
+        orgProfileError.value = error.data?.message || 'Failed to update organization profile';
       } finally {
-        orgProfileLoading.value = false
+        orgProfileLoading.value = false;
       }
-    }
+    };
 
     const resetOrgProfile = () => {
-      loadOrgProfile()
-      orgProfileSuccess.value = ''
-      orgProfileError.value = ''
-    }
+      loadOrgProfile();
+      orgProfileSuccess.value = '';
+      orgProfileError.value = '';
+    };
 
     const handleLogoUpload = async (event: Event) => {
-      const target = event.target as HTMLInputElement
-      const file = target.files?.[0]
-      
-      if (!file) return
-      
+      const target = event.target as HTMLInputElement;
+      const file = target.files?.[0];
+
+      if (!file) return;
+
       try {
-        const config = useRuntimeConfig()
-        const token = useCookie('auth_token')
-        
-        const formData = new FormData()
-        formData.append('logo', file)
-        
-        const response = await $fetch<{ data: { logo: string } }>(`${config.public.apiBase}/api/organization/logo`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token.value}`,
-            'Accept': 'application/json'
-          },
-          body: formData
-        })
-        
+        const formData = new FormData();
+        formData.append('logo', file);
+
+        const response = await $organizationApi.updateOrgLogo(formData);
+
         if (response.data?.logo) {
-          orgProfile.value.logo = response.data.logo
-          orgProfileSuccess.value = 'Logo uploaded successfully!'
-          
+          orgProfile.value.logo = response.data.logo;
+          orgProfileSuccess.value = 'Logo uploaded successfully!';
+
           setTimeout(() => {
-            orgProfileSuccess.value = ''
-          }, 3000)
+            orgProfileSuccess.value = '';
+          }, 3000);
         }
       } catch (error: any) {
-        orgProfileError.value = error.data?.message || 'Failed to upload logo'
+        orgProfileError.value = error.data?.message || 'Failed to upload logo';
       }
-    }
+    };
 
     const formatDate = (date: string | null | undefined): string => {
-      if (!date) return '-'
-      
+      if (!date) return '-';
+
       try {
-        const d = new Date(date)
+        const d = new Date(date);
         const options: Intl.DateTimeFormatOptions = {
           year: 'numeric',
           month: 'short',
-          day: 'numeric'
-        }
-        return d.toLocaleDateString('en-US', options)
+          day: 'numeric',
+        };
+        return d.toLocaleDateString('en-US', options);
       } catch {
-        return '-'
+        return '-';
       }
-    }
+    };
 
     const getInitials = (name: string): string => {
-      if (!name) return '?'
-      
-      const parts = name.trim().split(' ').filter(p => p.length > 0)
+      if (!name) return '?';
+
+      const parts = name
+        .trim()
+        .split(' ')
+        .filter((p) => p.length > 0);
       if (parts.length >= 2) {
-        const firstChar = parts[0]?.[0]
-        const lastChar = parts[parts.length - 1]?.[0]
+        const firstChar = parts[0]?.[0];
+        const lastChar = parts[parts.length - 1]?.[0];
         if (firstChar && lastChar) {
-          return (firstChar + lastChar).toUpperCase()
+          return (firstChar + lastChar).toUpperCase();
         }
       }
-      return name.substring(0, 2).toUpperCase()
-    }
+      return name.substring(0, 2).toUpperCase();
+    };
 
     const handleCreateUser = () => {
-      navigateTo('/org-settings/users/create')
-    }
+      navigateTo('/org-settings/users/create');
+    };
 
     const editUser = (user: User) => {
-      navigateTo(`/org-settings/users/${user.id}/edit`)
-    }
+      navigateTo(`/org-settings/users/${user.id}/edit`);
+    };
 
     const deleteUser = async (user: User) => {
-      if (!confirm(`Are you sure you want to delete ${user.name}?`)) return
-      
+      if (!confirm(`Are you sure you want to delete ${user.name}?`)) return;
+
       try {
-        const config = useRuntimeConfig()
-        const token = useCookie('auth_token')
-        
-        await $fetch(`${config.public.apiBase}/api/organization/users/${user.id}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token.value}`,
-            'Accept': 'application/json'
-          }
-        })
-        
+        await $userApi.deleteUser(user.id);
+
         // Remove user from list
-        users.value = users.value.filter(u => u.id !== user.id)
+        users.value = users.value.filter((u) => u.id !== user.id);
       } catch (error: any) {
-        alert(error.data?.message || 'Failed to delete user')
+        alert(error.data?.message || 'Failed to delete user');
       }
-    }
+    };
 
     const handleCreateRole = () => {
-      navigateTo('/org-settings/roles/create')
-    }
+      navigateTo('/org-settings/roles/create');
+    };
 
     const handleCreateTeam = () => {
-      navigateTo('/org-settings/teams/create')
-    }
+      navigateTo('/org-settings/teams/create');
+    };
 
     // Lifecycle
     onMounted(() => {
-      loadOrgProfile()
+      loadOrgProfile();
       if (activeTab.value === 'users') {
-        loadUsers()
+        loadUsers();
       }
-    })
+    });
 
     // Watch activeTab to load data when switching tabs
-    watch(() => activeTab.value, (newTab) => {
-      if (newTab === 'users') {
-        loadUsers()
+    watch(
+      () => activeTab.value,
+      (newTab) => {
+        if (newTab === 'users') {
+          loadUsers();
+        }
       }
-    })
+    );
 
     return {
       activeTab,
@@ -306,7 +264,7 @@ export default defineComponent({
       editUser,
       deleteUser,
       handleCreateRole,
-      handleCreateTeam
-    }
-  }
-})
+      handleCreateTeam,
+    };
+  },
+});

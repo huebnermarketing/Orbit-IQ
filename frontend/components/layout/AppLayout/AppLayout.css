@@ -13,7 +13,7 @@
 }
 
 .nav-item-active {
-  @apply bg-primary-50 text-primary-700;
+  @apply nav-item bg-primary-100 text-primary-800 border-r-2 border-primary-500;
 }
 
 .nav-item-inactive {
@@ -26,7 +26,7 @@
 }
 
 /* Search Bar Styles */
-input[type="text"]:focus {
+input[type='text']:focus {
   @apply ring-2 ring-primary-500 border-transparent;
 }
 

@@ -58,16 +58,20 @@
     </div>
 
     <div v-else-if="filteredProjects.length === 0" class="text-center py-12">
-      <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <div
+        class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4"
+      >
         <i class="fas fa-folder-open text-primary-600 text-2xl"></i>
       </div>
       <h3 class="text-lg font-semibold text-text-primary mb-2">No projects found</h3>
       <p class="text-text-secondary mb-6">
-        {{ searchQuery ? 'Try adjusting your search or filters' : 'Get started by creating your first project' }}
+        {{
+          searchQuery
+            ? 'Try adjusting your search or filters'
+            : 'Get started by creating your first project'
+        }}
       </p>
-      <button @click="handleCreateProject" class="btn btn-primary">
-        Create Project
-      </button>
+      <button @click="handleCreateProject" class="btn btn-primary">Create Project</button>
     </div>
 
     <div v-else class="card overflow-hidden">
@@ -83,14 +87,16 @@
             >
               <i class="fas fa-ellipsis-v"></i>
             </button>
-            
+
             <!-- Column Visibility Menu -->
             <div
               v-if="showColumnMenu"
               class="absolute right-0 mt-2 w-48 bg-surface border border-border-light rounded-lg shadow-lg z-10"
             >
               <div class="p-2">
-                <div class="text-xs font-medium text-text-secondary mb-2 px-2">Show/Hide Columns</div>
+                <div class="text-xs font-medium text-text-secondary mb-2 px-2">
+                  Show/Hide Columns
+                </div>
                 <div class="space-y-1">
                   <label
                     v-for="column in tableColumns"
@@ -135,7 +141,9 @@
               <!-- Project Name -->
               <td v-if="isColumnVisible('name')" class="px-6 py-4 whitespace-nowrap">
                 <div>
-                  <div class="text-sm font-medium text-primary-600 hover:text-primary-800">{{ project.name }}</div>
+                  <div class="text-sm font-medium text-primary-600 hover:text-primary-800">
+                    {{ project.name }}
+                  </div>
                   <div class="text-xs text-text-muted">{{ project.project_number }}</div>
                 </div>
               </td>
@@ -143,8 +151,12 @@
               <!-- Client/Subclient -->
               <td v-if="isColumnVisible('client')" class="px-6 py-4 whitespace-nowrap">
                 <div v-if="project.client">
-                  <div class="text-sm font-medium text-text-primary">{{ project.client.company_name }}</div>
-                  <div v-if="project.subclient" class="text-xs text-text-muted">{{ project.subclient.name }}</div>
+                  <div class="text-sm font-medium text-text-primary">
+                    {{ project.client.company_name }}
+                  </div>
+                  <div v-if="project.subclient" class="text-xs text-text-muted">
+                    {{ project.subclient.name }}
+                  </div>
                 </div>
                 <span v-else class="text-sm text-text-muted">-</span>
               </td>
@@ -152,8 +164,12 @@
               <!-- Funding Source -->
               <td v-if="isColumnVisible('funding')" class="px-6 py-4 whitespace-nowrap">
                 <div v-if="project.funding_source">
-                  <div class="text-sm font-medium text-text-primary capitalize">{{ project.funding_source }}</div>
-                  <div class="text-xs text-text-muted capitalize">{{ project.hour_type || 'Billable' }}</div>
+                  <div class="text-sm font-medium text-text-primary capitalize">
+                    {{ project.funding_source }}
+                  </div>
+                  <div class="text-xs text-text-muted capitalize">
+                    {{ project.hour_type || 'Billable' }}
+                  </div>
                 </div>
                 <span v-else class="text-sm text-text-muted">-</span>
               </td>
@@ -182,12 +198,18 @@
               </td>
 
               <!-- Created Date -->
-              <td v-if="isColumnVisible('created_date')" class="px-6 py-4 whitespace-nowrap text-sm text-text-muted">
+              <td
+                v-if="isColumnVisible('created_date')"
+                class="px-6 py-4 whitespace-nowrap text-sm text-text-muted"
+              >
                 {{ formatDate(project.created_at) }}
               </td>
 
               <!-- Due Date -->
-              <td v-if="isColumnVisible('due_date')" class="px-6 py-4 whitespace-nowrap text-sm text-text-muted">
+              <td
+                v-if="isColumnVisible('due_date')"
+                class="px-6 py-4 whitespace-nowrap text-sm text-text-muted"
+              >
                 {{ project.due_date ? formatDate(project.due_date) : '-' }}
               </td>
 
@@ -195,12 +217,18 @@
               <td v-if="isColumnVisible('am')" class="px-6 py-4 whitespace-nowrap">
                 <div v-if="project.account_manager" class="flex items-center">
                   <div class="flex-shrink-0 h-8 w-8">
-                    <div class="h-8 w-8 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
-                      <span class="text-xs font-medium text-white">{{ getInitials(project.account_manager.name) }}</span>
+                    <div
+                      class="h-8 w-8 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center"
+                    >
+                      <span class="text-xs font-medium text-white">{{
+                        getInitials(project.account_manager.name)
+                      }}</span>
                     </div>
                   </div>
                   <div class="ml-3">
-                    <div class="text-sm font-medium text-text-primary">{{ project.account_manager.name }}</div>
+                    <div class="text-sm font-medium text-text-primary">
+                      {{ project.account_manager.name }}
+                    </div>
                     <div class="text-xs text-text-muted">{{ project.account_manager.email }}</div>
                   </div>
                 </div>
@@ -211,12 +239,18 @@
               <td v-if="isColumnVisible('pm')" class="px-6 py-4 whitespace-nowrap">
                 <div v-if="project.project_manager" class="flex items-center">
                   <div class="flex-shrink-0 h-8 w-8">
-                    <div class="h-8 w-8 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
-                      <span class="text-xs font-medium text-white">{{ getInitials(project.project_manager.name) }}</span>
+                    <div
+                      class="h-8 w-8 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center"
+                    >
+                      <span class="text-xs font-medium text-white">{{
+                        getInitials(project.project_manager.name)
+                      }}</span>
                     </div>
                   </div>
                   <div class="ml-3">
-                    <div class="text-sm font-medium text-text-primary">{{ project.project_manager.name }}</div>
+                    <div class="text-sm font-medium text-text-primary">
+                      {{ project.project_manager.name }}
+                    </div>
                     <div class="text-xs text-text-muted">{{ project.project_manager.email }}</div>
                   </div>
                 </div>

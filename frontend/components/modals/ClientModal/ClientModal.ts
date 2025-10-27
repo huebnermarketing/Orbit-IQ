@@ -1,9 +1,9 @@
-import { defineComponent, ref, computed, watch, onMounted } from 'vue'
+import { defineComponent, ref, computed, watch, onMounted } from 'vue';
 
 interface Manager {
-  id: number
-  name: string
-  email: string
+  id: number;
+  name: string;
+  email: string;
 }
 
 export default defineComponent({
@@ -11,23 +11,24 @@ export default defineComponent({
   props: {
     show: {
       type: Boolean,
-      default: false
+      default: false,
     },
     client: {
       type: Object,
-      default: null
+      default: null,
     },
     isEdit: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   emits: ['close', 'saved'],
   setup(props, { emit }) {
-    const loading = ref(false)
-    const accountManagers = ref<Manager[]>([])
-    const managerSearchQuery = ref('')
-    const selectedManagers = ref<Manager[]>([])
+    const { $clientApi } = useNuxtApp();
+    const loading = ref(false);
+    const accountManagers = ref<Manager[]>([]);
+    const managerSearchQuery = ref('');
+    const selectedManagers = ref<Manager[]>([]);
 
     const form = ref({
       company_name: '',
@@ -38,43 +39,45 @@ export default defineComponent({
       primary_account_manager_id: '',
       secondary_account_manager_ids: [] as number[],
       client_type: '',
-      is_active: true
-    })
+      is_active: true,
+    });
 
     const filteredManagers = computed(() => {
-      if (!managerSearchQuery.value) return accountManagers.value
-      
-      const query = managerSearchQuery.value.toLowerCase()
-      return accountManagers.value.filter((manager: any) =>
-        manager.name.toLowerCase().includes(query) ||
-        manager.email.toLowerCase().includes(query)
-      )
-    })
+      if (!managerSearchQuery.value) return accountManagers.value;
+
+      const query = managerSearchQuery.value.toLowerCase();
+      return accountManagers.value.filter(
+        (manager: any) =>
+          manager.name.toLowerCase().includes(query) || manager.email.toLowerCase().includes(query)
+      );
+    });
 
     const isManagerSelected = (managerId: number) => {
-      return selectedManagers.value.some((manager: any) => manager.id === managerId)
-    }
+      return selectedManagers.value.some((manager: any) => manager.id === managerId);
+    };
 
     const toggleManager = (manager: any) => {
       if (isManagerSelected(manager.id)) {
-        removeManager(manager.id)
+        removeManager(manager.id);
       } else {
-        selectedManagers.value.push(manager)
+        selectedManagers.value.push(manager);
       }
-    }
+    };
 
     const removeManager = (managerId: number) => {
-      selectedManagers.value = selectedManagers.value.filter((manager: any) => manager.id !== managerId)
-    }
+      selectedManagers.value = selectedManagers.value.filter(
+        (manager: any) => manager.id !== managerId
+      );
+    };
 
     const loadAccountManagers = async () => {
       try {
-        const response = await $fetch('/api/clients/account-managers') as any
-        accountManagers.value = response || []
+        const response = (await $clientApi.getAccountManagers()) as any;
+        accountManagers.value = response || [];
       } catch (error) {
-        console.error('Failed to load account managers:', error)
+        console.error('Failed to load account managers:', error);
       }
-    }
+    };
 
     const initializeForm = () => {
       if (props.client && props.isEdit) {
@@ -87,11 +90,11 @@ export default defineComponent({
           primary_account_manager_id: props.client.primary_account_manager_id || '',
           secondary_account_manager_ids: props.client.secondary_account_manager_ids || [],
           client_type: props.client.client_type || '',
-          is_active: props.client.is_active !== false
-        }
-        
+          is_active: props.client.is_active !== false,
+        };
+
         // Set selected managers for display
-        selectedManagers.value = props.client.secondary_account_managers || []
+        selectedManagers.value = props.client.secondary_account_managers || [];
       } else {
         form.value = {
           company_name: '',
@@ -102,55 +105,58 @@ export default defineComponent({
           primary_account_manager_id: '',
           secondary_account_manager_ids: [],
           client_type: '',
-          is_active: true
-        }
-        selectedManagers.value = []
+          is_active: true,
+        };
+        selectedManagers.value = [];
       }
-      managerSearchQuery.value = ''
-    }
+      managerSearchQuery.value = '';
+    };
 
     const handleSubmit = async () => {
-      loading.value = true
-      
+      loading.value = true;
+
       try {
         // Update form with selected managers
-        form.value.secondary_account_manager_ids = selectedManagers.value.map((manager: any) => manager.id)
-        
+        form.value.secondary_account_manager_ids = selectedManagers.value.map(
+          (manager: any) => manager.id
+        );
+
         if (props.isEdit && props.client) {
-          await $fetch(`/api/clients/${props.client.id}`, {
-            method: 'PUT',
-            body: form.value
-          })
+          await $clientApi.updateClient(props.client.id, form.value);
         } else {
-          await $fetch('/api/clients', {
-            method: 'POST',
-            body: form.value
-          })
+          await $clientApi.createClient(form.value);
         }
-        
-        emit('saved')
+
+        emit('saved');
       } catch (error) {
-        console.error('Failed to save client:', error)
+        console.error('Failed to save client:', error);
       } finally {
-        loading.value = false
+        loading.value = false;
       }
-    }
+    };
 
-    watch(() => props.client, () => {
-      initializeForm()
-    }, { immediate: true, deep: true })
+    watch(
+      () => props.client,
+      () => {
+        initializeForm();
+      },
+      { immediate: true, deep: true }
+    );
 
-    watch(() => props.show, async (newValue) => {
-      if (newValue) {
-        await loadAccountManagers()
-        // Initialize form after account managers are loaded
-        initializeForm()
+    watch(
+      () => props.show,
+      async (newValue) => {
+        if (newValue) {
+          await loadAccountManagers();
+          // Initialize form after account managers are loaded
+          initializeForm();
+        }
       }
-    })
+    );
 
     onMounted(() => {
-      loadAccountManagers()
-    })
+      loadAccountManagers();
+    });
 
     return {
       loading,
@@ -164,7 +170,7 @@ export default defineComponent({
       removeManager,
       loadAccountManagers,
       initializeForm,
-      handleSubmit
-    }
-  }
-})
+      handleSubmit,
+    };
+  },
+});

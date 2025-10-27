@@ -24,18 +24,17 @@ const router = useRouter()
       loading.value = true
       error.value = ''
       try {
-        const response = await authStore.login(
+        await authStore.login(
           form.email,
           form.password,
           form.mfa_code,
           form.remember
         )
-        if (response.mfa_required) {
-          mfaRequired.value = true
-          form.mfa_code = ''
-          return
-        }
-        console.log('eeeeeeee');
+        // if (response.mfa_required) {
+        //   mfaRequired.value = true
+        //   form.mfa_code = ''
+        //   return
+        // }
         
        router.push('/dashboard') 
       } catch (err: any) {

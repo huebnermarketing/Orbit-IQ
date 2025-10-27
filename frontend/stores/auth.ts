@@ -1,173 +1,155 @@
-import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import type { User } from '~/types/user'
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
+import type { User } from '~/types/user';
+// import { useTheme } from '~/composables/useTheme';
 
 export const useAuthStore = defineStore('auth', () => {
-  const config = useRuntimeConfig()
-  const apiBase = config.public.apiBase
-  
-  const user = ref<User | null>(null)
-  const loading = ref(false)
-  const initialized = ref(false)
-  
-  // Use Nuxt's useCookie instead of localStorage
-  const tokenCookie = useCookie('token', {
-    maxAge: 60 * 60 * 24 * 30, // 30 days
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production'
-  })
-  
-  const expiresAtCookie = useCookie('token_expires_at')
-  const rememberMeCookie = useCookie('remember_me')
+  const { setTheme } = useTheme();
+  const { $authApi } = useNuxtApp();
+  // ✅ Reactive state
+  const user = ref<User | null>(null);
+  const token = ref<string | null>(import.meta.client ? localStorage.getItem('token') : null);
+  const loading = ref(false);
+  const initialized = ref(false);
 
-  const isAuthenticated = computed(() => !!tokenCookie.value && !!user.value)
+  // ✅ Derived state
+  const isAuthenticated = computed(() => !!token.value && !!user.value);
 
+  // ✅ Initialize session (called on app mount or layout)
   const initialize = async () => {
-    if (initialized.value) return
-    
-    const savedToken = tokenCookie.value
-    const tokenExpiresAt = expiresAtCookie.value
-    
-    console.log('Initializing auth store, saved token:', savedToken ? 'exists' : 'none')
-    
-    // Check if token is expired
+    if (initialized.value) return;
+
+    if (!import.meta.client) {
+      initialized.value = true;
+      return;
+    }
+
+    const savedToken = localStorage.getItem('token');
+    const tokenExpiresAt = localStorage.getItem('token_expires_at');
+
+    console.log('🔹 Initializing auth store. Token:', savedToken ? 'exists' : 'none');
+
     if (savedToken && tokenExpiresAt) {
-      const expirationDate = new Date(tokenExpiresAt)
+      const expirationDate = new Date(tokenExpiresAt);
       if (expirationDate <= new Date()) {
-        console.log('Token has expired, clearing auth data')
-        tokenCookie.value = null
-        expiresAtCookie.value = null
-        rememberMeCookie.value = null
-        user.value = null
-        initialized.value = true
-        return
+        console.log('⏰ Token expired, clearing data');
+        clearAuth();
+        initialized.value = true;
+        return;
       }
     }
-    
+
     if (savedToken) {
+      token.value = savedToken;
+      // $authApi.setAuthToken(savedToken)
       try {
-        // Fetch user profile to verify token is still valid
-        const response = await $fetch(`${apiBase}/profile`, {
-          headers: {
-            Authorization: `Bearer ${savedToken}`
-          }
-        }) as { user: User }
-        user.value = response.user
-        console.log('Auth initialization successful, user:', response.user)
-      } catch (error) {
-        // Token is invalid, clear it
-        console.error('Token validation failed:', error)
-        tokenCookie.value = null
-        expiresAtCookie.value = null
-        rememberMeCookie.value = null
-        user.value = null
-      }
-    }
-    
-    initialized.value = true
-    console.log('Auth store initialized, isAuthenticated:', isAuthenticated.value)
-  }
-
-  const login = async (email: string, password: string, mfaCode?: string, remember?: boolean) => {
-    loading.value = true
-    try {
-      const response = await $fetch(`${apiBase}/auth/login`, {
-        method: 'POST',
-        body: {
-          email,
-          password,
-          mfa_code: mfaCode,
-          remember
+        const response = await $authApi.getProfile();
+        user.value = response.user ?? response;
+        // Apply theme from user preference
+        if (user.value?.theme_preference) {
+          setTheme(user.value.theme_preference);
         }
-      }) as {
-        mfa_required?: boolean
-        token?: string
-        user?: User
-        expires_at?: string
-        remember?: boolean
+        console.log('✅ Auth initialized successfully:', user.value);
+      } catch (error) {
+        console.error('❌ Token validation failed:', error);
+        clearAuth();
       }
-      
-      console.log('Login response:', response)
-      
-      // If MFA is required, return the response without setting token
-      if (response.mfa_required) {
-        return response
-      }
-      
-      tokenCookie.value = response.token
-      user.value = response.user ?? null
-      
-      // Store token expiration info if provided
-      if (response.expires_at) {
-        expiresAtCookie.value = response.expires_at
-      }
-      if (response.remember !== undefined) {
-        rememberMeCookie.value = response.remember.toString()
-      }
-      
-      console.log('Login successful, token saved, user:', response.user, 'expires_at:', response.expires_at)
-      return response
-    } catch (error) {
-      console.error('Login error:', error)
-      throw error
-    } finally {
-      loading.value = false
     }
-  }
 
-  const register = async (userData: {
-    name: string
-    email: string
-    password: string
-    password_confirmation: string
-  }) => {
-    loading.value = true
+    initialized.value = true;
+  };
+
+  // ✅ Login
+  const login = async (email: string, password: string, mfaCode?: string, remember?: boolean) => {
+    loading.value = true;
     try {
-      const response = await $fetch(`${apiBase}/auth/register`, {
-        method: 'POST',
-        body: userData
-      }) as {
-        token: string
-        user: User
-      }
-      
-      tokenCookie.value = response.token
-      user.value = response.user ?? null
-      return response
-    } catch (error) {
-      throw error
-    } finally {
-      loading.value = false
-    }
-  }
+      const response = await $authApi.login(email, password, mfaCode, remember);
+      console.log('🔹 Login response:', response);
 
+      // if (response.mfa_required) return response
+
+      token.value = response.token;
+      user.value = response.user ?? null;
+      // Apply theme from user preference
+      if (user.value?.theme_preference) {
+        setTheme(user.value.theme_preference);
+      }
+
+      if (import.meta.client && response.token) {
+        localStorage.setItem('token', response.token);
+        if (response.expires_at) localStorage.setItem('token_expires_at', response.expires_at);
+        if (response.remember !== undefined)
+          localStorage.setItem('remember_me', String(response.remember));
+      }
+
+      // $authApi.setAuthToken(response.token)
+      console.log('✅ Login successful. User:', user.value);
+      return response;
+    } catch (error) {
+      console.error('❌ Login error:', error);
+      throw error;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  // ✅ Register
+  const register = async (userData: {
+    name: string;
+    email: string;
+    password: string;
+    password_confirmation: string;
+  }) => {
+    loading.value = true;
+    try {
+      const response = await $authApi.register(userData);
+      token.value = response.token;
+      user.value = response.user ?? null;
+
+      if (import.meta.client) {
+        localStorage.setItem('token', response.token);
+      }
+
+      // $authApi.setAuthToken(response.token)
+      return response;
+    } catch (error) {
+      throw error;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  // ✅ Logout
   const logout = async () => {
     try {
-      if (tokenCookie.value) {
-        await $fetch(`${apiBase}/auth/logout`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${tokenCookie.value}`
-          }
-        })
-      }
+      if (token.value) await $authApi.logout();
     } catch (error) {
-      console.error('Logout error:', error)
+      console.error('Logout error:', error);
     } finally {
-      tokenCookie.value = null
-      expiresAtCookie.value = null
-      rememberMeCookie.value = null
-      user.value = null
+      clearAuth();
     }
-  }
+  };
 
+  // ✅ Clear local auth data
+  const clearAuth = () => {
+    if (import.meta.client) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('token_expires_at');
+      localStorage.removeItem('remember_me');
+    }
+    token.value = null;
+    user.value = null;
+    // $authApi.clearAuthToken()
+  };
+
+  // ✅ Update user object
   const updateUser = (userData: User) => {
-    user.value = userData
-  }
+    user.value = userData;
+  };
 
   return {
     user,
-    token: computed(() => tokenCookie.value),
+    token,
     loading,
     initialized,
     isAuthenticated,
@@ -175,6 +157,6 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     register,
     logout,
-    updateUser
-  }
-})
+    updateUser,
+  };
+});

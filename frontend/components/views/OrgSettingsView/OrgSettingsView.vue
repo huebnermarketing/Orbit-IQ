@@ -3,7 +3,9 @@
     <!-- Header -->
     <div class="card p-6">
       <h1 class="text-3xl font-bold text-text-primary">Organization Settings</h1>
-      <p class="text-text-secondary mt-2">Manage your organization's users, settings, and configurations</p>
+      <p class="text-text-secondary mt-2">
+        Manage your organization's users, settings, and configurations
+      </p>
     </div>
 
     <!-- Settings Tabs -->
@@ -19,7 +21,7 @@
               'w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors',
               activeTab === tab.id
                 ? 'bg-primary-100 text-primary-800 font-medium'
-                : 'text-text-secondary hover:bg-surface-alt'
+                : 'text-text-secondary hover:bg-surface-alt',
             ]"
           >
             <i :class="tab.icon" class="w-5 h-5 mr-3"></i>
@@ -34,9 +36,12 @@
         <div v-if="activeTab === 'org-profile'" class="space-y-6">
           <div class="card p-6">
             <h3 class="text-lg font-semibold text-text-primary mb-6">Company Profile</h3>
-            
+
             <!-- Success/Error Messages -->
-            <div v-if="orgProfileSuccess" class="p-4 bg-green-50 border border-green-200 rounded-lg mb-6">
+            <div
+              v-if="orgProfileSuccess"
+              class="p-4 bg-green-50 border border-green-200 rounded-lg mb-6"
+            >
               <div class="flex">
                 <i class="fas fa-check-circle text-green-400 mt-0.5"></i>
                 <div class="ml-3">
@@ -53,16 +58,18 @@
                 </div>
               </div>
             </div>
-            
+
             <form @submit.prevent="handleOrgProfileSubmit" class="space-y-6">
               <!-- Company Logo -->
               <div>
                 <label class="block text-sm font-medium text-text-primary mb-2">Company Logo</label>
                 <div class="flex items-center space-x-4">
-                  <div class="w-20 h-20 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center overflow-hidden">
-                    <img 
-                      v-if="orgProfile.logo" 
-                      :src="`/storage/${orgProfile.logo}`" 
+                  <div
+                    class="w-20 h-20 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center overflow-hidden"
+                  >
+                    <img
+                      v-if="orgProfile.logo"
+                      :src="`/storage/${orgProfile.logo}`"
                       alt="Company Logo"
                       class="w-full h-full object-cover"
                     />
@@ -76,14 +83,12 @@
                       @change="handleLogoUpload"
                       class="hidden"
                     />
-                    <button
-                      type="button"
-                      @click="$refs.logoInput.click()"
-                      class="btn-outline"
-                    >
+                    <button type="button" @click="$refs.logoInput.click()" class="btn-outline btn">
                       Upload Logo
                     </button>
-                    <p class="text-xs text-text-secondary mt-1">Recommended: 200x200px, PNG or JPG</p>
+                    <p class="text-xs text-text-secondary mt-1">
+                      Recommended: 200x200px, PNG or JPG
+                    </p>
                   </div>
                 </div>
               </div>
@@ -157,7 +162,9 @@
 
               <!-- Timezone -->
               <div>
-                <label class="block text-sm font-medium text-text-primary mb-2">Default Timezone</label>
+                <label class="block text-sm font-medium text-text-primary mb-2"
+                  >Default Timezone</label
+                >
                 <select v-model="orgProfile.timezone" class="input">
                   <option value="UTC">UTC</option>
                   <option value="America/New_York">Eastern Time</option>
@@ -172,18 +179,10 @@
 
               <!-- Actions -->
               <div class="flex justify-end space-x-3 pt-4">
-                <button
-                  type="button"
-                  @click="resetOrgProfile"
-                  class="btn-outline"
-                >
+                <button type="button" @click="resetOrgProfile" class="btn-outline btn">
                   Reset
                 </button>
-                <button
-                  type="submit"
-                  :disabled="orgProfileLoading"
-                  class="btn-primary"
-                >
+                <button type="submit" :disabled="orgProfileLoading" class="btn-primary btn">
                   {{ orgProfileLoading ? 'Saving...' : 'Save Changes' }}
                 </button>
               </div>
@@ -196,10 +195,7 @@
           <div class="card p-6">
             <div class="flex items-center justify-between mb-6">
               <h3 class="text-lg font-semibold text-text-primary">User Management</h3>
-              <button
-                @click="handleCreateUser"
-                class="btn-primary"
-              >
+              <button @click="handleCreateUser" class="btn-primary btn">
                 <i class="fas fa-plus mr-2"></i>
                 Add User
               </button>
@@ -234,19 +230,29 @@
               <table class="min-w-full divide-y divide-border-light">
                 <thead class="bg-surface-alt">
                   <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider"
+                    >
                       User
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider"
+                    >
                       Role
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider"
+                    >
                       Status
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider"
+                    >
                       Created
                     </th>
-                    <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider">
+                    <th
+                      class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider"
+                    >
                       Actions
                     </th>
                   </tr>
@@ -255,7 +261,9 @@
                   <tr v-for="user in filteredUsers" :key="user.id" class="hover:bg-surface-alt">
                     <td class="px-6 py-4 whitespace-nowrap">
                       <div class="flex items-center">
-                        <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center overflow-hidden">
+                        <div
+                          class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center overflow-hidden"
+                        >
                           <span class="text-white font-medium text-sm">
                             {{ getInitials(user.name) }}
                           </span>
@@ -267,15 +275,19 @@
                       </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+                      <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
+                      >
                         {{ user.role }}
                       </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      <span 
+                      <span
                         :class="[
                           'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-                          user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          user.is_active
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800',
                         ]"
                       >
                         {{ user.is_active ? 'Active' : 'Inactive' }}
@@ -311,7 +323,11 @@
             <div v-if="filteredUsers.length === 0" class="text-center py-12">
               <i class="fas fa-users text-4xl text-gray-400 mb-4"></i>
               <h3 class="text-lg font-medium text-text-primary mb-2">No users found</h3>
-              <p class="text-text-secondary">{{ searchQuery ? 'Try adjusting your search' : 'Add your first user to get started' }}</p>
+              <p class="text-text-secondary">
+                {{
+                  searchQuery ? 'Try adjusting your search' : 'Add your first user to get started'
+                }}
+              </p>
             </div>
           </div>
         </div>
@@ -321,10 +337,7 @@
           <div class="card p-6">
             <div class="flex items-center justify-between mb-6">
               <h3 class="text-lg font-semibold text-text-primary">Organization Roles</h3>
-              <button
-                @click="handleCreateRole"
-                class="btn-primary"
-              >
+              <button @click="handleCreateRole" class="btn-primary btn">
                 <i class="fas fa-plus mr-2"></i>
                 Add Role
               </button>
@@ -340,10 +353,7 @@
           <div class="card p-6">
             <div class="flex items-center justify-between mb-6">
               <h3 class="text-lg font-semibold text-text-primary">Teams</h3>
-              <button
-                @click="handleCreateTeam"
-                class="btn-primary"
-              >
+              <button @click="handleCreateTeam" class="btn-primary btn">
                 <i class="fas fa-plus mr-2"></i>
                 Add Team
               </button>

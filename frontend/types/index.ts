@@ -2,19 +2,6 @@
 // Note: Nuxt 4's auto-imports (ref, computed, $fetch, etc.) are handled by .nuxt/types after npm install
 
 // ============================================================================
-// User types
-// ============================================================================
-
-export interface User {
-  id: number
-  name: string
-  email: string
-  role: string
-  avatar?: string
-  organization_role?: string
-}
-
-// ============================================================================
 // Project types
 // ============================================================================
 

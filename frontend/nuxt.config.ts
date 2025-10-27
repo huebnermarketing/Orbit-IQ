@@ -2,44 +2,38 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
-  
+
   // CSR only mode (no SSR)
   ssr: false,
-  
+
   // TypeScript configuration
   typescript: {
     strict: true,
     typeCheck: true,
     tsConfig: {
       compilerOptions: {
-        skipLibCheck: true
+        skipLibCheck: true,
       },
       vueCompilerOptions: {
-        skipTemplateCodegen: true
-      }
-    }
+        skipTemplateCodegen: true,
+      },
+    },
   },
-  
+
   // Modules
-  modules: [
-    '@nuxtjs/tailwindcss',
-    '@pinia/nuxt'
-  ],
-  
+  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
+
   // TailwindCSS module configuration
   tailwindcss: {
     cssPath: '~/assets/css/main.css',
     configPath: 'tailwind.config.ts',
     exposeConfig: false,
-    viewer: true
+    viewer: true,
   },
-  
+
   // CSS configuration
-  css: [
-    '@fortawesome/fontawesome-free/css/all.css',
-    'quill/dist/quill.snow.css'
-  ],
-  
+  css: ['@fortawesome/fontawesome-free/css/all.css', 'quill/dist/quill.snow.css'],
+
   // App configuration
   app: {
     head: {
@@ -47,41 +41,41 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Orbit IQ Project Management System' }
+        { name: 'description', content: 'Orbit IQ Project Management System' },
       ],
-      link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-      ]
-    }
+      link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    },
   },
-  
+
   // Build configuration
   build: {
-    transpile: []
+    transpile: [],
   },
-  
+
   // Runtime configuration
   runtimeConfig: {
     public: {
       apiBase: process.env.VITE_API_URL || 'https://orbitapi.whitelabeliq.com/api',
-      appUrl: process.env.VITE_API_URL || 'https://orbitapi.whitelabeliq.com/api'
-    }
+      // appUrl: process.env.VITE_API_URL || 'https://orbitapi.whitelabeliq.com/api'
+    },
   },
-  
+
+  plugins: ['~/plugins/api.ts'],
+
   // PostCSS configuration (integrated from postcss.config.js)
   postcss: {
     plugins: {
       tailwindcss: {},
-      autoprefixer: {}
-    }
+      autoprefixer: {},
+    },
   },
-  
+
   // Dev server configuration
   devServer: {
     port: 3000,
-    host: '0.0.0.0'
+    host: '0.0.0.0',
   },
-  
+
   // Vite configuration
   vite: {
     server: {
@@ -90,23 +84,24 @@ export default defineNuxtConfig({
     },
     build: {
       outDir: 'dist',
-      sourcemap: true
-    }
+      sourcemap: true,
+    },
   },
-  
+
   // Auto-import configuration
   components: {
     dirs: [
       {
         path: '~/components',
         pathPrefix: false,
-        extensions: ['.vue']
-      }
-    ]
+        extensions: ['.vue'],
+      },
+    ],
+    loader: true,
   },
-  
+
   // Experimental features
   experimental: {
-    componentIslands: true
-  }
-})
+    componentIslands: true,
+  },
+});
