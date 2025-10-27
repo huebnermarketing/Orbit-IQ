@@ -1,12 +1,19 @@
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   name: 'ThemeSelector',
   emits: ['theme-changed'],
-  setup(_,) {
-    // const currentTheme = ref('default')
-const { currentTheme, availableThemes, applyTheme, resetTheme } = useTheme()
-
+  setup(_) {
+    const { currentTheme, availableThemes, applyTheme, resetTheme } = useTheme();
+    const getSelectedTheme = ref(currentTheme);
+    const onApplyTheme = (themeName: string) => {
+      applyTheme(themeName);
+      getSelectedTheme.value = themeName;
+    };
+    const resetToDefault = () => {
+      resetTheme();
+      getSelectedTheme.value = 'default';
+    };
     // const availableThemes = [
     //   {
     //     name: 'default',
@@ -58,15 +65,15 @@ const { currentTheme, availableThemes, applyTheme, resetTheme } = useTheme()
     // const applyTheme = (themeName: string) => {
     //   currentTheme.value = themeName
     //   const theme = availableThemes.find(t => t.name === themeName)
-      
+
     //   if (theme) {
     //     const root = document.documentElement
     //     root.style.setProperty('--color-primary-500', theme.colors.primary)
     //     root.style.setProperty('--color-secondary-500', theme.colors.secondary)
     //     root.style.setProperty('--color-accent-500', theme.colors.accent)
-        
+
     //     emit('theme-changed', themeName)
-        
+
     //     window.dispatchEvent(new CustomEvent('theme-changed'))
     //   }
     // }
@@ -76,10 +83,10 @@ const { currentTheme, availableThemes, applyTheme, resetTheme } = useTheme()
     // }
 
     return {
-      currentTheme,
+      getSelectedTheme,
       availableThemes,
-      applyTheme,
-      resetTheme,
-    }
+      onApplyTheme,
+      resetToDefault,
+    };
   },
-})
+});

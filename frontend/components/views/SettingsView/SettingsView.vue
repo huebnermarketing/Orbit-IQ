@@ -1,5 +1,40 @@
 <template>
-  <div>
+  <!-- <AppLayout> -->
+  <div class="w-full space-y-8">
+    <!-- Success Message -->
+    <div v-if="success" class="bg-success-50 border border-success-200 rounded-lg p-4">
+      <div class="flex">
+        <svg class="w-5 h-5 text-success-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+        <div class="ml-3">
+          <p class="text-sm text-success-800">{{ success }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div v-if="error" class="bg-error-50 border border-error-200 rounded-lg p-4">
+      <div class="flex">
+        <svg class="w-5 h-5 text-error-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+        <div class="ml-3">
+          <p class="text-sm text-error-800">{{ error }}</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Profile Header -->
     <div class="card p-8">
       <div class="flex items-center space-x-6">
@@ -44,178 +79,272 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Settings Navigation -->
-      <div class="lg:col-span-1">
-        <div class="card p-4">
-          <nav class="space-y-1">
-            <button
-              v-for="section in settingsSections"
-              :key="section.id"
-              @click="activeSection = section.id"
-              class="settings-nav-item"
-              :class="
-                activeSection === section.id
-                  ? 'settings-nav-item-active'
-                  : 'settings-nav-item-inactive'
-              "
-            >
-              <i :class="section.icon" class="w-5 h-5 mr-3"></i>
-              {{ section.label }}
-            </button>
-          </nav>
-        </div>
+    <!-- Settings Tabs -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Navigation -->
+      <div class="lg:col-span-2">
+        <nav class="space-y-2">
+          <button
+            v-for="tab in tabs"
+            :key="tab.id"
+            @click="activeTab = tab.id"
+            :class="[
+              'w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors',
+              activeTab === tab.id
+                ? 'bg-primary-50 text-primary-600 border-r-2 border-primary-500'
+                : 'text-text-secondary hover:bg-surface-alt hover:text-text-primary',
+            ]"
+          >
+            <component :is="tab.icon" class="w-5 h-5 mr-3" />
+            {{ tab.name }}
+          </button>
+        </nav>
       </div>
 
-      <!-- Settings Content -->
-      <div class="lg:col-span-2">
-        <div class="card p-6">
-          <!-- Profile Section -->
-          <div v-if="activeSection === 'profile'">
-            <h2 class="text-xl font-semibold text-text-primary mb-4">Profile Information</h2>
-            <p class="text-text-secondary mb-6">Update your personal information</p>
-
-            <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-text-primary mb-2">Full Name</label>
-                <input
-                  type="text"
-                  class="input"
-                  :value="user?.name || ''"
-                  placeholder="Enter your name"
-                />
+      <!-- Content -->
+      <div class="lg:col-span-10">
+        <!-- Profile Tab -->
+        <div v-if="activeTab === 'profile'" class="space-y-6">
+          <div class="card p-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">Profile Information</h3>
+            <form @submit.prevent="updateProfile" class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-text-primary mb-2">Full Name</label>
+                  <input
+                    v-model="profileForm.name"
+                    type="text"
+                    class="input"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-text-primary mb-2"
+                    >Email Address</label
+                  >
+                  <input
+                    v-model="profileForm.email"
+                    type="email"
+                    class="input"
+                    placeholder="Enter your email"
+                  />
+                </div>
               </div>
               <div>
-                <label class="block text-sm font-medium text-text-primary mb-2">Email</label>
-                <input
-                  type="email"
-                  class="input"
-                  :value="user?.email || ''"
-                  placeholder="your@email.com"
-                />
+                <label class="block text-sm font-medium text-text-primary mb-2">Timezone</label>
+                <select v-model="profileForm.timezone" class="input">
+                  <option value="UTC">UTC</option>
+                  <option value="America/New_York">Eastern Time</option>
+                  <option value="America/Chicago">Central Time</option>
+                  <option value="America/Denver">Mountain Time</option>
+                  <option value="America/Los_Angeles">Pacific Time</option>
+                  <option value="Europe/London">London</option>
+                  <option value="Europe/Paris">Paris</option>
+                  <option value="Asia/Tokyo">Tokyo</option>
+                </select>
               </div>
-              <div>
-                <label class="block text-sm font-medium text-text-primary mb-2">Phone</label>
-                <input type="tel" class="input" placeholder="+1 (555) 000-0000" />
+              <div class="flex justify-end">
+                <button type="submit" :disabled="profileLoading" class="btn-primary">
+                  {{ profileLoading ? 'Saving...' : 'Save Changes' }}
+                </button>
               </div>
-            </div>
+            </form>
           </div>
 
-          <!-- Security Section -->
-          <div v-else-if="activeSection === 'security'">
-            <h2 class="text-xl font-semibold text-text-primary mb-4">Security Settings</h2>
-            <p class="text-text-secondary mb-6">Manage your password and security preferences</p>
-
-            <div class="space-y-4">
+          <!-- Change Password -->
+          <div class="card p-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">Change Password</h3>
+            <form @submit.prevent="changePassword" class="space-y-4">
               <div>
                 <label class="block text-sm font-medium text-text-primary mb-2"
                   >Current Password</label
                 >
-                <input type="password" class="input" placeholder="Enter current password" />
+                <input
+                  v-model="passwordForm.current_password"
+                  type="password"
+                  class="input"
+                  placeholder="Enter current password"
+                />
               </div>
-              <div>
-                <label class="block text-sm font-medium text-text-primary mb-2">New Password</label>
-                <input type="password" class="input" placeholder="Enter new password" />
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-text-primary mb-2"
+                    >New Password</label
+                  >
+                  <input
+                    v-model="passwordForm.new_password"
+                    type="password"
+                    class="input"
+                    placeholder="Enter new password"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-text-primary mb-2"
+                    >Confirm New Password</label
+                  >
+                  <input
+                    v-model="passwordForm.new_password_confirmation"
+                    type="password"
+                    class="input"
+                    placeholder="Confirm new password"
+                  />
+                </div>
               </div>
+              <div class="flex justify-end">
+                <button type="submit" :disabled="passwordLoading" class="btn-primary">
+                  {{ passwordLoading ? 'Updating...' : 'Update Password' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Security Tab -->
+        <div v-if="activeTab === 'security'" class="space-y-6">
+          <!-- MFA Status -->
+          <div class="card p-6">
+            <div class="flex items-center justify-between mb-4">
               <div>
-                <label class="block text-sm font-medium text-text-primary mb-2"
-                  >Confirm New Password</label
+                <h3 class="text-lg font-semibold text-text-primary">Two-Factor Authentication</h3>
+                <p class="text-text-secondary">Add an extra layer of security to your account</p>
+              </div>
+              <div class="flex items-center space-x-3">
+                <span
+                  :class="[
+                    'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium',
+                    mfaStatus?.enabled
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-gray-100 text-gray-800',
+                  ]"
                 >
-                <input type="password" class="input" placeholder="Confirm new password" />
+                  {{ mfaStatus?.enabled ? 'Enabled' : 'Disabled' }}
+                </span>
+                <button v-if="!mfaStatus?.enabled" @click="setupMfa" class="btn-primary">
+                  Enable MFA
+                </button>
+                <button v-else @click="disableMfa" class="btn-outline">Disable MFA</button>
               </div>
             </div>
-          </div>
 
-          <!-- Notifications Section -->
-          <div v-else-if="activeSection === 'notifications'">
-            <h2 class="text-xl font-semibold text-text-primary mb-4">Notification Preferences</h2>
-            <p class="text-text-secondary mb-6">Choose what notifications you want to receive</p>
-
-            <div class="space-y-4">
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-sm font-medium text-text-primary">Email Notifications</p>
-                  <p class="text-xs text-text-secondary">Receive updates via email</p>
+            <div
+              v-if="mfaStatus?.enabled"
+              class="bg-green-50 border border-green-200 rounded-lg p-4"
+            >
+              <div class="flex">
+                <svg
+                  class="w-5 h-5 text-green-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                <div class="ml-3">
+                  <p class="text-sm text-green-800">
+                    Two-factor authentication is enabled. You have
+                    {{ mfaStatus.backup_codes_count }} backup codes remaining.
+                  </p>
                 </div>
-                <input
-                  type="checkbox"
-                  class="w-5 h-5 text-primary-600 border-border-light rounded"
-                  checked
-                />
-              </div>
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-sm font-medium text-text-primary">Task Updates</p>
-                  <p class="text-xs text-text-secondary">Get notified about task changes</p>
-                </div>
-                <input
-                  type="checkbox"
-                  class="w-5 h-5 text-primary-600 border-border-light rounded"
-                  checked
-                />
               </div>
             </div>
           </div>
 
-          <!-- Preferences Section -->
-          <div v-else-if="activeSection === 'preferences'">
-            <h2 class="text-xl font-semibold text-text-primary mb-4">Preferences</h2>
-            <p class="text-text-secondary mb-6">Customize your experience</p>
-
-            <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-text-primary mb-2">Language</label>
-                <select class="input">
-                  <option value="en">English</option>
-                  <option value="es">Spanish</option>
-                  <option value="fr">French</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-text-primary mb-2">Timezone</label>
-                <select class="input">
-                  <option value="utc">UTC</option>
-                  <option value="est">EST</option>
-                  <option value="pst">PST</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Theme & Colors Section -->
-          <div v-else-if="activeSection === 'theme'" class="space-y-6">
-            <div class="card p-6">
-              <h3 class="text-lg font-semibold text-text-primary mb-4">Theme & Colors</h3>
-              <p class="text-text-secondary mb-6">
-                Customize your interface appearance with different themes and color schemes.
-              </p>
-
-              <!-- Theme Selector -->
-              <ThemeSelector @theme-changed="handleThemeChanged" />
-            </div>
-
-            <!-- Color Showcase -->
-            <div class="card p-6">
-              <h3 class="text-lg font-semibold text-text-primary mb-4">Color System Showcase</h3>
-              <p class="text-text-secondary mb-6">
-                Preview how colors look in your selected theme.
-              </p>
-
-              <ColorShowcase />
-            </div>
-          </div>
-
-          <!-- Save Button -->
-          <div class="mt-6 pt-6 border-t border-border-light">
-            <button class="btn btn-primary">
-              <i class="fas fa-save mr-2"></i>
-              Save Changes
+          <!-- Backup Codes -->
+          <div v-if="mfaStatus?.enabled" class="card p-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">Backup Codes</h3>
+            <p class="text-text-secondary mb-4">
+              Backup codes can be used to access your account if you lose your authenticator device.
+            </p>
+            <button @click="regenerateBackupCodes" class="btn-outline">
+              Regenerate Backup Codes
             </button>
+          </div>
+        </div>
+
+        <!-- Notifications Tab -->
+        <div v-if="activeTab === 'notifications'" class="space-y-6">
+          <div class="card p-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">Email Notifications</h3>
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="text-sm font-medium text-text-primary">Project Updates</h4>
+                  <p class="text-sm text-text-secondary">Get notified when projects are updated</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" class="sr-only peer" checked />
+                  <div
+                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"
+                  ></div>
+                </label>
+              </div>
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="text-sm font-medium text-text-primary">Task Assignments</h4>
+                  <p class="text-sm text-text-secondary">
+                    Get notified when tasks are assigned to you
+                  </p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" class="sr-only peer" checked />
+                  <div
+                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"
+                  ></div>
+                </label>
+              </div>
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="text-sm font-medium text-text-primary">Team Invitations</h4>
+                  <p class="text-sm text-text-secondary">
+                    Get notified when you're invited to teams
+                  </p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" class="sr-only peer" checked />
+                  <div
+                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"
+                  ></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Theme Tab -->
+        <div v-if="activeTab === 'theme'" class="space-y-6">
+          <div class="card p-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">Theme & Colors</h3>
+            <p class="text-text-secondary mb-6">
+              Customize your interface appearance with different themes and color schemes.
+            </p>
+
+            <!-- Theme Selector -->
+            <ThemeSelector @theme-changed="handleThemeChanged" />
+          </div>
+
+          <!-- Color Showcase -->
+          <div class="card p-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">Color System Showcase</h3>
+            <p class="text-text-secondary mb-6">Preview how colors look in your selected theme.</p>
+
+            <ColorShowcase />
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- MFA Setup Modal -->
+  <MfaSetupModal
+    v-if="showMfaSetup"
+    @close="showMfaSetup = false"
+    @success="handleMfaSetupSuccess"
+  />
 </template>
 
 <script lang="ts" src="./SettingsView.ts"></script>

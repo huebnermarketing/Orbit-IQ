@@ -1,6 +1,6 @@
 /* Sidebar Styles */
 .sidebar {
-  @apply bg-surface border-r border-border-light;
+  @apply bg-surface border-r border-border-light h-full shadow-lg;
 }
 
 /* Navigation Items */

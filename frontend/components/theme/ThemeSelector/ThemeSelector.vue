@@ -3,8 +3,8 @@
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-lg font-semibold text-text-primary">Theme</h3>
       <button
-        v-if="currentTheme !== 'default'"
-        @click="resetTheme"
+        v-if="getSelectedTheme !== 'default'"
+        @click="resetToDefault"
         class="text-sm text-text-muted hover:text-text-primary transition-colors"
       >
         Reset to Default
@@ -15,10 +15,10 @@
       <div
         v-for="theme in availableThemes"
         :key="theme.name"
-        @click="applyTheme(theme.name)"
+        @click="onApplyTheme(theme.name)"
         :class="[
           'theme-option',
-          currentTheme === theme.name ? 'theme-option-active' : 'theme-option-inactive',
+          getSelectedTheme === theme.name ? 'theme-option-active' : 'theme-option-inactive',
         ]"
       >
         <div class="flex items-center space-x-3">
@@ -45,7 +45,7 @@
           </div>
 
           <!-- Active Indicator -->
-          <div v-if="currentTheme === theme.name" class="text-primary-500">
+          <div v-if="getSelectedTheme === theme.name" class="text-primary-500">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fill-rule="evenodd"
