@@ -183,7 +183,7 @@ export default defineComponent({
     };
 
     const viewProject = (projectId: number) => {
-      navigateTo(`/projects/${projectId}`);
+      navigateTo(`/project/${projectId}`);
     };
 
     const handleCreateProject = () => {

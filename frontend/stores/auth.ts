@@ -4,8 +4,6 @@ import type { User } from '~/types/user';
 // import { useTheme } from '~/composables/useTheme';
 
 export const useAuthStore = defineStore('auth', () => {
-  const { setTheme } = useTheme();
-  const { $authApi } = useNuxtApp();
   // ✅ Reactive state
   const user = ref<User | null>(null);
   const token = ref<string | null>(import.meta.client ? localStorage.getItem('token') : null);
@@ -19,10 +17,10 @@ export const useAuthStore = defineStore('auth', () => {
   const initialize = async () => {
     if (initialized.value) return;
 
-    if (!import.meta.client) {
-      initialized.value = true;
-      return;
-    }
+    // if (!import.meta.client) {
+    //   initialized.value = true;
+    //   return;
+    // }
 
     const savedToken = localStorage.getItem('token');
     const tokenExpiresAt = localStorage.getItem('token_expires_at');
@@ -41,6 +39,9 @@ export const useAuthStore = defineStore('auth', () => {
 
     if (savedToken) {
       token.value = savedToken;
+      // Get API and theme composables inside the method to avoid serialization issues
+      const { $authApi } = useNuxtApp();
+      const { setTheme } = useTheme();
       // $authApi.setAuthToken(savedToken)
       try {
         const response = await $authApi.getProfile();
@@ -63,6 +64,9 @@ export const useAuthStore = defineStore('auth', () => {
   const login = async (email: string, password: string, mfaCode?: string, remember?: boolean) => {
     loading.value = true;
     try {
+      // Get API and theme composables inside the method to avoid serialization issues
+      const { $authApi } = useNuxtApp();
+      const { setTheme } = useTheme();
       const response = await $authApi.login(email, password, mfaCode, remember);
       console.log('🔹 Login response:', response);
 
@@ -102,6 +106,8 @@ export const useAuthStore = defineStore('auth', () => {
   }) => {
     loading.value = true;
     try {
+      // Get API composable inside the method to avoid serialization issues
+      const { $authApi } = useNuxtApp();
       const response = await $authApi.register(userData);
       token.value = response.token;
       user.value = response.user ?? null;
@@ -122,6 +128,8 @@ export const useAuthStore = defineStore('auth', () => {
   // ✅ Logout
   const logout = async () => {
     try {
+      // Get API composable inside the method to avoid serialization issues
+      const { $authApi } = useNuxtApp();
       if (token.value) await $authApi.logout();
     } catch (error) {
       console.error('Logout error:', error);

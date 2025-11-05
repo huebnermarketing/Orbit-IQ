@@ -42,4 +42,8 @@ export const authApi = {
   enableMfa: (data: any) => useApiFetch('/mfa/enable', { method: 'POST', body: data }),
   disableMfa: (data: any) => useApiFetch('/mfa/disable', { method: 'POST', body: data }),
   regenerateBackupCodes: () => useApiFetch('/mfa/regenerate-backup-codes', { method: 'POST' }),
+  
+  // Project-related methods
+  getProjectStatuses: () => useApiFetch('/project-statuses'),
+  getProjectTypes: () => useApiFetch('/project-types'),
 }

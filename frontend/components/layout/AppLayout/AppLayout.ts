@@ -186,7 +186,7 @@ export default defineComponent({
       searchQuery.value = '';
 
       if (result.type === 'project') {
-        router.push(`/projects/${result.id}`);
+        router.push(`/project/${result.id}`);
       } else if (result.type === 'task') {
         router.push(`/tasks/${result.id}`);
       }

@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   // CSR only mode (no SSR)
-  ssr: false,
+  ssr: true,
 
   // TypeScript configuration
   typescript: {
@@ -60,7 +60,7 @@ export default defineNuxtConfig({
     },
   },
 
-  plugins: ['~/plugins/api.ts'],
+  plugins: [{ src: '~/plugins/api.ts' }, { src: '~/plugins/auth.ts' }],
 
   // PostCSS configuration (integrated from postcss.config.js)
   postcss: {

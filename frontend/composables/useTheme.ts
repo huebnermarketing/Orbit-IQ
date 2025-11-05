@@ -247,7 +247,7 @@ function darken(color: string, amount: number): string {
 // Theme management functions
 const themeManager = (() => {
   let currentTheme = 'default';
-  const storageKey = 'orbit-iq-theme';
+  // const storageKey = 'orbit-iq-theme';
 
   function getCurrentTheme() {
     return currentTheme;
@@ -265,7 +265,7 @@ const themeManager = (() => {
     }
     currentTheme = themeName;
     updateCSSVariables(theme);
-    saveTheme();
+    // saveTheme();
     notifyThemeChange();
   }
 
@@ -316,30 +316,30 @@ const themeManager = (() => {
     root.style.setProperty('--color-border-dark', theme.colors['border-dark'] || '#9ca3af');
   }
 
-  function saveTheme() {
-    try {
-      localStorage.setItem(storageKey, currentTheme);
-    } catch (error) {
-      console.warn('Failed to save theme to localStorage:', error);
-    }
-  }
+  // function saveTheme() {
+  //   try {
+  //     localStorage.setItem(storageKey, currentTheme);
+  //   } catch (error) {
+  //     console.warn('Failed to save theme to localStorage:', error);
+  //   }
+  // }
 
-  function loadTheme() {
-    try {
-      const savedTheme = localStorage.getItem(storageKey);
-      if (savedTheme && themes[savedTheme]) {
-        currentTheme = savedTheme;
-        applyTheme(savedTheme);
-      } else {
-        currentTheme = 'default';
-        applyTheme('default');
-      }
-    } catch (error) {
-      console.warn('Failed to load theme:', error);
-      currentTheme = 'default';
-      applyTheme('default');
-    }
-  }
+  // function loadTheme() {
+  //   try {
+  //     const savedTheme = localStorage.getItem(storageKey);
+  //     if (savedTheme && themes[savedTheme]) {
+  //       currentTheme = savedTheme;
+  //       applyTheme(savedTheme);
+  //     } else {
+  //       currentTheme = 'default';
+  //       applyTheme('default');
+  //     }
+  //   } catch (error) {
+  //     console.warn('Failed to load theme:', error);
+  //     currentTheme = 'default';
+  //     applyTheme('default');
+  //   }
+  // }
 
   function notifyThemeChange() {
     window.dispatchEvent(
@@ -353,7 +353,7 @@ const themeManager = (() => {
     applyTheme('default');
   }
 
-  loadTheme();
+  // loadTheme();
 
   return {
     getCurrentTheme,

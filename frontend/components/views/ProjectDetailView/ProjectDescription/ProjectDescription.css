@@ -1,0 +1,340 @@
+/* ProjectDescription Component Styles */
+
+/* Custom styles for Quill editor */
+:deep(.ql-editor) {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: normal !important;
+  transition: all 0.2s ease;
+  color: #374151;
+  padding: 16px !important;
+  min-height: 350px !important;
+}
+
+/* Additional RTL prevention */
+:deep(.ql-editor *) {
+  direction: ltr !important;
+  text-align: inherit !important;
+}
+
+/* Beautiful Quill container */
+:deep(.ql-container) {
+  direction: ltr !important;
+  border: none !important;
+  font-family: inherit;
+}
+
+/* Ensure Quill editor container has proper height */
+#project-description-editor {
+  min-height: 400px;
+}
+
+/* Beautiful toolbar styling */
+:deep(.ql-toolbar) {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+  border: 1px solid #e2e8f0;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  height: 48px !important;
+  min-height: 48px !important;
+  padding: 8px 16px !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+:deep(.ql-toolbar .ql-formats) {
+  display: flex !important;
+  align-items: center !important;
+  margin-right: 16px !important;
+}
+
+:deep(.ql-toolbar .ql-formats:not(:last-child)::after) {
+  content: '';
+  width: 1px;
+  height: 20px;
+  background: #d1d5db;
+  margin-left: 8px;
+}
+
+:deep(.ql-toolbar button) {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 4px !important;
+  margin: 0 1px !important;
+  transition: all 0.15s ease !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+:deep(.ql-toolbar button:hover) {
+  background: #e5e7eb !important;
+  color: #374151 !important;
+}
+
+:deep(.ql-toolbar button.ql-active) {
+  background: #3b82f6 !important;
+  color: white !important;
+}
+
+:deep(.ql-toolbar .ql-picker) {
+  border-radius: 4px !important;
+  transition: all 0.15s ease !important;
+}
+
+:deep(.ql-toolbar .ql-picker:hover) {
+  background: #e5e7eb !important;
+}
+
+/* Editor content area */
+:deep(.ql-container .ql-editor) {
+  border-radius: 0 0 8px 8px;
+  border: 1px solid #e2e8f0;
+  border-top: none;
+  background: white;
+}
+
+/* Focus states */
+:deep(.ql-container.ql-snow:focus-within) {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+:deep(.ql-container.ql-snow:focus-within .ql-toolbar) {
+  border-color: #3b82f6;
+}
+
+:deep(.ql-container.ql-snow:focus-within .ql-editor) {
+  border-color: #3b82f6;
+}
+
+/* Drag and drop visual feedback */
+:deep(.ql-editor.drag-over) {
+  border: 2px dashed #3b82f6 !important;
+  background-color: #eff6ff !important;
+}
+
+/* Placeholder styling */
+:deep(.ql-editor.ql-blank::before) {
+  color: #9ca3af !important;
+  font-style: italic !important;
+  left: 16px !important;
+}
+
+/* Custom scrollbar for editor */
+:deep(.ql-editor) {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+:deep(.ql-editor::-webkit-scrollbar) {
+  width: 6px;
+}
+
+:deep(.ql-editor::-webkit-scrollbar-track) {
+  background: transparent;
+}
+
+:deep(.ql-editor::-webkit-scrollbar-thumb) {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+:deep(.ql-editor::-webkit-scrollbar-thumb:hover) {
+  background: #94a3b8;
+}
+
+/* Card styling */
+.bg-white {
+  background-color: #ffffff;
+}
+
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
+.border-gray-200 {
+  border-color: #e5e7eb;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Header styling */
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+.from-blue-50 {
+  --tw-gradient-from: #eff6ff;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(239, 246, 255, 0));
+}
+
+.to-indigo-50 {
+  --tw-gradient-to: #eef2ff;
+}
+
+.bg-blue-100 {
+  background-color: #dbeafe;
+}
+
+.text-blue-600 {
+  color: #2563eb;
+}
+
+/* Typography */
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+/* Colors */
+.text-gray-500 {
+  color: #6b7280;
+}
+
+.text-gray-900 {
+  color: #111827;
+}
+
+.text-green-800 {
+  color: #166534;
+}
+
+.bg-green-100 {
+  background-color: #dcfce7;
+}
+
+/* Badge styling */
+.inline-flex {
+  display: inline-flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.px-2\.5 {
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+}
+
+.py-0\.5 {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+/* Spacing */
+.space-x-2 > * + * {
+  margin-left: 0.5rem;
+}
+
+.space-x-3 > * + * {
+  margin-left: 0.75rem;
+}
+
+.space-x-4 > * + * {
+  margin-left: 1rem;
+}
+
+.mr-1 {
+  margin-right: 0.25rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+/* Flexbox */
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+/* Status indicator */
+.w-2 {
+  width: 0.5rem;
+}
+
+.h-2 {
+  height: 0.5rem;
+}
+
+.bg-green-400 {
+  background-color: #4ade80;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+/* Textarea fallback styling */
+textarea {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #374151;
+}
+
+textarea:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .flex.items-center.justify-between {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .flex.items-center.space-x-4 {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}

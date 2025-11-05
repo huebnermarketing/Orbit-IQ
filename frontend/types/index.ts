@@ -8,11 +8,23 @@
 export interface Project {
   id: number
   name: string
+  project_number: string
+  job_code?: string
   description?: string
   status?: string
   client_id?: number
   created_at: string
   updated_at: string
+  due_date?: string
+  budget?: string
+  client?: Client
+  subclient?: Subclient
+  funding_source?: string
+  hour_type?: string
+  project_status?: ProjectStatus
+  project_type?: ProjectType
+  account_manager?: User
+  project_manager?: User
 }
 
 // ============================================================================
@@ -37,6 +49,30 @@ export interface Manager {
   id: number
   name: string
   email: string
+}
+
+export interface User {
+  id: number
+  name: string
+  email: string
+  avatar?: string
+}
+
+export interface Subclient {
+  id: number
+  name: string
+}
+
+export interface ProjectStatus {
+  id: number
+  name: string
+  color: string
+}
+
+export interface ProjectType {
+  id: number
+  name: string
+  color: string
 }
 
 // ============================================================================

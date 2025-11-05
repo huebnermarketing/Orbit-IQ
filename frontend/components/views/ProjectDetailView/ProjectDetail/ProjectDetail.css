@@ -1,0 +1,149 @@
+/* Custom styles for Quill editor */
+:deep(.ql-editor) {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: normal !important;
+  transition: all 0.2s ease;
+  color: #374151;
+  padding: 16px !important;
+  min-height: 350px !important;
+}
+
+/* Additional RTL prevention */
+:deep(.ql-editor *) {
+  direction: ltr !important;
+  text-align: inherit !important;
+}
+
+/* Beautiful Quill container */
+:deep(.ql-container) {
+  direction: ltr !important;
+  border: none !important;
+  font-family: inherit;
+}
+
+/* Ensure Quill editor container has proper height */
+#project-description-editor {
+  min-height: 400px;
+}
+
+/* Beautiful toolbar styling */
+:deep(.ql-toolbar) {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+  border: 1px solid #e2e8f0;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  height: 48px !important;
+  min-height: 48px !important;
+  padding: 8px 16px !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+:deep(.ql-toolbar .ql-formats) {
+  display: flex !important;
+  align-items: center !important;
+  margin-right: 16px !important;
+}
+
+:deep(.ql-toolbar .ql-formats:not(:last-child)::after) {
+  content: '';
+  width: 1px;
+  height: 20px;
+  background: #d1d5db;
+  margin-left: 8px;
+}
+
+:deep(.ql-toolbar button) {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 4px !important;
+  margin: 0 1px !important;
+  transition: all 0.15s ease !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+:deep(.ql-toolbar button:hover) {
+  background: #e5e7eb !important;
+  color: #374151 !important;
+}
+
+:deep(.ql-toolbar button.ql-active) {
+  background: #3b82f6 !important;
+  color: white !important;
+}
+
+:deep(.ql-toolbar .ql-picker) {
+  border-radius: 4px !important;
+  transition: all 0.15s ease !important;
+}
+
+:deep(.ql-toolbar .ql-picker:hover) {
+  background: #e5e7eb !important;
+}
+
+/* Editor content area */
+:deep(.ql-container .ql-editor) {
+  border-radius: 0 0 8px 8px;
+  border: 1px solid #e2e8f0;
+  border-top: none;
+  background: white;
+}
+
+/* Focus states */
+:deep(.ql-container.ql-snow:focus-within) {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+:deep(.ql-container.ql-snow:focus-within .ql-toolbar) {
+  border-color: #3b82f6;
+}
+
+:deep(.ql-container.ql-snow:focus-within .ql-editor) {
+  border-color: #3b82f6;
+}
+
+/* Drag and drop visual feedback */
+:deep(.ql-editor.drag-over) {
+  border: 2px dashed #3b82f6 !important;
+  background-color: #eff6ff !important;
+}
+
+/* Placeholder styling */
+:deep(.ql-editor.ql-blank::before) {
+  color: #9ca3af !important;
+  font-style: italic !important;
+  left: 16px !important;
+}
+
+/* Custom scrollbar for editor */
+:deep(.ql-editor) {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+:deep(.ql-editor::-webkit-scrollbar) {
+  width: 6px;
+}
+
+:deep(.ql-editor::-webkit-scrollbar-track) {
+  background: transparent;
+}
+
+:deep(.ql-editor::-webkit-scrollbar-thumb) {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+:deep(.ql-editor::-webkit-scrollbar-thumb:hover) {
+  background: #94a3b8;
+}
