@@ -6,17 +6,16 @@ export default defineComponent({
   props: {
     projectId: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const { $projectApi, $taskApi, $clientApi, $authApi } = useNuxtApp();
     const route = useRoute();
-    
+
     // Reactive data
     const project = ref<Project | null>(null);
     const loading = ref(false);
-    const error = ref(false);
     const activeTab = ref('overview');
     const quill = ref<any>(null);
     const tasks = ref<any[]>([]);
@@ -43,7 +42,7 @@ export default defineComponent({
       { id: 'task_list', name: 'Task list' },
       { id: 'activity', name: 'Activity' },
       { id: 'client', name: 'Client' },
-      { id: 'hour_report', name: 'Hour report' }
+      { id: 'hour_report', name: 'Hour report' },
     ]);
 
     // User-created sections (this would come from API in real implementation)
@@ -51,20 +50,19 @@ export default defineComponent({
       {
         id: '1',
         name: 'Planning',
-        tasks: []
+        tasks: [],
       },
       {
-        id: '2', 
+        id: '2',
         name: 'Development',
-        tasks: []
+        tasks: [],
       },
       {
         id: '3',
         name: 'Testing',
-        tasks: []
-      }
+        tasks: [],
+      },
     ]);
-
 
     // Computed
     const isDev = computed(() => import.meta.dev);
@@ -73,52 +71,18 @@ export default defineComponent({
     const loadProject = async () => {
       try {
         loading.value = true;
-        error.value = false;
 
         console.log('Loading project with ID:', props.projectId);
         const response = await $projectApi.getProject(props.projectId);
         console.log('API Response:', response);
-
-        // Handle different response formats
-        if (response && typeof response === 'object') {
-          // If response has a data property
-          if (response.data) {
-            project.value = response.data;
-          }
-          // If response is the project data directly
-          else if (response.id) {
-            project.value = response;
-          }
-          // If response is an array (shouldn't happen for single project)
-          else if (Array.isArray(response) && response.length > 0) {
-            project.value = response[0];
-          }
-          else {
-            console.warn('Unexpected response format:', response);
-            error.value = true;
-            return;
-          }
-        } else {
-          console.warn('No response data received');
-          error.value = true;
-          return;
-        }
-
-        if (!project.value) {
-          error.value = true;
-          return;
-        }
-
-        console.log('Project loaded successfully:', project.value);
+        project.value = response;
       } catch (err: any) {
         console.error('Failed to load project:', err);
-        console.error('Error details:', {
-          message: err.message,
-          status: err.status,
-          statusText: err.statusText,
-          data: err.data
+        showError({
+          statusCode: err.status || 500,
+          statusMessage: err.statusText || 'Error',
+          message: err.message || 'Failed to load project',
         });
-        error.value = true;
       } finally {
         loading.value = false;
       }
@@ -128,10 +92,10 @@ export default defineComponent({
       try {
         const response = await $taskApi.getTasks({
           project_id: props.projectId,
-          include_subtasks: true
+          include_subtasks: true,
         });
         tasks.value = response.data || [];
-        
+
         // Distribute tasks to sections (in real implementation, tasks would have section_id)
         distributeTasksToSections();
       } catch (error) {
@@ -141,10 +105,10 @@ export default defineComponent({
 
     const distributeTasksToSections = () => {
       // Reset all sections
-      userSections.value.forEach(section => {
+      userSections.value.forEach((section) => {
         section.tasks = [];
       });
-      
+
       // Distribute tasks evenly across sections for demo purposes
       // In real implementation, tasks would have a section_id field
       tasks.value.forEach((task, index) => {
@@ -223,10 +187,10 @@ export default defineComponent({
     // Client change handler for Basic Details editing
     const onBasicDetailsClientChange = async () => {
       if (!editingBasicDetails.value) return;
-      
+
       // Reset sub-client when client changes
       editingBasicDetails.value.sub_client_id = '';
-      
+
       // Load sub-clients for new client
       if (editingBasicDetails.value.client_id) {
         await loadSubClientsData(editingBasicDetails.value.client_id);
@@ -238,32 +202,28 @@ export default defineComponent({
     // Basic Details editing functions
     const enableEditingBasicDetails = async () => {
       if (!project.value) return;
-      
+
       // Load dropdown data first
-      await Promise.all([
-        loadClientsData(),
-        loadProjectStatusesData(),
-        loadProjectTypesData()
-      ]);
-      
+      await Promise.all([loadClientsData(), loadProjectStatusesData(), loadProjectTypesData()]);
+
       // Store original data for potential rollback
       originalBasicDetails.value = { ...project.value };
       editingBasicDetails.value = { ...project.value };
-      
+
       // Load sub-clients if client is selected
       if (project.value.client_id) {
         await loadSubClientsData(project.value.client_id);
       }
-      
+
       isEditingBasicDetails.value = true;
     };
 
     const saveBasicDetails = async () => {
       if (!editingBasicDetails.value || !project.value) return;
-      
+
       try {
         savingBasicDetails.value = true;
-        
+
         // Prepare update data maintaining relationships
         const updateData = {
           name: editingBasicDetails.value.name,
@@ -278,57 +238,64 @@ export default defineComponent({
           start_date: editingBasicDetails.value.start_date,
           due_date: editingBasicDetails.value.due_date,
           hour_type: editingBasicDetails.value.hour_type,
-          funding_source: editingBasicDetails.value.funding_source
+          funding_source: editingBasicDetails.value.funding_source,
         };
-        
+
         // Update project via API
         const response = await $projectApi.updateProject(props.projectId, updateData);
-        
+
         // Reconstruct the project object with proper relationships
         const updatedProject = {
           ...project.value,
           ...editingBasicDetails.value,
           // If API response contains updated relationships, merge them too
-          ...response
+          ...response,
         };
-        
+
         // Update relationship objects from loaded dropdown data
         if (editingBasicDetails.value.client_id) {
-          const selectedClient = clients.value.find(c => c.id == editingBasicDetails.value.client_id);
+          const selectedClient = clients.value.find(
+            (c) => c.id == editingBasicDetails.value.client_id
+          );
           if (selectedClient) {
             updatedProject.client = selectedClient;
           }
         }
-        
+
         if (editingBasicDetails.value.sub_client_id) {
-          const selectedSubClient = subClients.value.find(sc => sc.id == editingBasicDetails.value.sub_client_id);
+          const selectedSubClient = subClients.value.find(
+            (sc) => sc.id == editingBasicDetails.value.sub_client_id
+          );
           if (selectedSubClient) {
             updatedProject.sub_client = selectedSubClient;
           }
         }
-        
+
         if (editingBasicDetails.value.project_status_id) {
-          const selectedStatus = projectStatuses.value.find(s => s.id == editingBasicDetails.value.project_status_id);
+          const selectedStatus = projectStatuses.value.find(
+            (s) => s.id == editingBasicDetails.value.project_status_id
+          );
           if (selectedStatus) {
             updatedProject.project_status = selectedStatus;
           }
         }
-        
+
         if (editingBasicDetails.value.project_type_id) {
-          const selectedType = projectTypes.value.find(t => t.id == editingBasicDetails.value.project_type_id);
+          const selectedType = projectTypes.value.find(
+            (t) => t.id == editingBasicDetails.value.project_type_id
+          );
           if (selectedType) {
             updatedProject.project_type = selectedType;
           }
         }
-        
+
         // Update local project data
         project.value = updatedProject;
-        
+
         // Exit editing mode
         isEditingBasicDetails.value = false;
         originalBasicDetails.value = null;
         editingBasicDetails.value = null;
-        
       } catch (error) {
         console.error('Failed to save basic details:', error);
         // TODO: Show error message to user
@@ -342,7 +309,7 @@ export default defineComponent({
       if (originalBasicDetails.value) {
         project.value = { ...originalBasicDetails.value };
       }
-      
+
       // Exit editing mode
       isEditingBasicDetails.value = false;
       originalBasicDetails.value = null;
@@ -358,7 +325,7 @@ export default defineComponent({
           name: taskName.trim(),
           project_id: props.projectId,
           status: 'todo',
-          priority: 'medium'
+          priority: 'medium',
         };
 
         await $taskApi.createTask(taskData);
@@ -373,7 +340,7 @@ export default defineComponent({
       if (!companyName) return '?';
       return companyName
         .split(' ')
-        .map(word => word[0])
+        .map((word) => word[0])
         .join('')
         .toUpperCase()
         .slice(0, 2);
@@ -383,7 +350,7 @@ export default defineComponent({
       if (!name) return '?';
       return name
         .split(' ')
-        .map(word => word[0])
+        .map((word) => word[0])
         .join('')
         .toUpperCase()
         .slice(0, 2);
@@ -406,7 +373,7 @@ export default defineComponent({
 
       try {
         let content = '';
-        
+
         if (quill.value) {
           // Quill editor
           content = quill.value.root.innerHTML;
@@ -414,13 +381,13 @@ export default defineComponent({
           // Fallback textarea - get content from project data
           content = project.value.description || '';
         }
-        
+
         // Only save if content has changed
         if (content !== project.value.description) {
           await $projectApi.updateProject(props.projectId, {
-            description: content
+            description: content,
           });
-          
+
           // Update local project data
           project.value.description = content;
           console.log('Project description auto-saved successfully');
@@ -432,26 +399,26 @@ export default defineComponent({
 
     const initializeDescriptionEditor = async () => {
       console.log('Starting description editor initialization...');
-      
+
       // Check if the element exists
       const editorElement = document.getElementById('project-description-editor');
       if (!editorElement) {
         console.error('❌ Description editor element not found');
         return;
       }
-      
+
       console.log('✅ Editor element found:', editorElement);
-      
+
       // Clear any existing content
       editorElement.innerHTML = '';
-      
+
       try {
         console.log('📦 Loading Quill module...');
         const QuillModule = await import('quill');
         const QuillClass = QuillModule.default || QuillModule;
-        
+
         console.log('✅ Quill module loaded:', QuillClass);
-        
+
         // Configure Quill with minimal options
         quill.value = new QuillClass('#project-description-editor', {
           theme: 'snow',
@@ -460,17 +427,17 @@ export default defineComponent({
             toolbar: {
               container: [
                 ['bold', 'italic', 'underline'],
-                [{ 'header': [1, 2, 3, false] }],
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                [{ 'indent': '-1'}, { 'indent': '+1' }],
-                [{ 'align': [] }],
+                [{ header: [1, 2, 3, false] }],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                [{ indent: '-1' }, { indent: '+1' }],
+                [{ align: [] }],
                 ['image'],
-                ['clean']
-              ]
-            }
-          }
+                ['clean'],
+              ],
+            },
+          },
         });
-        
+
         // Custom image handler with drag and drop support
         const toolbar = quill.value.getModule('toolbar');
         toolbar.addHandler('image', () => {
@@ -478,7 +445,7 @@ export default defineComponent({
           input.setAttribute('type', 'file');
           input.setAttribute('accept', 'image/*');
           input.click();
-          
+
           input.onchange = () => {
             const file = input.files?.[0];
             if (file) {
@@ -491,7 +458,7 @@ export default defineComponent({
             }
           };
         });
-        
+
         // Add drag and drop support
         const editorElementForDrop = quill.value.container.querySelector('.ql-editor');
         if (editorElementForDrop) {
@@ -499,16 +466,16 @@ export default defineComponent({
             e.preventDefault();
             (editorElementForDrop as HTMLElement).classList.add('drag-over');
           });
-          
+
           editorElementForDrop.addEventListener('dragleave', (e: DragEvent) => {
             e.preventDefault();
             (editorElementForDrop as HTMLElement).classList.remove('drag-over');
           });
-          
+
           editorElementForDrop.addEventListener('drop', (e: DragEvent) => {
             e.preventDefault();
             (editorElementForDrop as HTMLElement).classList.remove('drag-over');
-            
+
             const files = e.dataTransfer?.files;
             if (files && files.length > 0) {
               const file = files[0];
@@ -526,7 +493,7 @@ export default defineComponent({
             }
           });
         }
-        
+
         // Force toolbar to be visible immediately
         const toolbarElement = quill.value.getModule('toolbar').container;
         if (toolbarElement) {
@@ -535,24 +502,23 @@ export default defineComponent({
           (toolbarElement as HTMLElement).style.opacity = '1';
           (toolbarElement as HTMLElement).style.height = 'auto';
         }
-        
+
         // Listen for text changes
         quill.value.on('text-change', () => {
           if (project.value) {
             project.value.description = quill.value.root.innerHTML;
           }
         });
-        
+
         // Set initial content if editing
         if (project.value?.description) {
           quill.value.clipboard.dangerouslyPasteHTML(project.value.description);
         }
-        
+
         // Remove focus from editor to prevent auto-focus on page load
         quill.value.blur();
-        
+
         console.log('🎉 Description editor initialized successfully!');
-        
       } catch (error: any) {
         console.error('❌ Error initializing description editor:', error);
         if (error.stack) {
@@ -565,7 +531,7 @@ export default defineComponent({
     onMounted(() => {
       loadProject();
       loadTasks();
-      
+
       // Initialize editor if we're already on overview tab
       if (activeTab.value === 'overview') {
         nextTick(() => {
@@ -586,25 +552,36 @@ export default defineComponent({
     });
 
     // Watch for project data to initialize editor with content (only when project first loads)
-    watch(project, (newProject) => {
-      if (newProject && activeTab.value === 'overview' && quill.value && !quill.value.getText().trim()) {
-        // Only set content if editor is empty (initial load)
-        quill.value.root.innerHTML = newProject.description || '';
-      }
-    }, { deep: true });
+    watch(
+      project,
+      (newProject) => {
+        if (
+          newProject &&
+          activeTab.value === 'overview' &&
+          quill.value &&
+          !quill.value.getText().trim()
+        ) {
+          // Only set content if editor is empty (initial load)
+          quill.value.root.innerHTML = newProject.description || '';
+        }
+      },
+      { deep: true }
+    );
 
     // Watch for route changes
-    watch(() => route.params.id, (newId) => {
-      if (newId) {
-        loadProject();
-        loadTasks();
+    watch(
+      () => route.params.id,
+      (newId) => {
+        if (newId) {
+          loadProject();
+          loadTasks();
+        }
       }
-    });
+    );
 
     return {
       project,
       loading,
-      error,
       activeTab,
       tabs,
       quill,

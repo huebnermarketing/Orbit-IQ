@@ -56,7 +56,7 @@ interface TableColumn {
 export default defineComponent({
   name: 'ProjectsView',
   setup() {
-    const { $projectApi } = useNuxtApp();
+    const { $projectApi, $toast } = useNuxtApp();
     // State
     const projects = ref<Project[]>([]);
     const loading = ref(true);
@@ -123,6 +123,7 @@ export default defineComponent({
       } catch (error) {
         console.error('Failed to load projects:', error);
         projects.value = [];
+        $toast.error('Failed to load projects. Please try again.');
       } finally {
         loading.value = false;
       }
@@ -183,18 +184,13 @@ export default defineComponent({
     };
 
     const viewProject = (projectId: number) => {
-      navigateTo(`/project/${projectId}`);
+      navigateTo(`/projects/${projectId}`);
     };
 
     const handleCreateProject = () => {
       // Navigate to create project page or open modal
       navigateTo('/projects/create');
     };
-
-    // Lifecycle
-    onMounted(() => {
-      loadProjects();
-    });
 
     // Close column menu when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
@@ -204,7 +200,9 @@ export default defineComponent({
       }
     };
 
+    // Lifecycle
     onMounted(() => {
+      loadProjects();
       document.addEventListener('click', handleClickOutside);
     });
 

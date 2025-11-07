@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   // CSR only mode (no SSR)
-  ssr: true,
+  ssr: false,
 
   // TypeScript configuration
   typescript: {

@@ -220,4 +220,4 @@
   </div>
 </template>
 
-<script setup lang="ts" src="./TaskModal.ts"></script>
+<script lang="ts" src="./TaskModal.ts"></script>

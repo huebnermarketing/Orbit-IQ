@@ -1,5 +1,6 @@
 <template>
   <div class="min-h-screen bg-background">
+    <ToastContainer />
     <AppLayout>
       <slot />
     </AppLayout>

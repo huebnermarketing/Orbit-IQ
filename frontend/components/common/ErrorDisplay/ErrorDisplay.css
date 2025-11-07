@@ -1,0 +1,48 @@
+.error-display-container {
+  @apply flex items-center justify-center min-h-[60vh] py-12 px-4;
+}
+
+.error-content {
+  @apply text-center max-w-md w-full;
+}
+
+.error-icon-wrapper {
+  @apply flex justify-center mb-6;
+}
+
+.error-icon {
+  @apply w-24 h-24;
+}
+
+.error-title {
+  @apply text-3xl font-bold text-gray-900 mb-3;
+}
+
+.error-description {
+  @apply text-lg text-gray-600 mb-4;
+}
+
+.error-details {
+  @apply mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg;
+}
+
+.error-details-text {
+  @apply text-sm text-gray-700 text-left;
+}
+
+.error-actions {
+  @apply flex flex-col sm:flex-row gap-4 justify-center mt-8;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center px-6 py-3 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition-colors;
+}
+
+.btn-danger {
+  @apply inline-flex items-center justify-center px-6 py-3 bg-error-600 text-white font-medium rounded-lg hover:bg-error-700 transition-colors;
+}
+
