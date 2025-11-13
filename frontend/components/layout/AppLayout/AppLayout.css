@@ -1,70 +1,145 @@
 /* Sidebar Styles */
 .sidebar {
-  @apply bg-surface border-r border-border-light h-full shadow-lg;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border-light);
+  height: 100%;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 /* Navigation Items */
 .nav-item {
-  @apply flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200;
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition-property: all;
+  transition-duration: 200ms;
 }
 
 .nav-item-collapsed {
-  @apply flex items-center justify-center p-3 text-sm font-medium rounded-lg transition-all duration-200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition-property: all;
+  transition-duration: 200ms;
 }
 
 .nav-item-active {
-  @apply nav-item bg-primary-100 text-primary-800 border-r-2 border-primary-500;
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition-property: all;
+  transition-duration: 200ms;
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-800);
+  border-right: 2px solid var(--color-primary-500);
 }
 
 .nav-item-inactive {
-  @apply text-text-secondary hover:bg-surface-alt hover:text-text-primary;
+  color: var(--color-text-secondary);
+  transition-property: background-color, color;
+  transition-duration: 150ms;
+}
+
+.nav-item-inactive:hover {
+  background-color: var(--color-surface-alt);
+  color: var(--color-text-primary);
 }
 
 /* Gradient Text */
 .gradient-text {
-  @apply bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent;
+  background-image: linear-gradient(to right, var(--color-primary-600), var(--color-secondary-600));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /* Search Bar Styles */
 input[type='text']:focus {
-  @apply ring-2 ring-primary-500 border-transparent;
+  box-shadow: 0 0 0 2px var(--color-primary-500);
+  border-color: transparent;
 }
 
 /* Notification Badge */
 .notification-badge {
-  @apply absolute -top-1 -right-1 bg-error-500 text-white text-xs font-medium rounded-full h-5 w-5 flex items-center justify-center;
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  background-color: var(--color-error-500);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  height: 1.25rem;
+  width: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Profile Dropdown */
 .profile-dropdown {
-  @apply absolute bottom-full mb-2 bg-surface border border-border-light rounded-lg shadow-lg z-50;
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: 0.5rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 50;
 }
 
 /* Search Results */
 .search-results {
-  @apply absolute top-full mt-2 w-full bg-surface border border-border-light rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto;
+  position: absolute;
+  top: 100%;
+  margin-top: 0.5rem;
+  width: 100%;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 50;
+  max-height: 24rem;
+  overflow-y: auto;
 }
 
 /* Custom Scrollbar */
 .overflow-y-auto::-webkit-scrollbar {
-  @apply w-2;
+  width: 0.5rem;
 }
 
 .overflow-y-auto::-webkit-scrollbar-track {
-  @apply bg-surface-alt rounded;
+  background-color: var(--color-surface-alt);
+  border-radius: 0.25rem;
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
-  @apply bg-border-light rounded hover:bg-text-muted;
+  background-color: var(--color-border-light);
+  border-radius: 0.25rem;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-muted);
 }
 
 /* Animation for dropdowns */
 .fade-enter-active,
 .fade-leave-active {
-  @apply transition-opacity duration-200;
+  transition-property: opacity;
+  transition-duration: 200ms;
 }
 
 .fade-enter-from,
 .fade-leave-to {
-  @apply opacity-0;
+  opacity: 0;
 }

@@ -1,11 +1,19 @@
 import { defineComponent, computed, defineAsyncComponent } from 'vue';
 
 const NotFoundIcon = defineAsyncComponent(() => import('~/components/icons/NotFoundIcon.vue'));
-const ServerErrorIcon = defineAsyncComponent(() => import('~/components/icons/ServerErrorIcon.vue'));
+const ServerErrorIcon = defineAsyncComponent(
+  () => import('~/components/icons/ServerErrorIcon.vue')
+);
 const ForbiddenIcon = defineAsyncComponent(() => import('~/components/icons/ForbiddenIcon.vue'));
-const UnauthorizedIcon = defineAsyncComponent(() => import('~/components/icons/UnauthorizedIcon.vue'));
-const NetworkErrorIcon = defineAsyncComponent(() => import('~/components/icons/NetworkErrorIcon.vue'));
-const GeneralErrorIcon = defineAsyncComponent(() => import('~/components/icons/GeneralErrorIcon.vue'));
+const UnauthorizedIcon = defineAsyncComponent(
+  () => import('~/components/icons/UnauthorizedIcon.vue')
+);
+const NetworkErrorIcon = defineAsyncComponent(
+  () => import('~/components/icons/NetworkErrorIcon.vue')
+);
+const GeneralErrorIcon = defineAsyncComponent(
+  () => import('~/components/icons/GeneralErrorIcon.vue')
+);
 
 type ErrorType = '404' | '500' | '403' | '401' | 'network' | 'general' | 'custom';
 
@@ -33,29 +41,29 @@ export default defineComponent({
         data?: any;
         path?: string;
       },
-      default: () => ({})
+      default: () => ({}),
     },
     // Or accept individual props (for backward compatibility)
     title: {
       type: String,
-      default: ''
+      default: '',
     },
     message: {
       type: String,
-      default: ''
+      default: '',
     },
     details: {
       type: String,
-      default: ''
+      default: '',
     },
     type: {
       type: String as () => ErrorType,
-      default: '' as ErrorType
+      default: '' as ErrorType,
     },
     actions: {
       type: Array as () => ErrorAction[],
-      default: () => []
-    }
+      default: () => [],
+    },
   },
   setup(props) {
     const router = useRouter();
@@ -80,9 +88,9 @@ export default defineComponent({
         if (props.error.data?.type === 'network' || statusCode.value === 0) {
           return 'network';
         }
-        
+
         if (!statusCode.value) return 'general';
-        
+
         switch (statusCode.value) {
           case 404:
             return '404';
@@ -96,7 +104,7 @@ export default defineComponent({
             return 'general';
         }
       }
-      
+
       return 'general';
     });
 
@@ -112,9 +120,9 @@ export default defineComponent({
         if (props.error.data?.type === 'network' || statusCode.value === 0) {
           return 'Connection Error';
         }
-        
+
         if (!statusCode.value) return 'Error';
-        
+
         switch (statusCode.value) {
           case 404:
             return 'Page Not Found';
@@ -128,7 +136,7 @@ export default defineComponent({
             return 'Error';
         }
       }
-      
+
       return 'Error';
     });
 
@@ -140,14 +148,46 @@ export default defineComponent({
 
       // Otherwise, compute from error object
       if (props.error) {
+        let message = '';
+
         if (props.error.message) {
-          return props.error.message;
+          message = props.error.message;
+        } else if (props.error.statusMessage) {
+          message = props.error.statusMessage;
         }
-        if (props.error.statusMessage) {
-          return props.error.statusMessage;
+
+        // Clean up the message - remove API endpoint URLs and HTTP method prefixes
+        if (message) {
+          // Remove patterns like [GET] "http://..." or [POST] "http://..."
+          message = message.replace(/\[(GET|POST|PUT|DELETE|PATCH)\]\s*"[^"]*":\s*/g, '');
+
+          // Remove standalone URLs in quotes
+          message = message.replace(/"https?:\/\/[^"]*"/g, '');
+
+          // Clean up extra spaces and colons
+          message = message.replace(/\s*:\s*/g, ': ').trim();
+
+          // If message is just a status code, provide a default message
+          if (/^\d+\s*(Not Found|Internal Server Error|Forbidden|Unauthorized)?$/i.test(message)) {
+            const code = statusCode.value;
+            if (code === 404) {
+              return 'The requested resource was not found.';
+            }
+            if (code === 500) {
+              return 'An internal server error occurred.';
+            }
+            if (code === 403) {
+              return 'You do not have permission to access this resource.';
+            }
+            if (code === 401) {
+              return 'You are not authorized to access this resource.';
+            }
+          }
+
+          return message || 'An unexpected error occurred.';
         }
       }
-      
+
       return 'An unexpected error occurred.';
     });
 
@@ -166,7 +206,7 @@ export default defineComponent({
           return props.error.stack;
         }
       }
-      
+
       return '';
     });
 
@@ -183,15 +223,15 @@ export default defineComponent({
           type: 'button',
           handler: () => router.back(),
           icon: 'fas fa-undo',
-          variant: 'secondary'
+          variant: 'secondary',
         },
         {
           label: 'Go to Dashboard',
           type: 'link',
           to: '/dashboard',
           icon: 'fas fa-home',
-          variant: 'primary'
-        }
+          variant: 'primary',
+        },
       ];
 
       // For 404 errors, add projects link at the beginning
@@ -201,7 +241,7 @@ export default defineComponent({
           type: 'link',
           to: '/projects',
           icon: 'fas fa-arrow-left',
-          variant: 'primary'
+          variant: 'primary',
         });
       }
 
@@ -213,11 +253,12 @@ export default defineComponent({
     };
 
     const getActionClass = (variant: string = 'primary') => {
-      const baseClass = 'inline-flex items-center justify-center px-6 py-3 font-medium rounded-lg transition-colors';
+      const baseClass =
+        'inline-flex items-center justify-center px-6 py-3 font-medium rounded-lg transition-colors';
       const variants = {
         primary: 'bg-primary-600 text-white hover:bg-primary-700',
         secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
-        danger: 'bg-error-600 text-white hover:bg-error-700'
+        danger: 'bg-error-600 text-white hover:bg-error-700',
       };
       return `${baseClass} ${variants[variant as keyof typeof variants] || variants.primary}`;
     };
@@ -247,9 +288,9 @@ export default defineComponent({
         '500': 'text-error-500',
         '403': 'text-warning-500',
         '401': 'text-warning-500',
-        'network': 'text-error-500',
-        'general': 'text-error-500',
-        'custom': 'text-gray-400'
+        network: 'text-error-500',
+        general: 'text-error-500',
+        custom: 'text-gray-400',
       };
       return `${baseClass} ${typeClasses[errorType.value] || typeClasses.general}`;
     });
@@ -260,9 +301,9 @@ export default defineComponent({
         '500': 'text-error-500',
         '403': 'text-warning-500',
         '401': 'text-warning-500',
-        'network': 'text-error-500',
-        'general': 'text-error-500',
-        'custom': 'text-gray-400'
+        network: 'text-error-500',
+        general: 'text-error-500',
+        custom: 'text-gray-400',
       };
       return typeClasses[errorType.value] || typeClasses.general;
     });
@@ -277,8 +318,8 @@ export default defineComponent({
       errorTitle,
       errorMessage,
       errorDetails,
-      errorActions
+      errorActions,
+      statusCode,
     };
-  }
+  },
 });
-

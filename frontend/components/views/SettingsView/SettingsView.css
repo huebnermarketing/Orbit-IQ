@@ -1,33 +1,71 @@
 /* Settings Navigation */
 .settings-nav-item {
-  @apply w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition-property: background-color;
+  transition-duration: 200ms;
 }
 
 .settings-nav-item-active {
-  @apply bg-primary-50 text-primary-600;
+  background-color: var(--color-primary-50);
+  color: var(--color-primary-600);
 }
 
 .settings-nav-item-inactive {
-  @apply text-primary-600 hover:bg-gray-50;
+  color: var(--color-primary-600);
+  transition-property: background-color;
+  transition-duration: 150ms;
+}
+
+.settings-nav-item-inactive:hover {
+  background-color: #f9fafb;
 }
 
 /* Button Styling */
 .btn {
-  @apply inline-flex items-center justify-center px-4 py-2 font-medium rounded-md transition-all duration-200;
-  @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition-property: all;
+  transition-duration: 200ms;
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5), 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
 
 .btn-outline {
-  @apply border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-gray-500;
+  border: 1px solid #d1d5db;
+  background-color: white;
+  color: #374151;
+  transition-property: background-color;
+  transition-duration: 150ms;
+}
+
+.btn-outline:hover {
+  background-color: #f9fafb;
+}
+
+.btn-outline:focus {
+  box-shadow: 0 0 0 2px rgba(107, 114, 128, 0.5), 0 0 0 4px rgba(107, 114, 128, 0.1);
 }
 
 /* Success/Error Messages */
 .bg-success-50 {
-  @apply animate-fade-in;
+  animation: fade-in 0.3s ease-out;
 }
 
 .bg-error-50 {
-  @apply animate-fade-in;
+  animation: fade-in 0.3s ease-out;
 }
 
 /* Loading Spinner */
@@ -62,201 +100,298 @@
 
 /* Toggle Switch Styling */
 .toggle-switch {
-  @apply relative inline-flex items-center cursor-pointer;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
 }
 
 /* Status Badges */
 .status-badge {
-  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .status-badge-success {
-  @apply bg-success-100 text-success-800;
+  background-color: var(--color-success-100);
+  color: var(--color-success-800);
 }
 
 .status-badge-primary {
-  @apply bg-primary-100 text-primary-800;
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-800);
 }
 
 .status-badge-gray {
-  @apply bg-gray-100 text-gray-800;
+  background-color: #f3f4f6;
+  color: #1f2937;
 }
 
 /* Profile Header */
 .profile-header {
-  @apply flex items-center space-x-6;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .profile-info {
-  @apply flex-1;
+  flex: 1 1 0%;
 }
 
 .profile-name {
-  @apply text-3xl font-bold text-text-primary;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
 }
 
 .profile-email {
-  @apply text-text-secondary text-lg;
+  color: var(--color-text-secondary);
+  font-size: 1.125rem;
 }
 
 .profile-badges {
-  @apply flex items-center space-x-4 mt-2;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
 }
 
 /* Tab Navigation */
 .tab-nav {
-  @apply space-y-2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .tab-button {
-  @apply w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-radius: 0.5rem;
+  transition-property: background-color;
+  transition-duration: 150ms;
 }
 
 .tab-button-active {
-  @apply bg-primary-50 text-primary-600 border-r-2 border-primary-500;
+  background-color: var(--color-primary-50);
+  color: var(--color-primary-600);
+  border-right: 2px solid var(--color-primary-500);
 }
 
 .tab-button-inactive {
-  @apply text-text-secondary hover:bg-surface-alt hover:text-text-primary;
+  color: var(--color-text-secondary);
+  transition-property: background-color, color;
+  transition-duration: 150ms;
+}
+
+.tab-button-inactive:hover {
+  background-color: var(--color-surface-alt);
+  color: var(--color-text-primary);
 }
 
 /* Form Sections */
 .form-section {
-  @apply space-y-6;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .form-title {
-  @apply text-lg font-semibold text-text-primary mb-4;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 1rem;
 }
 
 .form-grid {
-  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .form-field {
-  @apply space-y-2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .form-label {
-  @apply block text-sm font-medium text-text-primary;
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
 }
 
 .form-actions {
-  @apply flex justify-end;
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* MFA Status */
 .mfa-status {
-  @apply flex items-center justify-between mb-4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
 .mfa-info {
-  @apply flex-1;
+  flex: 1 1 0%;
 }
 
 .mfa-title {
-  @apply text-lg font-semibold text-text-primary;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 .mfa-description {
-  @apply text-text-secondary;
+  color: var(--color-text-secondary);
 }
 
 .mfa-actions {
-  @apply flex items-center space-x-3;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .mfa-status-badge {
-  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .mfa-status-enabled {
-  @apply bg-green-100 text-green-800;
+  background-color: #dcfce7;
+  color: #166534;
 }
 
 .mfa-status-disabled {
-  @apply bg-gray-100 text-gray-800;
+  background-color: #f3f4f6;
+  color: #1f2937;
 }
 
 .mfa-success-message {
-  @apply bg-green-50 border border-green-200 rounded-lg p-4;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+  padding: 1rem;
 }
 
 .mfa-success-content {
-  @apply flex;
+  display: flex;
 }
 
 .mfa-success-icon {
-  @apply w-5 h-5 text-green-400;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #4ade80;
 }
 
 .mfa-success-text {
-  @apply ml-3 text-sm text-green-800;
+  margin-left: 0.75rem;
+  font-size: 0.875rem;
+  color: #166534;
 }
 
 /* Notification Toggles */
 .notification-item {
-  @apply flex items-center justify-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .notification-info {
-  @apply flex-1;
+  flex: 1 1 0%;
 }
 
 .notification-title {
-  @apply text-sm font-medium text-text-primary;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
 }
 
 .notification-description {
-  @apply text-sm text-text-secondary;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
 }
 
 /* Theme Section */
 .theme-section {
-  @apply space-y-6;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .theme-title {
-  @apply text-lg font-semibold text-text-primary mb-4;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 1rem;
 }
 
 .theme-description {
-  @apply text-text-secondary mb-6;
+  color: var(--color-text-secondary);
+  margin-bottom: 1.5rem;
 }
 
 /* Responsive Design */
 @media (max-width: 1024px) {
   .lg\:col-span-2 {
-    @apply col-span-12 mb-6;
+    grid-column: span 12 / span 12;
+    margin-bottom: 1.5rem;
   }
 
   .lg\:col-span-10 {
-    @apply col-span-12;
+    grid-column: span 12 / span 12;
   }
 }
 
 @media (max-width: 768px) {
   .profile-header {
-    @apply flex-col space-x-0 space-y-4 text-center;
+    flex-direction: column;
+    gap: 0;
+    gap: 1rem;
+    text-align: center;
   }
 
   .profile-badges {
-    @apply justify-center;
+    justify-content: center;
   }
 
   .form-grid {
-    @apply grid-cols-1;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
   .mfa-status {
-    @apply flex-col space-y-4;
+    flex-direction: column;
+    gap: 1rem;
   }
 
   .mfa-actions {
-    @apply w-full justify-center;
+    width: 100%;
+    justify-content: center;
   }
 
   .notification-item {
-    @apply flex-col space-y-2 text-center;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
   }
 }
+

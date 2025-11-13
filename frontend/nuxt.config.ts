@@ -21,18 +21,10 @@ export default defineNuxtConfig({
   },
 
   // Modules
-  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
-
-  // TailwindCSS module configuration
-  tailwindcss: {
-    cssPath: '~/assets/css/main.css',
-    configPath: 'tailwind.config.ts',
-    exposeConfig: false,
-    viewer: true,
-  },
+  modules: ['@pinia/nuxt'],
 
   // CSS configuration
-  css: ['@fortawesome/fontawesome-free/css/all.css', 'quill/dist/quill.snow.css'],
+  css: ['~/assets/css/main.css', '@fortawesome/fontawesome-free/css/all.css', 'quill/dist/quill.snow.css'],
 
   // App configuration
   app: {
@@ -62,10 +54,10 @@ export default defineNuxtConfig({
 
   plugins: [{ src: '~/plugins/api.ts' }, { src: '~/plugins/auth.ts' }],
 
-  // PostCSS configuration (integrated from postcss.config.js)
+  // PostCSS configuration for Tailwind 4
   postcss: {
     plugins: {
-      tailwindcss: {},
+      '@tailwindcss/postcss': {},
       autoprefixer: {},
     },
   },

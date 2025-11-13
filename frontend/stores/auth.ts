@@ -11,7 +11,7 @@ export const useAuthStore = defineStore('auth', () => {
   const initialized = ref(false);
 
   // ✅ Derived state
-  const isAuthenticated = computed(() => !!token.value && !!user.value);
+  const isAuthenticated = computed(() => !!token.value);
 
   // ✅ Initialize session (called on app mount or layout)
   const initialize = async () => {

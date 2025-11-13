@@ -64,6 +64,7 @@ export default defineComponent({
     const statusFilter = ref('');
     const priorityFilter = ref('');
     const showColumnMenu = ref(false);
+    const showCreateModal = ref(false);
 
     // Table columns configuration
     const tableColumns = ref<TableColumn[]>([
@@ -188,8 +189,12 @@ export default defineComponent({
     };
 
     const handleCreateProject = () => {
-      // Navigate to create project page or open modal
-      navigateTo('/projects/create');
+      showCreateModal.value = true;
+    };
+
+    const handleProjectCreated = () => {
+      showCreateModal.value = false;
+      loadProjects(); // Reload projects list after creation
     };
 
     // Close column menu when clicking outside
@@ -217,6 +222,7 @@ export default defineComponent({
       statusFilter,
       priorityFilter,
       showColumnMenu,
+      showCreateModal,
       tableColumns,
       visibleColumns,
       filteredProjects,
@@ -227,6 +233,7 @@ export default defineComponent({
       getStatusClass,
       viewProject,
       handleCreateProject,
+      handleProjectCreated,
     };
   },
 });

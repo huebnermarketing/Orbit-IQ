@@ -11,37 +11,41 @@ useHead({
   meta: [
     {
       name: 'description',
-      content: 'A modern Nuxt 4 CSR application with TailwindCSS and TypeScript'
-    }
-  ]
-})
+      content: 'A modern Nuxt 4 CSR application with TailwindCSS and TypeScript',
+    },
+  ],
+});
 </script>
 <style scoped>
 #app {
-  @apply font-sans antialiased;
+  /* font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji'; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* Ensure smooth transitions */
 * {
-  @apply transition-colors duration-200;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: 200ms;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  @apply w-2;
+  width: 0.5rem;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-surface;
+  background-color: var(--color-surface);
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-border-medium rounded-full;
+  background-color: var(--color-border-medium);
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-border-dark;
+  background-color: var(--color-border-dark);
 }
 </style>

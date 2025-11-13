@@ -1,24 +1,28 @@
 <template>
-  <div class="error-display-container">
-    <div class="error-content">
-      <!-- Icon -->
-      <div class="error-icon-wrapper" :class="iconWrapperClass">
-        <component :is="iconComponent" :class="iconClass" />
+  <div class="flex items-center justify-center min-h-[60vh] py-12 px-4">
+    <div class="flex flex-col items-center gap-8">
+      <div class="card p-8">
+        <div class="text-center max-w-md w-full">
+          <!-- Icon -->
+          <div class="flex justify-center mb-6" :class="iconWrapperClass">
+            <component :is="iconComponent" class="w-24 h-24" :class="iconClass" />
+          </div>
+
+          <!-- Status Code -->
+          <div v-if="statusCode" class="text-6xl font-bold text-gray-900 mb-4">
+            {{ statusCode }}
+          </div>
+
+          <!-- Error Message -->
+          <p class="text-lg text-gray-600">{{ errorMessage }}</p>
+        </div>
       </div>
 
-      <!-- Title -->
-      <h1 class="error-title">{{ errorTitle }}</h1>
-
-      <!-- Message -->
-      <p class="error-description">{{ errorMessage }}</p>
-
-      <!-- Additional Details (optional) -->
-      <div v-if="errorDetails" class="error-details">
-        <p class="error-details-text">{{ errorDetails }}</p>
-      </div>
-
-      <!-- Actions -->
-      <div v-if="errorActions && errorActions.length > 0" class="error-actions">
+      <!-- Actions (outside card, below) -->
+      <div
+        v-if="errorActions && errorActions.length > 0"
+        class="flex flex-col sm:flex-row gap-4 justify-center"
+      >
         <template v-for="(action, index) in errorActions" :key="index">
           <NuxtLink
             v-if="action.type === 'link'"
@@ -39,22 +43,9 @@
           </button>
         </template>
       </div>
-
-      <!-- Default Actions if none provided -->
-      <div v-else class="error-actions">
-        <button @click="goBack" class="btn-secondary">
-          <i class="fas fa-undo mr-2"></i>
-          Go Back
-        </button>
-        <NuxtLink to="/dashboard" class="btn-primary">
-          <i class="fas fa-home mr-2"></i>
-          Go to Dashboard
-        </NuxtLink>
-      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" src="./ErrorDisplay.ts"></script>
 <style scoped src="./ErrorDisplay.css"></style>
-

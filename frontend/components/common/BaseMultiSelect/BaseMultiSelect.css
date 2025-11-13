@@ -1,0 +1,117 @@
+/* Long Tailwind class strings moved here */
+.base-multiselect-chevron {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-text-muted);
+  transition-property: transform;
+  transition-duration: 200ms;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.base-multiselect-chevron.rotate-180 {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.base-multiselect-tag-remove {
+  margin-left: 0.25rem;
+  color: #0d9488;
+  transition-property: color, background-color;
+  transition-duration: 150ms;
+  padding: 0;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  min-width: 1rem;
+  cursor: pointer;
+}
+
+.base-multiselect-tag-remove:hover {
+  color: #115e59;
+  background-color: #ccfbf1;
+}
+
+.base-multiselect-option {
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  text-align: left;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--color-text-primary);
+  transition-property: background-color;
+  transition-duration: 150ms;
+}
+
+.base-multiselect-option:hover {
+  background-color: var(--color-surface-alt);
+}
+
+.base-multiselect-option:focus {
+  outline: none;
+  background-color: var(--color-surface-alt);
+}
+
+.base-multiselect-option:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.base-multiselect-option:disabled:hover {
+  background-color: transparent;
+}
+
+.base-multiselect-dropdown-inner {
+  max-height: calc(15rem - 3.5rem);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-light) var(--color-surface-alt);
+}
+
+.base-multiselect-dropdown-inner::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.base-multiselect-dropdown-inner::-webkit-scrollbar-track {
+  background: var(--color-surface-alt);
+  border-radius: 3px;
+}
+
+.base-multiselect-dropdown-inner::-webkit-scrollbar-thumb {
+  background: var(--color-border-light);
+  border-radius: 3px;
+}
+
+.base-multiselect-dropdown-inner::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Dropdown Animation */
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition-property: all;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dropdown-enter-from {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+}
+
+.dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+}

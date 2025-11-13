@@ -1,0 +1,101 @@
+<template>
+  <div class="w-full" :class="wrapperClass" ref="wrapperRef">
+    <div class="relative w-full" :class="{ 'opacity-60 cursor-not-allowed': disabled }">
+      <button
+        :id="id"
+        type="button"
+        :disabled="disabled"
+        :class="[selectClass, disabled ? 'bg-surface-alt cursor-not-allowed opacity-60' : '']"
+        @click="toggleDropdown"
+        @blur="handleBlur"
+        @focus="handleFocus"
+        @keydown="handleKeydown"
+      >
+        <div class="flex-1 text-left flex items-center flex-wrap gap-1 min-h-[1.5rem] py-0.5">
+          <div v-if="selectedOptions.length === 0" class="text-text-placeholder">
+            {{ placeholder }}
+          </div>
+          <div v-else class="flex items-center flex-wrap gap-1 w-full">
+            <template v-for="value in modelValue" :key="`tag-${value}`">
+              <span
+                v-if="getOptionByValue(value)"
+                class="inline-flex items-center px-2 py-0.5 bg-teal-100 text-teal-700 text-xs rounded-full flex-shrink-0 my-0.5 max-w-full"
+                @click.stop
+              >
+                {{ getOptionLabel(getOptionByValue(value)) }}
+                <button
+                  type="button"
+                  class="base-multiselect-tag-remove"
+                  @click.stop="removeOptionByValue(value)"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+              </span>
+            </template>
+          </div>
+        </div>
+        <div class="base-multiselect-chevron" :class="{ 'rotate-180': isOpen }">
+          <i class="fas fa-chevron-down"></i>
+        </div>
+      </button>
+      <Transition name="dropdown">
+        <div
+          v-if="isOpen"
+          class="absolute z-[100] w-full mt-1 bg-surface border border-border-light rounded-lg shadow-lg max-h-60 flex flex-col top-full left-0"
+        >
+          <div
+            v-if="searchable"
+            class="relative flex items-center px-3 py-2 border-b border-border-light"
+          >
+            <div class="absolute left-3 text-text-muted pointer-events-none">
+              <i class="fas fa-search"></i>
+            </div>
+            <input
+              ref="searchInputRef"
+              v-model="searchQuery"
+              type="text"
+              class="w-full pl-9 pr-8 py-2 text-sm bg-surface border-0 outline-none text-text-primary placeholder-text-placeholder focus:outline-none"
+              placeholder="Search..."
+              @click.stop
+              @keydown.stop
+            />
+            <button
+              v-if="searchQuery"
+              type="button"
+              class="absolute right-3 text-text-muted hover:text-text-primary transition-colors duration-150 p-1"
+              @click.stop="clearSearch"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="base-multiselect-dropdown-inner py-1 overflow-auto">
+            <div
+              v-if="searchable && searchQuery && filteredOptions.length === 0"
+              class="px-4 py-3 text-sm text-text-muted text-center"
+            >
+              No results found
+            </div>
+            <button
+              v-for="(option, index) in filteredOptions"
+              :key="`option-${getOptionValue(option)}-${index}`"
+              type="button"
+              class="base-multiselect-option"
+              :class="{
+                'bg-surface-alt font-medium': isOptionSelected(option),
+              }"
+              :disabled="isOptionDisabled(option)"
+              @click="toggleOption(option)"
+            >
+              {{ getOptionLabel(option) }}
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </div>
+    <p v-if="errorMessage" class="mt-1.5 text-sm text-error-500">{{ errorMessage }}</p>
+    <p v-if="hint && !errorMessage" class="mt-1.5 text-sm text-text-muted">{{ hint }}</p>
+  </div>
+</template>
+
+<script lang="ts" src="./BaseMultiSelect.ts"></script>
+<style scoped src="./BaseMultiSelect.css"></style>

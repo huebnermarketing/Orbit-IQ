@@ -50,29 +50,29 @@
           <p class="text-text-secondary text-lg">{{ user?.email || 'Loading...' }}</p>
           <div class="flex items-center space-x-4 mt-2">
             <span
-              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800"
+              class="inline-flex items-center justify-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800 leading-none"
             >
-              <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fill-rule="evenodd"
                   d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                   clip-rule="evenodd"
                 ></path>
               </svg>
-              Active
+              <span class="leading-none">Active</span>
             </span>
             <span
               v-if="mfaStatus?.enabled"
-              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
+              class="inline-flex items-center justify-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 leading-none"
             >
-              <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fill-rule="evenodd"
                   d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
                   clip-rule="evenodd"
                 ></path>
               </svg>
-              MFA Enabled
+              <span class="leading-none">MFA Enabled</span>
             </span>
           </div>
         </div>

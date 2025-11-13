@@ -261,6 +261,13 @@
         </table>
       </div>
     </div>
+
+    <!-- Create Project Modal -->
+    <CreateProjectModal
+      :show="showCreateModal"
+      @close="showCreateModal = false"
+      @saved="handleProjectCreated"
+    />
   </div>
 </template>
 

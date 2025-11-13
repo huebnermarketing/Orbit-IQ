@@ -9,10 +9,10 @@ export const userApi = {
 
   uploadAvatar: (formData: FormData) =>
     useApiFetch('/admin/users/upload-avatar', { method: 'POST', body: formData }),
-  getActiveUsers: () => useApiFetch('/api/users/active'),
+  getActiveUsers: () => useApiFetch('/users/active'),
   updateUserGroup: (id: number, data: any) =>
     useApiFetch(`/admin/user-groups/${id}`, { method: 'PUT', body: data }),
   createUserGroup: (data: any) => useApiFetch(`/admin/user-groups`, { method: 'POST', body: data }),
-  getAMUsers: () => useApiFetch('/api/users/am'),
-  getPMUsers: () => useApiFetch('/api/users/pm'),
+  getAMUsers: () => useApiFetch('/admin/users/am-users'),
+  getPMUsers: () => useApiFetch('/admin/users/pm-users'),
 };

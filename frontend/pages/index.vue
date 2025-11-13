@@ -1,9 +1,9 @@
 <template>
-  <Dashboard />
+  <div></div>
 </template>
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'auth'
-})
+  middleware: 'root',
+});
 </script>
