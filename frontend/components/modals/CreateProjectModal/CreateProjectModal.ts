@@ -89,18 +89,12 @@ export default defineComponent({
   emits: ['close', 'saved'],
   setup(props, { emit }) {
     const loading = ref(false);
-    const {
-      error,
-      getFieldError,
-      clearFieldError,
-      handleApiError,
-      handleSubmitWithValidation,
-      rules,
-    } = useFormValidation({
-      defaultErrorMessage: 'Failed to save project. Please try again.',
-      errorStrategy: 'field', // Use field strategy to show errors per field
-      clearOnSubmit: false, // Don't clear on submit, let validation handle it
-    });
+    const { error, getFieldError, clearFieldError, handleSubmitWithValidation, rules } =
+      useFormValidation({
+        defaultErrorMessage: 'Failed to save project. Please try again.',
+        errorStrategy: 'field', // Use field strategy to show errors per field
+        clearOnSubmit: false, // Don't clear on submit, let validation handle it
+      });
 
     // Tooltip configuration for Project Number
     const tooltipConfig = {
@@ -634,57 +628,67 @@ export default defineComponent({
     };
 
     const handleSubmit = async () => {
-      loading.value = true;
+      // Define validation rules for required fields
+      const validationRules = {
+        name: [rules.required('Project name is required')],
+        project_number: [
+          rules.required('Project number is required'),
+          rules.exactLength(6, 'Project number must be exactly 6 digits'),
+          rules.numeric('Project number must contain only numbers'),
+        ],
+        client_id: [rules.required('Client is required')],
+        funding_source: [rules.required('Funding source is required')],
+        hour_type: [rules.required('Hour type is required')],
+        am_id: [rules.required('Account Manager is required')],
+      };
+
       try {
-        // Define validation rules for required fields
-        const validationRules = {
-          name: [rules.required('Project name is required')],
-          project_number: [
-            rules.required('Project number is required'),
-            rules.exactLength(6, 'Project number must be exactly 6 digits'),
-            rules.numeric('Project number must contain only numbers'),
-          ],
-          client_id: [rules.required('Client is required')],
-          funding_source: [rules.required('Funding source is required')],
-          hour_type: [rules.required('Hour type is required')],
-          am_id: [rules.required('Account Manager is required')],
-        };
-
-        // Validate and submit
+        // Validate first - this will throw if validation fails
         await handleSubmitWithValidation(form, validationRules, async () => {
-          console.log('Submitting project data:', form);
+          // This callback only runs if validation passes
+          loading.value = true;
 
-          const projectData = {
-            ...form,
-            sub_client_id: form.sub_client_id || null,
-            am_id: form.am_id || null,
-            pm_id: form.pm_id || null,
-            project_type_id: form.project_type_id || null,
-            project_status_id: form.project_status_id || null,
-            start_date: form.start_date || null,
-            due_date: form.due_date || null,
-          };
+          try {
+            console.log('Submitting project data:', form);
 
-          let response;
-          if (props.isEdit && props.project) {
-            const project = props.project as any;
-            response = await projectApi.updateProject(String(project.id), projectData);
-          } else {
-            response = await projectApi.createProject(projectData);
+            const projectData = {
+              ...form,
+              sub_client_id: form.sub_client_id || null,
+              am_id: form.am_id || null,
+              pm_id: form.pm_id || null,
+              project_type_id: form.project_type_id || null,
+              project_status_id: form.project_status_id || null,
+              start_date: form.start_date || null,
+              due_date: form.due_date || null,
+            };
+
+            let response;
+            if (props.isEdit && props.project) {
+              const project = props.project as any;
+              response = await projectApi.updateProject(String(project.id), projectData);
+            } else {
+              response = await projectApi.createProject(projectData);
+            }
+
+            console.log('Project saved successfully:', response);
+            emit('saved', (response as any)?.project || response);
+            emit('close');
+          } catch (apiErr: any) {
+            console.error('Failed to save project:', apiErr);
+            $toast.error('Failed to save project. Please try again.');
+          } finally {
+            loading.value = false;
           }
-
-          console.log('Project saved successfully:', response);
-          emit('saved', (response as any)?.project || response);
-          emit('close');
         });
       } catch (err: any) {
-        console.error('Failed to save project:', err);
-        // Only handle API errors, validation errors are already handled
-        if (err.message !== 'Validation failed') {
-          handleApiError(err);
+        // Validation failed - don't call API, just handle the validation error
+        if (err.message === 'Validation failed') {
+          console.log('Validation failed, API call prevented');
+          // Validation errors are already set by handleSubmitWithValidation
+          return;
         }
-      } finally {
-        loading.value = false;
+        // Handle any other unexpected errors
+        console.error('Unexpected error:', err);
       }
     };
 

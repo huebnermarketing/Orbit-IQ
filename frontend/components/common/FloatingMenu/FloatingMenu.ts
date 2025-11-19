@@ -1,4 +1,4 @@
-import { defineComponent, ref, onMounted, onBeforeUnmount, watch } from 'vue';
+import { defineComponent, ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useFloatingPosition } from '~/composables/useFloatingPosition';
 
 export interface FloatingMenuProps {
@@ -19,6 +19,11 @@ export interface FloatingMenuProps {
   trigger?: 'click' | 'hover';
   closeOnClickOutside?: boolean;
   shown?: boolean;
+  width?: string | number;
+  minWidth?: string | number;
+  maxWidth?: string | number;
+  maxHeight?: string | number;
+  shiftPadding?: number;
 }
 
 export default defineComponent({
@@ -44,6 +49,26 @@ export default defineComponent({
       type: Boolean,
       default: undefined,
     },
+    width: {
+      type: [String, Number],
+      default: undefined,
+    },
+    minWidth: {
+      type: [String, Number],
+      default: 200,
+    },
+    maxWidth: {
+      type: [String, Number],
+      default: 320,
+    },
+    maxHeight: {
+      type: [String, Number],
+      default: undefined,
+    },
+    shiftPadding: {
+      type: Number,
+      default: 16,
+    },
   },
   emits: ['open', 'close', 'update:shown'],
   setup(props: FloatingMenuProps, { emit }) {
@@ -55,8 +80,8 @@ export default defineComponent({
     const { floatingStyles } = useFloatingPosition(triggerRef, floatingRef, {
       placement: props.placement as any,
       offset: props.offset,
-      shiftPadding: 8,
-      autoSize: true,
+      shiftPadding: props.shiftPadding,
+      autoSize: false,
       flip: true,
       shift: true,
     });
@@ -129,11 +154,40 @@ export default defineComponent({
       }
     });
 
+    const menuStyle = computed(() => {
+      const style: Record<string, string> = {};
+      if (props.width) {
+        style.width = typeof props.width === 'number' ? `${props.width}px` : props.width;
+      }
+      if (props.minWidth) {
+        style.minWidth =
+          typeof props.minWidth === 'number' ? `${props.minWidth}px` : props.minWidth;
+      }
+      if (props.maxWidth) {
+        // Ensure maxWidth doesn't exceed viewport
+        const maxWidthValue =
+          typeof props.maxWidth === 'number' ? props.maxWidth : parseInt(props.maxWidth);
+        const padding = (props.shiftPadding || 16) * 2;
+        style.maxWidth = `min(${maxWidthValue}px, calc(100vw - ${padding}px))`;
+      }
+      if (props.maxHeight) {
+        // Ensure maxHeight doesn't exceed viewport
+        const maxHeightValue =
+          typeof props.maxHeight === 'number' ? props.maxHeight : parseInt(props.maxHeight);
+        const padding = (props.shiftPadding || 16) * 2;
+        // Set height to maxHeight to enable scrolling, CSS will constrain to viewport
+        style.height = `${maxHeightValue}px`;
+        style.maxHeight = `min(${maxHeightValue}px, calc(100vh - ${padding}px))`;
+      }
+      return style;
+    });
+
     return {
       isOpen,
       triggerRef,
       floatingRef,
       floatingStyles,
+      menuStyle,
       toggleMenu,
       closeMenu,
     };

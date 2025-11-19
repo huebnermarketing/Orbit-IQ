@@ -22,7 +22,7 @@
             :disabled="saving"
             class="px-3 py-1 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <i v-if="saving" class="fas fa-spinner fa-spin mr-1"></i>
+            <div v-if="saving" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-1 inline-block"></div>
             Save
           </button>
           <button

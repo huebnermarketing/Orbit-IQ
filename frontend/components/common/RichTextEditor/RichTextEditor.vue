@@ -4,7 +4,7 @@
     <div v-if="isLoading" class="rich-text-editor-loading" :style="{ minHeight }">
       <div class="text-center">
         <div
-          class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"
+          class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-2"
         ></div>
         <p class="text-gray-600">Loading editor...</p>
       </div>

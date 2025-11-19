@@ -31,22 +31,20 @@
           </div>
         </div>
         <div class="w-48">
-          <select v-model="statusFilter" class="input">
-            <option value="">All Status</option>
-            <option value="planning">Planning</option>
-            <option value="active">Active</option>
-            <option value="on-hold">On Hold</option>
-            <option value="completed">Completed</option>
-          </select>
+          <BaseSelect
+            v-model="statusFilter"
+            :options="statusOptions"
+            placeholder="All Status"
+            wrapper-class="w-full"
+          />
         </div>
         <div class="w-48">
-          <select v-model="priorityFilter" class="input">
-            <option value="">All Priority</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-            <option value="urgent">Urgent</option>
-          </select>
+          <BaseSelect
+            v-model="priorityFilter"
+            :options="priorityOptions"
+            placeholder="All Priority"
+            wrapper-class="w-full"
+          />
         </div>
       </div>
     </div>
@@ -79,41 +77,46 @@
       <div class="px-6 py-4 border-b border-border-light bg-surface-alt">
         <div class="flex items-center justify-between">
           <h3 class="text-lg font-semibold text-text-primary">Projects</h3>
-          <div class="relative">
-            <button
-              @click="showColumnMenu = !showColumnMenu"
-              class="p-2 text-text-muted hover:text-text-primary transition-colors"
-              title="Show/Hide Columns"
-            >
-              <i class="fas fa-ellipsis-v"></i>
-            </button>
-
-            <!-- Column Visibility Menu -->
-            <div
-              v-if="showColumnMenu"
-              class="absolute right-0 mt-2 w-48 bg-surface border border-border-light rounded-lg shadow-lg z-10"
-            >
-              <div class="p-2">
-                <div class="text-xs font-medium text-text-secondary mb-2 px-2">
+          <FloatingMenu
+            v-model:shown="showColumnMenu"
+            placement="bottom-end"
+            :offset="16"
+            :shift-padding="16"
+            :width="280"
+            :min-width="200"
+            :max-width="320"
+            :max-height="400"
+          >
+            <template #trigger="{ isOpen }">
+              <button
+                class="p-2 text-text-muted hover:text-text-primary transition-colors"
+                title="Show/Hide Columns"
+              >
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+            </template>
+            <template #content="{ close }">
+              <div class="flex flex-col h-full">
+                <div
+                  class="text-xs font-semibold text-text-secondary uppercase tracking-wide py-3 px-4 leading-tight flex-shrink-0 border-b border-border-light"
+                >
                   Show/Hide Columns
                 </div>
-                <div class="space-y-1">
+                <div class="space-y-0 floating-menu-scrollable flex-1 min-h-0 overflow-y-auto">
                   <label
                     v-for="column in tableColumns"
                     :key="column.key"
-                    class="flex items-center px-2 py-1 hover:bg-surface-alt rounded cursor-pointer"
+                    class="flex items-center px-4 py-2.5 hover:bg-surface-alt cursor-pointer transition-colors"
                   >
-                    <input
-                      v-model="column.visible"
-                      type="checkbox"
-                      class="mr-2 rounded border-border-light text-primary-600 focus:ring-primary-500"
-                    />
-                    <span class="text-sm text-text-primary">{{ column.label }}</span>
+                    <input v-model="column.visible" type="checkbox" class="mr-3 flex-shrink-0" />
+                    <span class="text-sm text-text-primary whitespace-nowrap">{{
+                      column.label
+                    }}</span>
                   </label>
                 </div>
               </div>
-            </div>
-          </div>
+            </template>
+          </FloatingMenu>
         </div>
       </div>
 

@@ -56,7 +56,14 @@ export const useFloatingPosition = (
 
   // Add shift middleware
   if (enableShift) {
-    middleware.push(shift({ padding: shiftPadding, boundary }));
+    middleware.push(
+      shift({
+        padding: shiftPadding,
+        boundary: boundary || 'viewport',
+        // Enable cross-axis shifting to ensure spacing on all sides
+        crossAxis: true,
+      })
+    );
   }
 
   // Add size middleware for auto-sizing

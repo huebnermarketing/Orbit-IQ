@@ -1,4 +1,4 @@
-import { defineComponent, ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { defineComponent, ref, computed, onMounted } from 'vue';
 
 // Types
 interface User {
@@ -65,6 +65,21 @@ export default defineComponent({
     const priorityFilter = ref('');
     const showColumnMenu = ref(false);
     const showCreateModal = ref(false);
+
+    // Filter options
+    const statusOptions = [
+      { label: 'Planning', value: 'planning' },
+      { label: 'Active', value: 'active' },
+      { label: 'On Hold', value: 'on-hold' },
+      { label: 'Completed', value: 'completed' },
+    ];
+
+    const priorityOptions = [
+      { label: 'Low', value: 'low' },
+      { label: 'Medium', value: 'medium' },
+      { label: 'High', value: 'high' },
+      { label: 'Urgent', value: 'urgent' },
+    ];
 
     // Table columns configuration
     const tableColumns = ref<TableColumn[]>([
@@ -197,22 +212,9 @@ export default defineComponent({
       loadProjects(); // Reload projects list after creation
     };
 
-    // Close column menu when clicking outside
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (!target.closest('.relative')) {
-        showColumnMenu.value = false;
-      }
-    };
-
     // Lifecycle
     onMounted(() => {
       loadProjects();
-      document.addEventListener('click', handleClickOutside);
-    });
-
-    onBeforeUnmount(() => {
-      document.removeEventListener('click', handleClickOutside);
     });
 
     return {
@@ -221,6 +223,8 @@ export default defineComponent({
       searchQuery,
       statusFilter,
       priorityFilter,
+      statusOptions,
+      priorityOptions,
       showColumnMenu,
       showCreateModal,
       tableColumns,

@@ -17,7 +17,86 @@
 }
 
 .floating-menu {
-  min-width: 120px;
-  max-width: 300px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Ensure menu doesn't touch browser edges - these are handled by shift middleware */
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+  /* Ensure menu content can scroll */
+  min-height: 0;
 }
 
+/* Custom scrollbar for menu content */
+.floating-menu .overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-light) var(--color-surface-alt);
+  /* Always show scrollbar when content overflows */
+  overflow-y: auto !important;
+}
+
+.floating-menu .overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+  display: block;
+}
+
+.floating-menu .overflow-y-auto::-webkit-scrollbar-track {
+  background: var(--color-surface-alt);
+  border-radius: 4px;
+}
+
+.floating-menu .overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-light);
+  border-radius: 4px;
+  border: 2px solid var(--color-surface-alt);
+}
+
+.floating-menu .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-muted);
+}
+
+/* Custom checkbox styling for better appearance */
+.floating-menu input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border: 1.5px solid var(--color-border-light);
+  border-radius: 0.25rem;
+  background-color: var(--color-surface);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease-in-out;
+  flex-shrink: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+
+.floating-menu input[type='checkbox']:checked {
+  background-color: var(--color-primary-600);
+  border-color: var(--color-primary-600);
+}
+
+.floating-menu input[type='checkbox']:checked::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+}
+
+.floating-menu input[type='checkbox']:hover {
+  border-color: var(--color-primary-500);
+}
+
+.floating-menu input[type='checkbox']:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary-500);
+}

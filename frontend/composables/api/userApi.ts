@@ -13,6 +13,8 @@ export const userApi = {
   updateUserGroup: (id: number, data: any) =>
     useApiFetch(`/admin/user-groups/${id}`, { method: 'PUT', body: data }),
   createUserGroup: (data: any) => useApiFetch(`/admin/user-groups`, { method: 'POST', body: data }),
+  getUserGroups: () => useApiFetch('/admin/user-groups'),
+  deleteUserGroup: (id: number) => useApiFetch(`/admin/user-groups/${id}`, { method: 'DELETE' }),
   getAMUsers: () => useApiFetch('/admin/users/am-users'),
   getPMUsers: () => useApiFetch('/admin/users/pm-users'),
 };

@@ -1,31 +1,37 @@
 <template>
-  <div v-if="show" class="fixed inset-0 z-50 overflow-y-auto">
-    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-      <!-- Background overlay -->
-      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="$emit('close')"></div>
+  <Teleport to="body">
+    <div v-if="show" class="client-modal-overlay" @click.self="$emit('close')">
+      <div class="client-modal-panel">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-6 border-b border-border-light">
+          <h3 class="text-2xl font-bold text-text-primary">
+            {{ isEdit ? 'Edit Client' : 'Add New Client' }}
+          </h3>
+          <button
+            type="button"
+            @click="$emit('close')"
+            class="text-text-muted hover:text-text-primary transition-colors"
+          >
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
 
-      <!-- Modal panel -->
-      <div class="inline-block align-bottom bg-surface rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
-        <div class="bg-surface px-6 pt-6 pb-4">
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="text-2xl font-bold text-text-primary">
-              {{ isEdit ? 'Edit Client' : 'Add New Client' }}
-            </h3>
-            <button
-              @click="$emit('close')"
-              class="text-text-muted hover:text-text-primary transition-colors"
-            >
-              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
-
+        <!-- Content -->
+        <div class="client-modal-content">
           <form @submit.prevent="handleSubmit" class="space-y-4">
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <!-- Company Name -->
               <div class="sm:col-span-2">
-                <label class="block text-sm font-medium text-text-primary mb-2">Company Name *</label>
+                <label class="block text-sm font-medium text-text-primary mb-2"
+                  >Company Name *</label
+                >
                 <input
                   v-model="form.company_name"
                   type="text"
@@ -71,12 +77,10 @@
 
               <!-- Client Type -->
               <div>
-                <label class="block text-sm font-medium text-text-primary mb-2">Client Type *</label>
-                <select
-                  v-model="form.client_type"
-                  class="input"
-                  required
+                <label class="block text-sm font-medium text-text-primary mb-2"
+                  >Client Type *</label
                 >
+                <select v-model="form.client_type" class="input" required>
                   <option value="">Select Type</option>
                   <option value="Agency">Agency</option>
                   <option value="Direct Client">Direct Client</option>
@@ -85,12 +89,13 @@
 
               <!-- Primary Account Manager -->
               <div>
-                <label class="block text-sm font-medium text-text-primary mb-2">Primary Account Manager</label>
-                <select
-                  v-model="form.primary_account_manager_id"
-                  class="input"
+                <label class="block text-sm font-medium text-text-primary mb-2"
+                  >Primary Account Manager</label
                 >
-                  <option value="">Select Primary AM ({{ accountManagers.length }} available)</option>
+                <select v-model="form.primary_account_manager_id" class="input">
+                  <option value="">
+                    Select Primary AM ({{ accountManagers.length }} available)
+                  </option>
                   <option v-for="manager in accountManagers" :key="manager.id" :value="manager.id">
                     {{ manager.name }} ({{ manager.email }})
                   </option>
@@ -99,8 +104,10 @@
 
               <!-- Secondary Account Managers -->
               <div class="sm:col-span-2">
-                <label class="block text-sm font-medium text-text-primary mb-2">Secondary Account Managers</label>
-                
+                <label class="block text-sm font-medium text-text-primary mb-2"
+                  >Secondary Account Managers</label
+                >
+
                 <!-- Search Input -->
                 <div class="mb-3">
                   <input
@@ -126,7 +133,12 @@
                         class="ml-2 text-primary-600 hover:text-primary-800"
                       >
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          ></path>
                         </svg>
                       </button>
                     </span>
@@ -138,7 +150,10 @@
 
                 <!-- Available Managers List -->
                 <div class="max-h-32 overflow-y-auto border border-gray-300 rounded-md">
-                  <div v-if="filteredManagers.length === 0" class="px-3 py-2 text-sm text-text-muted">
+                  <div
+                    v-if="filteredManagers.length === 0"
+                    class="px-3 py-2 text-sm text-text-muted"
+                  >
                     No account managers available ({{ accountManagers.length }} total)
                   </div>
                   <div
@@ -154,7 +169,11 @@
                       </div>
                       <div v-if="isManagerSelected(manager.id)" class="text-primary-600">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                          <path
+                            fill-rule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clip-rule="evenodd"
+                          ></path>
                         </svg>
                       </div>
                     </div>
@@ -188,29 +207,176 @@
                 </div>
               </div>
             </div>
-
-            <!-- Actions -->
-            <div class="flex justify-end space-x-3 pt-4">
-              <button
-                type="button"
-                @click="$emit('close')"
-                class="btn-outline"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                :disabled="loading"
-                class="btn-primary"
-              >
-                {{ loading ? 'Saving...' : (isEdit ? 'Update Client' : 'Create Client') }}
-              </button>
-            </div>
           </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex items-center justify-end space-x-3 p-6 border-t border-border-light">
+          <button type="button" @click="$emit('close')" class="btn-outline">Cancel</button>
+          <button type="button" @click="handleSubmit" :disabled="loading" class="btn-primary">
+            {{ loading ? 'Saving...' : isEdit ? 'Update Client' : 'Create Client' }}
+          </button>
         </div>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
-<script  lang="ts" src="./ClientModal.ts"></script>
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue';
+import { clientApi } from '@/composables/api/clientApi';
+
+interface Props {
+  show: boolean;
+  client?: any;
+  isEdit?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  show: false,
+  client: null,
+  isEdit: false,
+});
+
+const emit = defineEmits<{
+  close: [];
+  saved: [];
+}>();
+
+interface Manager {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const loading = ref(false);
+const accountManagers = ref<Manager[]>([]);
+const managerSearchQuery = ref('');
+const selectedManagers = ref<Manager[]>([]);
+
+const form = ref({
+  company_name: '',
+  email: '',
+  phone: '',
+  website: '',
+  address: '',
+  primary_account_manager_id: '',
+  secondary_account_manager_ids: [] as number[],
+  client_type: '',
+  is_active: true,
+});
+
+const filteredManagers = computed(() => {
+  if (!managerSearchQuery.value) return accountManagers.value;
+
+  const query = managerSearchQuery.value.toLowerCase();
+  return accountManagers.value.filter(
+    (manager) =>
+      manager.name.toLowerCase().includes(query) || manager.email.toLowerCase().includes(query)
+  );
+});
+
+const isManagerSelected = (managerId: number) => {
+  return selectedManagers.value.some((manager) => manager.id === managerId);
+};
+
+const toggleManager = (manager: Manager) => {
+  if (isManagerSelected(manager.id)) {
+    removeManager(manager.id);
+  } else {
+    selectedManagers.value.push(manager);
+  }
+};
+
+const removeManager = (managerId: number) => {
+  selectedManagers.value = selectedManagers.value.filter((manager) => manager.id !== managerId);
+};
+
+const loadAccountManagers = async () => {
+  try {
+    const response = await clientApi.getAccountManagers();
+    accountManagers.value = response || [];
+  } catch (error) {
+    console.error('Failed to load account managers:', error);
+  }
+};
+
+const initializeForm = () => {
+  if (props.client && props.isEdit) {
+    form.value = {
+      company_name: props.client.company_name || '',
+      email: props.client.email || '',
+      phone: props.client.phone || '',
+      website: props.client.website || '',
+      address: props.client.address || '',
+      primary_account_manager_id: props.client.primary_account_manager_id || '',
+      secondary_account_manager_ids: props.client.secondary_account_manager_ids || [],
+      client_type: props.client.client_type || '',
+      is_active: props.client.is_active !== false,
+    };
+
+    // Set selected managers for display
+    selectedManagers.value = props.client.secondary_account_managers || [];
+  } else {
+    form.value = {
+      company_name: '',
+      email: '',
+      phone: '',
+      website: '',
+      address: '',
+      primary_account_manager_id: '',
+      secondary_account_manager_ids: [],
+      client_type: '',
+      is_active: true,
+    };
+    selectedManagers.value = [];
+  }
+  managerSearchQuery.value = '';
+};
+
+const handleSubmit = async () => {
+  loading.value = true;
+
+  try {
+    // Update form with selected managers
+    form.value.secondary_account_manager_ids = selectedManagers.value.map((manager) => manager.id);
+
+    if (props.isEdit && props.client) {
+      await clientApi.updateClient(props.client.id.toString(), form.value);
+    } else {
+      await clientApi.createClient(form.value);
+    }
+
+    emit('saved');
+  } catch (error) {
+    console.error('Failed to save client:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+watch(
+  () => props.client,
+  () => {
+    initializeForm();
+  },
+  { immediate: true, deep: true }
+);
+
+watch(
+  () => props.show,
+  async (newValue) => {
+    if (newValue) {
+      await loadAccountManagers();
+      // Initialize form after account managers are loaded
+      initializeForm();
+    }
+  }
+);
+
+onMounted(() => {
+  loadAccountManagers();
+});
+</script>
+
+<style scoped src="./ClientModal.css"></style>

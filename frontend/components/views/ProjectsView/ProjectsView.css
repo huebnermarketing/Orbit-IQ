@@ -40,24 +40,13 @@ td {
 }
 
 /* Status Badges */
-.inline-flex[class*="bg-"] {
+.inline-flex[class*='bg-'] {
   display: inline-flex;
   align-items: center;
   padding: 0.125rem 0.625rem;
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 500;
-}
-
-/* Avatar Styles */
-.h-8.w-8.rounded-full {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 9999px;
-  background: linear-gradient(to bottom right, var(--color-primary-500), var(--color-secondary-500));
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .h-8.w-8.rounded-full span {
@@ -120,7 +109,7 @@ td {
     margin-left: -1.5rem;
     margin-right: -1.5rem;
   }
-  
+
   table {
     min-width: max-content;
   }

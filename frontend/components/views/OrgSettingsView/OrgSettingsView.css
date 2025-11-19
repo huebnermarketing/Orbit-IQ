@@ -8,6 +8,20 @@
   transform: scale(1.05);
 }
 
+.org-nav-active {
+  background-color: var(--color-primary-100, rgb(219 234 254));
+  color: var(--color-primary-800, rgb(30 64 175));
+  font-weight: 500;
+}
+
+.org-nav-inactive {
+  color: var(--color-text-secondary, rgb(107 114 128));
+}
+
+.org-nav-inactive:hover {
+  background-color: var(--color-surface-alt, rgb(249 250 251));
+}
+
 /* Active Tab Styling */
 .bg-primary-100.text-primary-800 {
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
