@@ -5,11 +5,16 @@
         :id="id"
         type="button"
         :disabled="disabled"
-        :class="[selectClass, disabled ? 'bg-surface-alt cursor-not-allowed opacity-60' : '']"
+        :class="[
+          selectClass,
+          disabled ? 'bg-surface-alt cursor-not-allowed opacity-60' : '',
+          isOpen ? 'border-primary-500 ring-2 ring-primary-500' : '',
+        ]"
         @click="toggleDropdown"
         @blur="handleBlur"
         @focus="handleFocus"
         @keydown="handleKeydown"
+        ref="triggerRef"
       >
         <div class="flex-1 text-left flex items-center flex-wrap gap-1 min-h-[1.5rem] py-0.5">
           <div v-if="selectedOptions.length === 0" class="text-text-placeholder">
@@ -19,7 +24,7 @@
             <template v-for="value in modelValue" :key="`tag-${value}`">
               <span
                 v-if="getOptionByValue(value)"
-                class="inline-flex items-center px-2 py-0.5 bg-teal-100 text-teal-700 text-xs rounded-full flex-shrink-0 my-0.5 max-w-full"
+                class="base-multiselect-tag inline-flex items-center px-2 py-0.5 text-xs rounded-full flex-shrink-0 my-0.5 max-w-full"
                 @click.stop
               >
                 {{ getOptionLabel(getOptionByValue(value)) }}
@@ -34,14 +39,18 @@
             </template>
           </div>
         </div>
-        <div class="base-multiselect-chevron" :class="{ 'rotate-180': isOpen }">
-          <i class="fas fa-chevron-down"></i>
+        <div class="base-multiselect-chevron-wrapper">
+          <div class="base-multiselect-chevron" :class="{ 'is-open': isOpen }">
+            <i class="fas fa-chevron-down"></i>
+          </div>
         </div>
       </button>
       <Transition name="dropdown">
         <div
           v-if="isOpen"
-          class="absolute z-[100] w-full mt-1 bg-surface border border-border-light rounded-lg shadow-lg max-h-60 flex flex-col top-full left-0"
+          ref="dropdownRef"
+          :style="floatingStyles"
+          class="absolute z-[100] bg-surface border border-border-light rounded-lg shadow-lg max-h-60 flex flex-col"
         >
           <div
             v-if="searchable"
@@ -70,10 +79,10 @@
           </div>
           <div class="base-multiselect-dropdown-inner py-1 overflow-auto">
             <div
-              v-if="searchable && searchQuery && filteredOptions.length === 0"
+              v-if="filteredOptions.length === 0"
               class="px-4 py-3 text-sm text-text-muted text-center"
             >
-              No results found
+              No results...
             </div>
             <button
               v-for="(option, index) in filteredOptions"

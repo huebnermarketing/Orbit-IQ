@@ -1,0 +1,112 @@
+.rich-text-editor-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.rich-text-editor-loading {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+}
+
+.rich-text-editor-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.rich-text-editor-container :deep(.ql-container) {
+  font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', 'Roboto',
+    'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.rich-text-editor-container :deep(.ql-editor) {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.rich-text-editor-container :deep(.ql-toolbar) {
+  display: flex;
+  visibility: visible;
+  opacity: 1;
+  border-top: 1px solid #e5e7eb;
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  border-bottom: none;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  background-color: #fff;
+  padding: 8px;
+}
+
+.rich-text-editor-container :deep(.ql-container) {
+  border-bottom: 1px solid #e5e7eb;
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  border-top: none;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  background-color: #fff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Match default browser scrollbar (same as left side form) */
+.rich-text-editor-container :deep(.ql-editor) {
+  /* Use default browser scrollbar - no custom styling to match left side */
+}
+
+.rich-text-editor-container :deep(.ql-editor.drag-over) {
+  background-color: #f0f9ff;
+  border: 2px dashed #3b82f6;
+}
+
+.rich-text-editor-disabled :deep(.ql-editor) {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+}
+
+.rich-text-editor-fallback {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  resize: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', 'Roboto',
+    'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  direction: ltr;
+  text-align: left;
+  background-color: #fff;
+}
+
+.rich-text-editor-fallback:focus {
+  outline: none;
+  border-color: #3b82f6;
+  ring: 2px;
+  ring-color: #3b82f6;
+}
+
+.rich-text-editor-fallback:disabled {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+}
+

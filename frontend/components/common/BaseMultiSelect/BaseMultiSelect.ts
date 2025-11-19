@@ -1,4 +1,5 @@
 import { defineComponent, computed, ref, onMounted, onBeforeUnmount } from 'vue';
+import { useFloatingPosition } from '~/composables/useFloatingPosition';
 
 export interface MultiSelectOption {
   label: string;
@@ -62,6 +63,8 @@ export default defineComponent({
   setup(props, { emit }) {
     const isOpen = ref(false);
     const wrapperRef = ref<HTMLElement | null>(null);
+    const triggerRef = ref<HTMLElement | null>(null);
+    const dropdownRef = ref<HTMLElement | null>(null);
     const searchInputRef = ref<HTMLInputElement | null>(null);
     const searchQuery = ref('');
     const isClosing = ref(false);
@@ -79,7 +82,7 @@ export default defineComponent({
         outlined: 'border-2',
       };
       const baseClasses =
-        'w-full appearance-none bg-surface rounded-lg shadow-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 pr-10 text-left flex items-center min-h-[2.5rem] py-1';
+        'w-full appearance-none bg-surface rounded-lg shadow-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 pr-3 text-left flex items-center min-h-[2.5rem] py-1';
       const sizeClass = sizeClasses[props.size];
       const variantClass = variantClasses[props.variant];
       const errorClass = hasError.value
@@ -144,6 +147,18 @@ export default defineComponent({
       const value = getOptionValue(option);
       return props.modelValue.includes(value);
     };
+
+    // Floating UI setup for automatic repositioning
+    // Use absolute positioning like BaseSelect, with automatic repositioning
+    const { floatingStyles } = useFloatingPosition(triggerRef, dropdownRef, {
+      placement: 'bottom-start',
+      offset: 4,
+      shiftPadding: 8,
+      autoSize: true,
+      flip: true,
+      shift: true,
+      strategy: 'absolute', // Use absolute positioning like BaseSelect
+    });
 
     const toggleOption = (option: MultiSelectOption | string | number) => {
       if (isOptionDisabled(option)) return;
@@ -261,6 +276,8 @@ export default defineComponent({
     return {
       isOpen,
       wrapperRef,
+      triggerRef,
+      dropdownRef,
       searchInputRef,
       searchQuery,
       hasError,
@@ -280,6 +297,7 @@ export default defineComponent({
       handleBlur,
       handleFocus,
       handleKeydown,
+      floatingStyles,
     };
   },
 });

@@ -1,4 +1,5 @@
 import { defineComponent, computed, ref, onMounted, onBeforeUnmount } from 'vue';
+import { useFloatingPosition } from '~/composables/useFloatingPosition';
 
 export interface SelectOption {
   label: string;
@@ -62,6 +63,8 @@ export default defineComponent({
   setup(props, { emit }) {
     const isOpen = ref(false);
     const wrapperRef = ref<HTMLElement | null>(null);
+    const triggerRef = ref<HTMLElement | null>(null);
+    const dropdownRef = ref<HTMLElement | null>(null);
     const searchInputRef = ref<HTMLInputElement | null>(null);
     const searchQuery = ref('');
 
@@ -78,7 +81,7 @@ export default defineComponent({
         outlined: 'border-2',
       };
       const baseClasses =
-        'w-full appearance-none bg-surface rounded-lg shadow-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 pr-10 text-left flex items-center justify-between';
+        'w-full appearance-none bg-surface rounded-lg shadow-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 pr-3 text-left flex items-center justify-between';
       const sizeClass = sizeClasses[props.size];
       const variantClass = variantClasses[props.variant];
       const errorClass = hasError.value
@@ -129,6 +132,18 @@ export default defineComponent({
       }
       return option.disabled || false;
     };
+
+    // Floating UI setup for automatic repositioning
+    // Use absolute positioning like BaseMultiSelect, but with automatic repositioning
+    const { floatingStyles } = useFloatingPosition(triggerRef, dropdownRef, {
+      placement: 'bottom-start',
+      offset: 4,
+      shiftPadding: 8,
+      autoSize: true,
+      flip: true,
+      shift: true,
+      strategy: 'absolute', // Use absolute positioning like BaseMultiSelect
+    });
 
     const toggleDropdown = () => {
       if (!props.disabled) {
@@ -215,6 +230,8 @@ export default defineComponent({
     return {
       isOpen,
       wrapperRef,
+      triggerRef,
+      dropdownRef,
       searchInputRef,
       searchQuery,
       hasError,
@@ -230,6 +247,7 @@ export default defineComponent({
       handleBlur,
       handleFocus,
       handleKeydown,
+      floatingStyles,
     };
   },
 });

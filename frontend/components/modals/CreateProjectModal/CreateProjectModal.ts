@@ -1,9 +1,10 @@
-import { ref, reactive, watch, computed, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, reactive, watch, computed, onMounted } from 'vue';
 import { clientApi } from '~/composables/api/clientApi';
 import { authApi } from '~/composables/api/authApi';
 import { userApi } from '~/composables/api/userApi';
 import { projectApi } from '~/composables/api/projectApi';
 import { useApiFetch } from '~/composables/useApiFetch';
+import { useFormValidation } from '~/composables/useFormValidation';
 
 interface Project {
   id?: number;
@@ -88,160 +89,27 @@ export default defineComponent({
   emits: ['close', 'saved'],
   setup(props, { emit }) {
     const loading = ref(false);
-    const error = ref('');
+    const {
+      error,
+      getFieldError,
+      clearFieldError,
+      handleApiError,
+      handleSubmitWithValidation,
+      rules,
+    } = useFormValidation({
+      defaultErrorMessage: 'Failed to save project. Please try again.',
+      errorStrategy: 'field', // Use field strategy to show errors per field
+      clearOnSubmit: false, // Don't clear on submit, let validation handle it
+    });
 
-    // Quill Editor
-    let quill: any = null;
-
-    const initializeQuill = async () => {
-      console.log('Starting Quill initialization...');
-
-      // Check if the element exists
-      const editorElement = document.getElementById('quill-editor');
-      if (!editorElement) {
-        console.error('❌ Quill editor element not found');
-        return;
-      }
-
-      console.log('✅ Editor element found:', editorElement);
-
-      // Clear any existing content
-      editorElement.innerHTML = '';
-
-      try {
-        console.log('📦 Loading Quill module...');
-        const QuillModule = await import('quill');
-        const QuillClass = QuillModule.default || QuillModule;
-
-        console.log('✅ Quill module loaded:', QuillClass);
-
-        // Configure Quill with minimal options
-        quill = new QuillClass('#quill-editor', {
-          theme: 'snow',
-          placeholder: 'Enter project description...',
-          modules: {
-            toolbar: {
-              container: [
-                ['bold', 'italic', 'underline'],
-                [{ header: [1, 2, 3, false] }],
-                [{ list: 'ordered' }, { list: 'bullet' }],
-                [{ indent: '-1' }, { indent: '+1' }],
-                [{ align: [] }],
-                ['image'],
-                ['clean'],
-              ],
-            },
-          },
-        });
-
-        // Custom image handler with drag and drop support
-        const toolbar = quill.getModule('toolbar');
-        toolbar.addHandler('image', () => {
-          const input = document.createElement('input');
-          input.setAttribute('type', 'file');
-          input.setAttribute('accept', 'image/*');
-          input.click();
-
-          input.onchange = () => {
-            const file = input.files?.[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onload = () => {
-                const range = quill.getSelection();
-                quill.insertEmbed(range.index, 'image', reader.result);
-              };
-              reader.readAsDataURL(file);
-            }
-          };
-        });
-
-        // Add drag and drop support
-        const editorElementForDrop = quill.container.querySelector('.ql-editor');
-        if (editorElementForDrop) {
-          editorElementForDrop.addEventListener('dragover', (e: DragEvent) => {
-            e.preventDefault();
-            editorElementForDrop.classList.add('drag-over');
-          });
-
-          editorElementForDrop.addEventListener('dragleave', (e: DragEvent) => {
-            e.preventDefault();
-            editorElementForDrop.classList.remove('drag-over');
-          });
-
-          editorElementForDrop.addEventListener('drop', (e: DragEvent) => {
-            e.preventDefault();
-            editorElementForDrop.classList.remove('drag-over');
-
-            const files = e.dataTransfer?.files;
-            if (files && files.length > 0) {
-              const file = files[0];
-              if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = () => {
-                  const range = quill.getSelection() || { index: quill.getLength() };
-                  quill.insertEmbed(range.index, 'image', reader.result);
-                  console.log('✅ Image inserted via drag and drop');
-                };
-                reader.readAsDataURL(file);
-              } else {
-                console.log('❌ Only image files are supported for drag and drop');
-              }
-            }
-          });
-        }
-
-        // Force toolbar to be visible immediately
-        const toolbarElement = quill.getModule('toolbar').container;
-        if (toolbarElement) {
-          toolbarElement.style.display = 'flex';
-          toolbarElement.style.visibility = 'visible';
-          toolbarElement.style.opacity = '1';
-          toolbarElement.style.height = 'auto';
-        }
-
-        // Ensure toolbar is always visible by adding focus/blur handlers
-        const editorElementForFocus = quill.container.querySelector('.ql-editor');
-        if (editorElementForFocus) {
-          editorElementForFocus.addEventListener('focus', () => {
-            if (toolbarElement) {
-              toolbarElement.style.display = 'flex';
-              toolbarElement.style.visibility = 'visible';
-              toolbarElement.style.opacity = '1';
-            }
-          });
-
-          editorElementForFocus.addEventListener('blur', () => {
-            if (toolbarElement) {
-              toolbarElement.style.display = 'flex';
-              toolbarElement.style.visibility = 'visible';
-              toolbarElement.style.opacity = '1';
-            }
-          });
-        }
-
-        console.log('✅ Quill instance created:', quill);
-
-        // Listen for text changes
-        quill.on('text-change', () => {
-          form.description = quill.root.innerHTML;
-        });
-
-        // Set initial content if editing
-        if (form.description) {
-          quill.clipboard.dangerouslyPasteHTML(form.description);
-        } else {
-          // Add a small invisible character to ensure toolbar shows
-          quill.setText('\u200B'); // Zero-width space
-          quill.setSelection(0, 0); // Reset cursor to start
-        }
-
-        console.log('🎉 Quill editor initialized successfully!');
-      } catch (err: any) {
-        console.error('❌ Error initializing Quill:', err);
-        if (err.stack) {
-          console.error('Stack trace:', err.stack);
-        }
-      }
+    // Tooltip configuration for Project Number
+    const tooltipConfig = {
+      content: '6-digit number (auto-generated, can be modified)',
+      html: false,
+      placement: 'top' as const,
+      distance: 8,
+      triggers: ['hover', 'focus'] as const,
+      theme: 'tooltip',
     };
 
     // Data arrays
@@ -382,11 +250,56 @@ export default defineComponent({
       return filteredPMs;
     });
 
+    // Computed property for minimum due date (should be after start date)
+    const minDueDate = computed(() => {
+      if (form.start_date) {
+        return form.start_date;
+      }
+      return '';
+    });
+
+    // Computed property for maximum start date (should be before due date)
+    const maxStartDate = computed(() => {
+      if (form.due_date) {
+        return form.due_date;
+      }
+      return '';
+    });
+
     // Helper functions
     const getInternalUserById = (id: string) => internalUsers.value.find((user) => user.id === id);
     const getClientUserById = (id: string) => clientUsers.value.find((person) => person.id === id);
     const getUserGroupById = (id: string) => userGroups.value.find((group) => group.id === id);
     const getTeamById = (id: string) => teams.value.find((team) => team.id === id);
+
+    // Date change handlers
+    const onStartDateChange = () => {
+      if (getFieldError('start_date')) clearFieldError('start_date');
+
+      // If due date is before new start date, clear it
+      if (form.due_date && form.start_date) {
+        const startDate = new Date(form.start_date);
+        const dueDate = new Date(form.due_date);
+        if (dueDate < startDate) {
+          form.due_date = '';
+          if (getFieldError('due_date')) clearFieldError('due_date');
+        }
+      }
+    };
+
+    const onDueDateChange = () => {
+      if (getFieldError('due_date')) clearFieldError('due_date');
+
+      // If start date is after new due date, clear it
+      if (form.start_date && form.due_date) {
+        const startDate = new Date(form.start_date);
+        const dueDate = new Date(form.due_date);
+        if (startDate > dueDate) {
+          form.start_date = '';
+          if (getFieldError('start_date')) clearFieldError('start_date');
+        }
+      }
+    };
 
     // Client change handler
     const onClientChange = async () => {
@@ -648,6 +561,56 @@ export default defineComponent({
       { immediate: true }
     );
 
+    // Watch form fields to clear errors when user corrects them
+    watch(
+      () => form.name,
+      () => {
+        if (getFieldError('name')) clearFieldError('name');
+      }
+    );
+    watch(
+      () => form.project_number,
+      () => {
+        if (getFieldError('project_number')) clearFieldError('project_number');
+      }
+    );
+    watch(
+      () => form.client_id,
+      () => {
+        if (getFieldError('client_id')) clearFieldError('client_id');
+      }
+    );
+    watch(
+      () => form.funding_source,
+      () => {
+        if (getFieldError('funding_source')) clearFieldError('funding_source');
+      }
+    );
+    watch(
+      () => form.hour_type,
+      () => {
+        if (getFieldError('hour_type')) clearFieldError('hour_type');
+      }
+    );
+    watch(
+      () => form.am_id,
+      () => {
+        if (getFieldError('am_id')) clearFieldError('am_id');
+      }
+    );
+    watch(
+      () => form.start_date,
+      () => {
+        if (getFieldError('start_date')) clearFieldError('start_date');
+      }
+    );
+    watch(
+      () => form.due_date,
+      () => {
+        if (getFieldError('due_date')) clearFieldError('due_date');
+      }
+    );
+
     // Load data on mount
     onMounted(async () => {
       await Promise.all([
@@ -662,67 +625,63 @@ export default defineComponent({
       ]);
     });
 
-    // Watch for modal visibility and initialize Quill when shown
-    watch(
-      () => props.show,
-      (newShow) => {
-        if (newShow) {
-          nextTick(async () => {
-            setTimeout(async () => {
-              await initializeQuill();
-            }, 500);
-          });
-        } else {
-          if (quill) {
-            quill = null;
-          }
-        }
-      },
-      { immediate: true }
-    );
-
-    onUnmounted(() => {
-      if (quill) {
-        quill = null;
-      }
-    });
+    // Restrict project number input to numbers only
+    const handleProjectNumberInput = (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      // Remove any non-numeric characters
+      target.value = target.value.replace(/\D/g, '');
+      form.project_number = target.value;
+    };
 
     const handleSubmit = async () => {
-      error.value = '';
       loading.value = true;
       try {
-        console.log('Submitting project data:', form);
-
-        const projectData = {
-          ...form,
-          sub_client_id: form.sub_client_id || null,
-          am_id: form.am_id || null,
-          pm_id: form.pm_id || null,
-          project_type_id: form.project_type_id || null,
-          project_status_id: form.project_status_id || null,
-          start_date: form.start_date || null,
-          due_date: form.due_date || null,
+        // Define validation rules for required fields
+        const validationRules = {
+          name: [rules.required('Project name is required')],
+          project_number: [
+            rules.required('Project number is required'),
+            rules.exactLength(6, 'Project number must be exactly 6 digits'),
+            rules.numeric('Project number must contain only numbers'),
+          ],
+          client_id: [rules.required('Client is required')],
+          funding_source: [rules.required('Funding source is required')],
+          hour_type: [rules.required('Hour type is required')],
+          am_id: [rules.required('Account Manager is required')],
         };
 
-        let response;
-        if (props.isEdit && props.project) {
-          const project = props.project as any;
-          response = await projectApi.updateProject(String(project.id), projectData);
-        } else {
-          response = await projectApi.createProject(projectData);
-        }
+        // Validate and submit
+        await handleSubmitWithValidation(form, validationRules, async () => {
+          console.log('Submitting project data:', form);
 
-        console.log('Project saved successfully:', response);
-        emit('saved', (response as any)?.project || response);
-        emit('close');
+          const projectData = {
+            ...form,
+            sub_client_id: form.sub_client_id || null,
+            am_id: form.am_id || null,
+            pm_id: form.pm_id || null,
+            project_type_id: form.project_type_id || null,
+            project_status_id: form.project_status_id || null,
+            start_date: form.start_date || null,
+            due_date: form.due_date || null,
+          };
+
+          let response;
+          if (props.isEdit && props.project) {
+            const project = props.project as any;
+            response = await projectApi.updateProject(String(project.id), projectData);
+          } else {
+            response = await projectApi.createProject(projectData);
+          }
+
+          console.log('Project saved successfully:', response);
+          emit('saved', (response as any)?.project || response);
+          emit('close');
+        });
       } catch (err: any) {
         console.error('Failed to save project:', err);
-        if (err.data?.errors) {
-          const errors = err.data.errors;
-          const firstError = Object.values(errors)[0];
-          error.value = Array.isArray(firstError) ? firstError[0] : String(firstError);
-        } else {
-          error.value = err.data?.message || 'Failed to save project. Please try again.';
+        // Only handle API errors, validation errors are already handled
+        if (err.message !== 'Validation failed') {
+          handleApiError(err);
         }
       } finally {
         loading.value = false;
@@ -732,6 +691,9 @@ export default defineComponent({
     return {
       loading,
       error,
+      getFieldError,
+      handleProjectNumberInput,
+      tooltipConfig,
       form,
       clients,
       subClients,
@@ -755,13 +717,16 @@ export default defineComponent({
       userGroupOptions,
       teamOptions,
       filteredPMUsers,
-      quill,
+      minDueDate,
+      maxStartDate,
       getInternalUserById,
       getClientUserById,
       getUserGroupById,
       getTeamById,
       onClientChange,
       onAMChange,
+      onStartDateChange,
+      onDueDateChange,
       updateInternalTeamFromGroupsAndTeams,
       handleSubmit,
     };

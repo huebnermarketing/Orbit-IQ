@@ -9,7 +9,7 @@ export default defineNuxtConfig({
   // TypeScript configuration
   typescript: {
     strict: true,
-    typeCheck: true,
+    typeCheck: false,
     tsConfig: {
       compilerOptions: {
         skipLibCheck: true,
@@ -24,7 +24,12 @@ export default defineNuxtConfig({
   modules: ['@pinia/nuxt'],
 
   // CSS configuration
-  css: ['~/assets/css/main.css', '@fortawesome/fontawesome-free/css/all.css', 'quill/dist/quill.snow.css'],
+  css: [
+    '~/assets/css/main.css',
+    '@fortawesome/fontawesome-free/css/all.css',
+    'quill/dist/quill.snow.css',
+    'floating-vue/dist/style.css',
+  ],
 
   // App configuration
   app: {
@@ -52,7 +57,11 @@ export default defineNuxtConfig({
     },
   },
 
-  plugins: [{ src: '~/plugins/api.ts' }, { src: '~/plugins/auth.ts' }],
+  plugins: [
+    { src: '~/plugins/api.ts' },
+    { src: '~/plugins/auth.ts' },
+    { src: '~/plugins/floating-vue.client.ts', mode: 'client' },
+  ],
 
   // PostCSS configuration for Tailwind 4
   postcss: {

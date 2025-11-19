@@ -1,27 +1,49 @@
 <template>
   <svg
-    class="toast-icon-svg"
-    fill="currentColor"
+    :class="['close-icon', `close-icon-${size}`]"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 20 20"
   >
-    <title>Close</title>
     <path
-      d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      :stroke-width="strokeWidth"
+      d="M6 18L18 6M6 6l12 12"
     />
   </svg>
 </template>
 
 <script setup lang="ts">
-defineOptions({
-  name: 'CloseIcon'
+interface Props {
+  size?: 'small' | 'medium' | 'large';
+  strokeWidth?: number;
+}
+
+withDefaults(defineProps<Props>(), {
+  size: 'medium',
+  strokeWidth: 2.5,
 });
 </script>
 
 <style scoped>
-.toast-icon-svg {
+.close-icon {
+  display: block;
+}
+
+.close-icon-small {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+.close-icon-medium {
   width: 1.5rem;
   height: 1.5rem;
 }
-</style>
 
+.close-icon-large {
+  width: 1.875rem;
+  height: 1.875rem;
+}
+</style>

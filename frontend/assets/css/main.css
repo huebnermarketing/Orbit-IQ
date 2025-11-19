@@ -334,3 +334,28 @@
     animation: slide-in 0.3s ease-out;
   }
 }
+
+/* Floating Vue Tooltip Custom Styling - Match second image style */
+.v-popper__popper {
+  z-index: 9999;
+}
+
+.v-popper__inner {
+  background-color: #1f2937 !important;
+  color: #ffffff !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+  max-width: 250px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  text-align: center !important;
+}
+
+.v-popper__arrow-outer {
+  border-color: #1f2937 !important;
+}
+
+.v-popper__arrow-inner {
+  border-color: #1f2937 !important;
+}

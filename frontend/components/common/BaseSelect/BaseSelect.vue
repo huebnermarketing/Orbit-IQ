@@ -5,11 +5,16 @@
         :id="id"
         type="button"
         :disabled="disabled"
-        :class="[selectClass, disabled ? 'bg-surface-alt cursor-not-allowed opacity-60' : '']"
+        :class="[
+          selectClass,
+          disabled ? 'bg-surface-alt cursor-not-allowed opacity-60' : '',
+          isOpen ? 'border-primary-500 ring-2 ring-primary-500' : '',
+        ]"
         @click="toggleDropdown"
         @blur="handleBlur"
         @focus="handleFocus"
         @keydown="handleKeydown"
+        ref="triggerRef"
       >
         <span class="flex-1 text-left truncate">
           <span v-if="displayValue === placeholder" class="text-text-placeholder">
@@ -17,14 +22,18 @@
           </span>
           <span v-else>{{ displayValue }}</span>
         </span>
-        <div class="base-select-chevron" :class="{ 'rotate-180': isOpen }">
-          <i class="fas fa-chevron-down"></i>
+        <div class="base-select-chevron-wrapper">
+          <div class="base-select-chevron" :class="{ 'is-open': isOpen }">
+            <i class="fas fa-chevron-down"></i>
+          </div>
         </div>
       </button>
       <Transition name="dropdown">
         <div
           v-if="isOpen"
-          class="absolute z-50 w-full mt-1 bg-surface border border-border-light rounded-lg shadow-lg max-h-60 flex flex-col top-full"
+          ref="dropdownRef"
+          :style="floatingStyles"
+          class="absolute z-[100] bg-surface border border-border-light rounded-lg shadow-lg max-h-60 flex flex-col"
         >
           <div
             v-if="searchable"
@@ -53,13 +62,13 @@
           </div>
           <div class="base-select-dropdown-inner py-1 overflow-auto">
             <div
-              v-if="searchable && searchQuery && filteredOptions.length === 0"
+              v-if="filteredOptions.length === 0"
               class="px-4 py-3 text-sm text-text-muted text-center"
             >
-              No results found
+              No results...
             </div>
             <button
-              v-if="placeholder && (!searchable || !searchQuery)"
+              v-if="placeholder && (!searchable || !searchQuery) && filteredOptions.length > 0"
               type="button"
               class="w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-surface-alt transition-colors duration-150 focus:outline-none focus:bg-surface-alt"
               :class="{ 'bg-surface-alt font-medium': modelValue === '' }"

@@ -1,23 +1,39 @@
 /* Long Tailwind class strings moved here */
-.base-select-chevron {
-  position: absolute;
-  right: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: var(--color-text-muted);
-  transition-property: transform;
-  transition-duration: 200ms;
-  flex-shrink: 0;
+.base-select-chevron-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   width: 1.25rem;
   height: 1.25rem;
+  margin-left: 0.5rem;
+  pointer-events: none;
 }
 
-.base-select-chevron.rotate-180 {
-  transform: translateY(-50%) rotate(180deg);
+.base-select-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--color-text-muted);
+  transition: transform 200ms ease-in-out;
+  transform-origin: center center;
+  transform: rotate(0deg);
+  will-change: transform;
+}
+
+.base-select-chevron i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.base-select-chevron.is-open {
+  transform: rotate(180deg);
 }
 
 .base-select-option {
@@ -94,4 +110,3 @@
   opacity: 0;
   transform: translateY(-0.5rem);
 }
-

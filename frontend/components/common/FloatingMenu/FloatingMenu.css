@@ -1,0 +1,23 @@
+/* Menu Animation */
+.menu-enter-active,
+.menu-leave-active {
+  transition-property: all;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-enter-from {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+}
+
+.menu-leave-to {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+}
+
+.floating-menu {
+  min-width: 120px;
+  max-width: 300px;
+}
+
