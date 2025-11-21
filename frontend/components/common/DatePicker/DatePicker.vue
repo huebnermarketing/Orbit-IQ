@@ -6,6 +6,7 @@
         :class="[
           'date-picker-input',
           'shadow-sm',
+          `date-picker-input-${size}`,
           error ? 'date-picker-input-error' : '',
           disabled ? 'date-picker-input-disabled' : '',
           isOpen ? 'date-picker-input-open' : '',
@@ -31,14 +32,13 @@
         </div>
       </div>
 
-      <Transition name="calendar-fade">
-        <div
-          v-if="isOpen && !disabled"
-          ref="calendarRef"
-          class="date-picker-calendar"
-          :style="floatingStyles"
-          @click.stop
-        >
+      <div
+        v-if="isOpen && !disabled"
+        ref="calendarRef"
+        class="date-picker-calendar fixed z-[1000]"
+        :style="floatingStyles"
+        @click.stop
+      >
           <div class="calendar-header">
             <div class="calendar-nav">
               <button
@@ -140,7 +140,6 @@
             <span class="text-xs text-text-muted"> {{ selectedDates.length }} selected </span>
           </div>
         </div>
-      </Transition>
     </div>
     <p v-if="error" class="mt-1 text-sm text-error-500">{{ error }}</p>
     <p v-if="hint && !error" class="mt-1 text-sm text-text-muted">{{ hint }}</p>

@@ -5,7 +5,6 @@
 .date-picker-input {
   display: block;
   width: 100%;
-  padding: 0.75rem 3.5rem 0.75rem 1rem;
   border: 1px solid var(--color-border-light);
   border-radius: 0.5rem;
   font-size: 0.875rem;
@@ -15,6 +14,19 @@
   transition: all 0.2s;
   cursor: pointer;
   position: relative;
+}
+
+.date-picker-input-sm {
+  padding: 0.5rem 3.5rem 0.5rem 0.75rem;
+}
+
+.date-picker-input-md {
+  padding: 0.75rem 3.5rem 0.75rem 1rem;
+}
+
+.date-picker-input-lg {
+  padding: 0.875rem 3.5rem 0.875rem 1rem;
+  font-size: 1rem;
 }
 
 .date-picker-display {
@@ -85,7 +97,7 @@
   padding: 1rem;
   min-width: 300px;
   max-width: 100%;
-  z-index: 1000;
+  /* Position and z-index are handled by floatingStyles and Tailwind classes */
 }
 
 .calendar-header {
@@ -312,16 +324,4 @@
 
 .calendar-clear-btn:hover {
   background: var(--color-surface-alt);
-}
-
-/* Transitions */
-.calendar-fade-enter-active,
-.calendar-fade-leave-active {
-  transition: opacity 0.2s, transform 0.2s;
-}
-
-.calendar-fade-enter-from,
-.calendar-fade-leave-to {
-  opacity: 0;
-  transform: translateY(-0.5rem);
 }

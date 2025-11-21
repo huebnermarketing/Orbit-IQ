@@ -45,13 +45,12 @@
           </div>
         </div>
       </button>
-      <Transition name="dropdown">
-        <div
-          v-if="isOpen"
-          ref="dropdownRef"
-          :style="floatingStyles"
-          class="absolute z-[100] bg-surface border border-border-light rounded-lg shadow-lg max-h-60 flex flex-col"
-        >
+      <div
+        v-if="isOpen"
+        ref="dropdownRef"
+        :style="floatingStyles"
+        class="fixed z-[100] bg-surface border border-border-light rounded-lg shadow-lg max-h-60 flex flex-col"
+      >
           <div
             v-if="searchable"
             class="relative flex items-center px-3 py-2 border-b border-border-light"
@@ -99,7 +98,6 @@
             </button>
           </div>
         </div>
-      </Transition>
     </div>
     <p v-if="errorMessage" class="mt-1.5 text-sm text-error-500">{{ errorMessage }}</p>
     <p v-if="hint && !errorMessage" class="mt-1.5 text-sm text-text-muted">{{ hint }}</p>

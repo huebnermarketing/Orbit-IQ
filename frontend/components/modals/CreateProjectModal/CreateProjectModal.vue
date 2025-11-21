@@ -22,7 +22,7 @@
         <!-- Left Side - Form Fields -->
         <div class="create-project-dialog-form-section">
           <form @submit.prevent="handleSubmit" class="space-y-6">
-            <!-- Project Name and Number -->
+            <!-- All fields in a single grid for automatic repositioning -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-text-primary mb-2">
@@ -58,10 +58,8 @@
                 />
                 <FieldError :error="getFieldError('project_number')" />
               </div>
-            </div>
 
-            <!-- Client and Sub-Client -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Choose Client -->
               <div>
                 <label class="block text-sm font-medium text-text-primary mb-2">
                   Choose Client <span class="text-error-500">*</span>
@@ -85,10 +83,8 @@
                   :disabled="!form.client_id"
                 />
               </div>
-            </div>
 
-            <!-- Funding Source and Hour Type -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Funding Source -->
               <div>
                 <label class="block text-sm font-medium text-text-primary mb-2">
                   Funding Source <span class="text-error-500">*</span>
@@ -118,10 +114,8 @@
                   :error-message="getFieldError('hour_type')"
                 />
               </div>
-            </div>
 
-            <!-- AM and PM -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Account Manager -->
               <div>
                 <label class="block text-sm font-medium text-text-primary mb-2">
                   Account Manager <span class="text-error-500">*</span>
@@ -145,10 +139,8 @@
                   :disabled="!form.am_id"
                 />
               </div>
-            </div>
 
-            <!-- Start Date and Due Date -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Start Date -->
               <div>
                 <label class="block text-sm font-medium text-text-primary mb-2"> Start Date </label>
                 <DatePicker
@@ -173,10 +165,8 @@
                   @change="onDueDateChange"
                 />
               </div>
-            </div>
 
-            <!-- Project Status and Project Type -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Project Status -->
               <div>
                 <label class="block text-sm font-medium text-text-primary mb-2">
                   Project Status
@@ -197,18 +187,29 @@
                   placeholder="Select Project Type"
                 />
               </div>
-            </div>
 
-            <!-- Internal Team and Client Team -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Group Teams -->
               <div>
                 <label class="block text-sm font-medium text-text-primary mb-2">
-                  Internal Team
+                  Group Teams
+                </label>
+                <BaseMultiSelect
+                  v-model="form.teams"
+                  :options="teamOptions"
+                  placeholder="Select group teams..."
+                  @change="updateInternalTeamFromGroupsAndTeams"
+                />
+              </div>
+
+              <!-- Individual Members -->
+              <div>
+                <label class="block text-sm font-medium text-text-primary mb-2">
+                  Individual Members
                 </label>
                 <BaseMultiSelect
                   v-model="form.internal_team"
                   :options="internalUserOptions"
-                  placeholder="Select internal users..."
+                  placeholder="Select individual members..."
                 />
               </div>
               <div>
@@ -219,30 +220,6 @@
                   v-model="form.client_team"
                   :options="clientUserOptions"
                   placeholder="Select client users..."
-                />
-              </div>
-            </div>
-
-            <!-- User Groups and Teams -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-text-primary mb-2">
-                  Add User Groups
-                </label>
-                <BaseMultiSelect
-                  v-model="form.user_groups"
-                  :options="userGroupOptions"
-                  placeholder="Select user groups..."
-                  @change="updateInternalTeamFromGroupsAndTeams"
-                />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-text-primary mb-2"> Add Teams </label>
-                <BaseMultiSelect
-                  v-model="form.teams"
-                  :options="teamOptions"
-                  placeholder="Select teams..."
-                  @change="updateInternalTeamFromGroupsAndTeams"
                 />
               </div>
             </div>

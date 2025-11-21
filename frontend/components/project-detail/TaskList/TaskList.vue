@@ -34,7 +34,7 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3">
               <button class="text-gray-400 hover:text-gray-600">
-                <i class="far fa-chevron-down"></i>
+                <i class="fas fa-chevron-down"></i>
               </button>
               <h3 class="text-lg font-medium text-gray-900">{{ section.name }}</h3>
               <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-sm">{{
@@ -43,13 +43,13 @@
             </div>
             <div class="flex items-center space-x-2">
               <button class="text-gray-400 hover:text-gray-600">
-                <i class="far fa-ellipsis-v"></i>
+                <i class="fas fa-ellipsis-vertical"></i>
               </button>
               <button
                 @click="showCreateSectionModal = true"
                 class="text-gray-400 hover:text-gray-600"
               >
-                <i class="far fa-plus"></i>
+                <i class="fas fa-plus"></i>
               </button>
             </div>
           </div>

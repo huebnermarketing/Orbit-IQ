@@ -272,6 +272,13 @@
   justify-content: space-between;
 }
 
+/* BaseMultiSelect tag styles for view mode display */
+.base-multiselect-tag {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-700);
+  border: none;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .flex-wrap {

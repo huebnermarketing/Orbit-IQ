@@ -149,7 +149,7 @@ export default defineComponent({
     };
 
     // Floating UI setup for automatic repositioning
-    // Use absolute positioning like BaseSelect, with automatic repositioning
+    // Use fixed positioning to ensure flip checks against viewport, not parent container
     const { floatingStyles } = useFloatingPosition(triggerRef, dropdownRef, {
       placement: 'bottom-start',
       offset: 4,
@@ -157,7 +157,7 @@ export default defineComponent({
       autoSize: true,
       flip: true,
       shift: true,
-      strategy: 'absolute', // Use absolute positioning like BaseSelect
+      strategy: 'fixed', // Use fixed positioning for better viewport-based flip detection
     });
 
     const toggleOption = (option: MultiSelectOption | string | number) => {

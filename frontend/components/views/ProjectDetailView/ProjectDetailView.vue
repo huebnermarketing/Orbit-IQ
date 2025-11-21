@@ -77,9 +77,9 @@
           :project-id="projectId"
           @project-updated="handleProjectUpdated"
         />
-        <FinancialInfo :project="project" />
-        <ProjectManagement :project="project" />
-        <TeamMembers :project="project" />
+        <FinancialInfo :project="project" :project-id="projectId" @project-updated="handleProjectUpdated" />
+        <ProjectManagement :project="project" :project-id="projectId" @project-updated="handleProjectUpdated" />
+        <TeamMembers :project="project" :project-id="projectId" @project-updated="handleProjectUpdated" />
       </div>
 
       <!-- Right Column - Project Description Editor -->

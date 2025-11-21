@@ -56,7 +56,15 @@
           <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2"
             >Project Owner</label
           >
-          <div v-if="project?.account_manager" class="flex items-center space-x-2">
+          <BaseSelect
+            v-if="isEditingProjectManagement"
+            v-model="editingProjectManagement.am_id"
+            :options="amUserOptions"
+            placeholder="Select Project Owner"
+            size="sm"
+            wrapper-class="bg-white"
+          />
+          <div v-else-if="project?.account_manager" class="flex items-center space-x-2">
             <div
               class="w-7 h-7 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center overflow-hidden"
             >
@@ -82,7 +90,15 @@
           <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2"
             >Project Manager</label
           >
-          <div v-if="project?.project_manager" class="flex items-center space-x-2">
+          <BaseSelect
+            v-if="isEditingProjectManagement"
+            v-model="editingProjectManagement.pm_id"
+            :options="pmUserOptions"
+            placeholder="Select Project Manager"
+            size="sm"
+            wrapper-class="bg-white"
+          />
+          <div v-else-if="project?.project_manager" class="flex items-center space-x-2">
             <div
               class="w-7 h-7 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center overflow-hidden"
             >
@@ -108,7 +124,17 @@
           <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2"
             >Start Date</label
           >
-          <p class="text-sm font-medium text-gray-900">
+          <DatePicker
+            v-if="isEditingProjectManagement"
+            v-model="editingProjectManagement.start_date"
+            mode="single"
+            granularity="date"
+            placeholder="dd-mm-yyyy"
+            :max="maxStartDate"
+            size="sm"
+            @change="onStartDateChange"
+          />
+          <p v-else class="text-sm font-medium text-gray-900">
             {{ project?.start_date ? formatDate(project.start_date) : 'No start date' }}
           </p>
         </div>
@@ -118,7 +144,17 @@
           <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2"
             >Due Date</label
           >
-          <p class="text-sm font-medium text-red-600">
+          <DatePicker
+            v-if="isEditingProjectManagement"
+            v-model="editingProjectManagement.due_date"
+            mode="single"
+            granularity="date"
+            placeholder="dd-mm-yyyy"
+            :min="minDueDate"
+            size="sm"
+            @change="onDueDateChange"
+          />
+          <p v-else class="text-sm font-medium text-red-600">
             {{ project?.due_date ? formatDate(project.due_date) : 'No Due date' }}
           </p>
         </div>
@@ -128,7 +164,19 @@
           <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2"
             >Quoted Hours</label
           >
-          <p class="text-sm font-medium text-gray-900">0</p>
+          <input
+            v-if="isEditingProjectManagement"
+            v-model.number="editingProjectManagement.quoted_hours"
+            type="number"
+            min="0"
+            step="1"
+            class="w-full text-sm font-medium bg-white border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500"
+            placeholder="Enter quoted hours"
+            @keydown="preventDecimalInput"
+          />
+          <p v-else class="text-sm font-medium text-gray-900">
+            {{ project?.quoted_hours || 0 }}
+          </p>
         </div>
 
         <!-- Utilized Hours -->
@@ -159,7 +207,17 @@
           <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2"
             >Delivery Date</label
           >
-          <p class="text-sm font-medium text-gray-900">No Delivery date</p>
+          <DatePicker
+            v-if="isEditingProjectManagement"
+            v-model="editingProjectManagement.delivery_date"
+            mode="single"
+            granularity="date"
+            placeholder="dd-mm-yyyy"
+            size="sm"
+          />
+          <p v-else class="text-sm font-medium text-gray-900">
+            {{ project?.delivery_date ? formatDate(project.delivery_date) : 'No Delivery date' }}
+          </p>
         </div>
 
         <!-- Reminder -->

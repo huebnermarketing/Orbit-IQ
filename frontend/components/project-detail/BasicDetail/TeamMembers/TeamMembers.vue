@@ -13,83 +13,90 @@
             <p class="text-sm text-gray-500">Groups and individual team members</p>
           </div>
         </div>
+        <!-- Edit Mode Action Buttons -->
+        <div v-if="isEditingTeamMembers" class="flex items-center space-x-2">
+          <button type="button" @click="discardTeamMembersChanges" class="btn-outline">
+            Discard
+          </button>
+          <button
+            type="button"
+            @click="saveTeamMembers"
+            :disabled="savingTeamMembers"
+            class="btn-primary"
+          >
+            <div
+              v-if="savingTeamMembers"
+              class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-1 inline-block"
+            ></div>
+            Save
+          </button>
+        </div>
+        <!-- View Mode Edit Button -->
         <button
+          v-else
           @click="enableEditing"
           v-tooltip="'edit'"
-          class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          :disabled="loadingTeamMembers"
+          class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <i class="fas fa-edit w-5 h-5"></i>
+          <div
+            v-if="loadingTeamMembers"
+            class="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-700"
+          ></div>
+          <i v-else class="fas fa-edit w-5 h-5"></i>
         </button>
       </div>
     </div>
 
     <!-- Content -->
     <div class="p-6">
-      <div class="space-y-6">
-        <!-- Group Teams Section -->
-        <div>
-          <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
-            <i class="fas fa-layer-group mr-2 text-gray-500 text-sm"></i>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Group Teams -->
+        <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
+          <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
             Group Teams
-          </h4>
-          <div class="flex flex-wrap gap-2">
+          </label>
+          <BaseMultiSelect
+            v-if="isEditingTeamMembers"
+            v-model="editingTeamMembers.teams"
+            :options="teamOptions"
+            placeholder="Select group teams..."
+            size="sm"
+            @change="updateInternalTeamFromGroupsAndTeams"
+          />
+          <div v-else class="flex flex-wrap gap-1">
             <span
-              class="inline-flex items-center px-3 py-2 rounded-lg text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200 shadow-sm"
+              v-for="team in selectedTeams"
+              :key="team.id"
+              class="base-multiselect-tag inline-flex items-center px-2 py-0.5 text-xs rounded-full flex-shrink-0 my-0.5 max-w-full"
             >
-              T Task - WLIQ/India
-              <button class="ml-2 text-blue-600 hover:text-blue-800 transition-colors">×</button>
+              {{ team.name }}
             </span>
-            <span
-              class="inline-flex items-center px-3 py-2 rounded-lg text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200 shadow-sm"
-            >
-              W Warranty Period Team
-              <button class="ml-2 text-purple-600 hover:text-purple-800 transition-colors">
-                ×
-              </button>
-            </span>
+            <span v-if="selectedTeams.length === 0" class="text-sm text-gray-500">-</span>
           </div>
         </div>
 
-        <!-- Individual Team Members Section -->
-        <div>
-          <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
-            <i class="fas fa-user-friends mr-2 text-gray-500 text-sm"></i>
+        <!-- Individual Members -->
+        <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
+          <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">
             Individual Members
-          </h4>
-          <div class="flex flex-wrap gap-2">
-            <div
-              class="flex items-center space-x-2 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200 shadow-sm"
+          </label>
+          <BaseMultiSelect
+            v-if="isEditingTeamMembers"
+            v-model="editingTeamMembers.internal_team"
+            :options="internalUserOptions"
+            placeholder="Select individual members..."
+            size="sm"
+          />
+          <div v-else class="flex flex-wrap gap-1">
+            <span
+              v-for="member in selectedMembers"
+              :key="member.id"
+              class="base-multiselect-tag inline-flex items-center px-2 py-0.5 text-xs rounded-full flex-shrink-0 my-0.5 max-w-full"
             >
-              <div
-                class="w-6 h-6 bg-gradient-to-br from-pink-500 to-pink-600 rounded-full flex items-center justify-center"
-              >
-                <span class="text-white text-xs font-medium">A</span>
-              </div>
-              <span class="text-sm font-medium text-gray-900">Aagna Paneri</span>
-              <button class="text-gray-400 hover:text-gray-600 transition-colors">×</button>
-            </div>
-            <div
-              class="flex items-center space-x-2 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200 shadow-sm"
-            >
-              <div
-                class="w-6 h-6 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center"
-              >
-                <span class="text-white text-xs font-medium">A</span>
-              </div>
-              <span class="text-sm font-medium text-gray-900">Aditi Singh</span>
-              <button class="text-gray-400 hover:text-gray-600 transition-colors">×</button>
-            </div>
-            <div
-              class="flex items-center space-x-2 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200 shadow-sm"
-            >
-              <div
-                class="w-6 h-6 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center"
-              >
-                <span class="text-white text-xs font-medium">A</span>
-              </div>
-              <span class="text-sm font-medium text-gray-900">Akash Patel</span>
-              <button class="text-gray-400 hover:text-gray-600 transition-colors">×</button>
-            </div>
+              {{ member.name }}
+            </span>
+            <span v-if="selectedMembers.length === 0" class="text-sm text-gray-500">-</span>
           </div>
         </div>
       </div>

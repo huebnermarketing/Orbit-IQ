@@ -164,7 +164,7 @@ export default defineComponent({
 
     const internalUserOptions = computed(() => {
       return internalUsers.value.map((user) => ({
-        label: `${user.name} (${user.email})`,
+        label: user.name,
         value: user.id,
       }));
     });
@@ -173,13 +173,6 @@ export default defineComponent({
       return clientUsers.value.map((user) => ({
         label: `${user.name} (${user.email})`,
         value: user.id,
-      }));
-    });
-
-    const userGroupOptions = computed(() => {
-      return userGroups.value.map((group) => ({
-        label: group.name,
-        value: group.id,
       }));
     });
 
@@ -366,18 +359,21 @@ export default defineComponent({
       }
     };
 
-    // Auto-populate internal team from selected groups and teams
+    const loadTeams = async () => {
+      try {
+        console.log('Loading teams...');
+        const response = await useApiFetch('/admin/teams');
+        console.log('Teams API response:', response);
+        teams.value = (response as any) || [];
+        console.log('Teams value set to:', teams.value);
+      } catch (err) {
+        console.error('Failed to load teams:', err);
+      }
+    };
+
+    // Auto-populate internal team from selected teams
     const updateInternalTeamFromGroupsAndTeams = () => {
       const memberIds = new Set<string>();
-
-      form.user_groups.forEach((groupId: string) => {
-        const group = userGroups.value.find((g) => g.id === groupId);
-        if (group && group.users) {
-          group.users.forEach((user) => {
-            memberIds.add(user.id);
-          });
-        }
-      });
 
       form.teams.forEach((teamId: string) => {
         const team = teams.value.find((t) => t.id === teamId);
@@ -388,7 +384,18 @@ export default defineComponent({
         }
       });
 
-      form.internal_team = Array.from(memberIds);
+      // Merge with existing selections (don't overwrite manually selected members)
+      const existingMembers = new Set(form.internal_team.map((id: string) => String(id)));
+      const newMembers = Array.from(memberIds);
+
+      // Add new members from teams, but keep existing ones
+      newMembers.forEach((id) => {
+        if (!existingMembers.has(String(id))) {
+          existingMembers.add(String(id));
+        }
+      });
+
+      form.internal_team = Array.from(existingMembers);
     };
 
     // Load data functions
@@ -455,27 +462,6 @@ export default defineComponent({
       } catch (err) {
         console.error('Failed to load client users:', err);
         clientUsers.value = [];
-      }
-    };
-
-    const loadUserGroups = async () => {
-      try {
-        const response = await useApiFetch('/admin/user-groups');
-        userGroups.value = (response as any)?.data || [];
-      } catch (err) {
-        console.error('Failed to load user groups:', err);
-      }
-    };
-
-    const loadTeams = async () => {
-      try {
-        console.log('Loading teams...');
-        const response = await useApiFetch('/admin/teams');
-        console.log('Teams API response:', response);
-        teams.value = (response as any) || [];
-        console.log('Teams value set to:', teams.value);
-      } catch (err) {
-        console.error('Failed to load teams:', err);
       }
     };
 
@@ -612,7 +598,6 @@ export default defineComponent({
         loadAMUsers(),
         loadPMUsers(),
         loadInternalUsers(),
-        loadUserGroups(),
         loadTeams(),
         loadProjectStatuses(),
         loadProjectTypes(),
@@ -718,7 +703,6 @@ export default defineComponent({
       projectTypeOptions,
       internalUserOptions,
       clientUserOptions,
-      userGroupOptions,
       teamOptions,
       filteredPMUsers,
       minDueDate,

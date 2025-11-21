@@ -77,6 +77,10 @@ export default defineComponent({
       type: String,
       default: 'YYYY-MM-DD',
     },
+    size: {
+      type: String as PropType<'sm' | 'md' | 'lg'>,
+      default: 'md',
+    },
   },
   emits: ['update:modelValue', 'change', 'input'],
   setup(props, { emit }) {
@@ -244,6 +248,7 @@ export default defineComponent({
     });
 
     // Floating UI setup for automatic repositioning
+    // Use fixed positioning to ensure flip checks against viewport, not parent container
     const { floatingStyles } = useFloatingPosition(triggerRef, calendarRef, {
       placement: 'bottom-start',
       offset: 4,
@@ -251,7 +256,7 @@ export default defineComponent({
       autoSize: false, // Don't auto-size calendar width
       flip: true,
       shift: true,
-      strategy: 'absolute',
+      strategy: 'fixed', // Use fixed positioning for better viewport-based flip detection
     });
 
     const minDate = computed(() => {
@@ -717,6 +722,7 @@ export default defineComponent({
       displayText,
       currentPeriodLabel,
       yearRange,
+      size: props.size,
       calendarDays,
       floatingStyles,
       isMinDate,

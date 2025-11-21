@@ -16,6 +16,38 @@
               <p class="text-sm text-gray-500">Client details and contact information</p>
             </div>
           </div>
+          <!-- Edit Mode Action Buttons -->
+          <div v-if="isEditingClientInfo" class="flex items-center space-x-2">
+            <button type="button" @click="discardClientInfoChanges" class="btn-outline">
+              Discard
+            </button>
+            <button
+              type="button"
+              @click="saveClientInfo"
+              :disabled="savingClientInfo"
+              class="btn-primary"
+            >
+              <div
+                v-if="savingClientInfo"
+                class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-1 inline-block"
+              ></div>
+              Save
+            </button>
+          </div>
+          <!-- View Mode Edit Button -->
+          <button
+            v-else
+            @click="enableEditing"
+            v-tooltip="'edit'"
+            :disabled="loadingClientInfo || !client"
+            class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <div
+              v-if="loadingClientInfo"
+              class="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-700"
+            ></div>
+            <i v-else class="fas fa-edit w-5 h-5"></i>
+          </button>
         </div>
       </div>
 
@@ -47,15 +79,36 @@
             <div class="space-y-4">
               <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
                 <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Company Name</label>
-                <p class="text-sm font-medium text-gray-900">{{ client.company_name }}</p>
+                <input
+                  v-if="isEditingClientInfo"
+                  v-model="editingClientInfo.company_name"
+                  type="text"
+                  class="w-full text-sm font-medium bg-white border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500"
+                  placeholder="Enter company name"
+                />
+                <p v-else class="text-sm font-medium text-gray-900">{{ client.company_name }}</p>
               </div>
               <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
                 <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Contact Person</label>
-                <p class="text-sm font-medium text-gray-900">{{ client.contact_person || '-' }}</p>
+                <input
+                  v-if="isEditingClientInfo"
+                  v-model="editingClientInfo.contact_person"
+                  type="text"
+                  class="w-full text-sm font-medium bg-white border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500"
+                  placeholder="Enter contact person"
+                />
+                <p v-else class="text-sm font-medium text-gray-900">{{ client.contact_person || '-' }}</p>
               </div>
               <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
                 <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Phone</label>
-                <p class="text-sm font-medium text-gray-900">{{ client.phone || '-' }}</p>
+                <input
+                  v-if="isEditingClientInfo"
+                  v-model="editingClientInfo.phone"
+                  type="text"
+                  class="w-full text-sm font-medium bg-white border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500"
+                  placeholder="Enter phone number"
+                />
+                <p v-else class="text-sm font-medium text-gray-900">{{ client.phone || '-' }}</p>
               </div>
             </div>
             
@@ -63,23 +116,51 @@
             <div class="space-y-4">
               <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
                 <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Email</label>
-                <p class="text-sm font-medium text-gray-900">{{ client.email || '-' }}</p>
+                <input
+                  v-if="isEditingClientInfo"
+                  v-model="editingClientInfo.email"
+                  type="email"
+                  class="w-full text-sm font-medium bg-white border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500"
+                  placeholder="Enter email"
+                />
+                <p v-else class="text-sm font-medium text-gray-900">{{ client.email || '-' }}</p>
               </div>
               <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
                 <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Address</label>
-                <p class="text-sm font-medium text-gray-900">{{ client.address || '-' }}</p>
+                <input
+                  v-if="isEditingClientInfo"
+                  v-model="editingClientInfo.address"
+                  type="text"
+                  class="w-full text-sm font-medium bg-white border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500"
+                  placeholder="Enter address"
+                />
+                <p v-else class="text-sm font-medium text-gray-900">{{ client.address || '-' }}</p>
               </div>
               <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
                 <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Industry</label>
-                <p class="text-sm font-medium text-gray-900">{{ client.industry || '-' }}</p>
+                <input
+                  v-if="isEditingClientInfo"
+                  v-model="editingClientInfo.industry"
+                  type="text"
+                  class="w-full text-sm font-medium bg-white border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500"
+                  placeholder="Enter industry"
+                />
+                <p v-else class="text-sm font-medium text-gray-900">{{ client.industry || '-' }}</p>
               </div>
             </div>
           </div>
 
           <!-- Client Description -->
-          <div v-if="client.description" class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+          <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
             <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Description</label>
-            <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ client.description }}</p>
+            <textarea
+              v-if="isEditingClientInfo"
+              v-model="editingClientInfo.description"
+              rows="4"
+              class="w-full text-sm text-gray-700 bg-white border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500"
+              placeholder="Enter description"
+            ></textarea>
+            <p v-else class="text-sm text-gray-700 whitespace-pre-wrap">{{ client.description || '-' }}</p>
           </div>
         </div>
 

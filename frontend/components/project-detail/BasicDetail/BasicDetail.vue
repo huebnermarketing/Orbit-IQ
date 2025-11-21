@@ -61,7 +61,7 @@
             v-if="isEditingBasicDetails"
             v-model="editingBasicDetails.project_number"
             type="text"
-            class="w-full text-sm font-medium bg-white border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full text-sm font-medium bg-white border border-gray-300 rounded px-2 py-1 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500"
             placeholder="Enter project code"
           />
           <p v-else class="text-sm font-medium text-gray-900">
