@@ -127,6 +127,13 @@
   transition: transform 0.15s ease-in-out;
 }
 
+/* Arrow rotation transition */
+.fa-angle-down {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+  display: inline-block;
+}
+
 /* Spacing */
 .space-x-3 > * + * {
   margin-left: 0.75rem;
@@ -214,6 +221,31 @@
 
 .left-0\.5 {
   left: 0.125rem;
+}
+
+/* Slide-fade transition for content */
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.3s ease-in;
+}
+
+.slide-fade-enter-from {
+  transform: translateY(-10px);
+  opacity: 0;
+}
+
+.slide-fade-leave-to {
+  transform: translateY(-10px);
+  opacity: 0;
+}
+
+.slide-fade-enter-to,
+.slide-fade-leave-from {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 /* Responsive adjustments */

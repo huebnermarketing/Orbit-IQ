@@ -51,7 +51,12 @@ export const useFloatingPosition = (
 
   // Add flip middleware
   if (enableFlip) {
-    middleware.push(flip());
+    middleware.push(
+      flip({
+        rootBoundary: 'viewport',
+        fallbackPlacements: ['top-start', 'bottom-start'],
+      })
+    );
   }
 
   // Add shift middleware

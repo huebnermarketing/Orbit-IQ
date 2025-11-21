@@ -19,15 +19,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-defineProps<{
-  team?: any
-  isEdit?: boolean
-}>()
-
-defineEmits<{
-  close: []
-  success: []
-}>()
-</script>
+<script lang="ts" src="./TeamModal.ts"></script>
+<style scoped src="./TeamModal.css"></style>
 

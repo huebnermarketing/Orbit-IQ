@@ -82,8 +82,8 @@
             placement="bottom-end"
             :offset="16"
             :shift-padding="16"
-            :width="280"
-            :min-width="200"
+            :width="200"
+            :min-width="150"
             :max-width="320"
             :max-height="400"
           >

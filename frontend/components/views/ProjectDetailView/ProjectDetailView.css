@@ -9,7 +9,9 @@
   transition: all 0.2s ease;
   color: #374151;
   padding: 16px !important;
-  min-height: 350px !important;
+  min-height: 400px !important;
+  max-height: 400px !important;
+  overflow-y: auto !important;
 }
 
 /* Additional RTL prevention */
@@ -23,6 +25,8 @@
   direction: ltr !important;
   border: none !important;
   font-family: inherit;
+  max-height: 400px !important;
+  overflow: hidden !important;
 }
 
 /* Ensure Quill editor container has proper height */
@@ -39,10 +43,10 @@
   border: 1px solid #e2e8f0;
   border-bottom: none;
   border-radius: 8px 8px 0 0;
-  height: 48px !important;
   min-height: 48px !important;
   padding: 8px 16px !important;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  align-items: center !important;
 }
 
 :deep(.ql-toolbar .ql-formats) {
@@ -101,15 +105,26 @@
 
 /* Focus states */
 :deep(.ql-container.ql-snow:focus-within) {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px var(--color-primary-100);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-500) 10%, transparent);
+}
+/* Focus border on wrapper container - using :has() for modern browsers */
+.editor-wrapper:has(.ql-container.ql-snow:focus-within),
+.editor-wrapper:has(#project-description-editor:focus-within),
+.editor-wrapper.editor-focused {
+  border-color: var(--color-primary-500) !important;
+  box-shadow: 0 0 0 3px var(--color-primary-100) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-500) 10%, transparent) !important;
 }
 
-:deep(.ql-container.ql-snow:focus-within .ql-toolbar) {
-  border-color: #3b82f6;
+/* Fallback for browsers without :has() support - target parent when child is focused */
+:deep(.ql-container.ql-snow:focus-within) {
+  outline: none;
 }
 
-:deep(.ql-container.ql-snow:focus-within .ql-editor) {
-  border-color: #3b82f6;
+/* Ensure the wrapper gets focus styling */
+.editor-wrapper {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Drag and drop visual feedback */

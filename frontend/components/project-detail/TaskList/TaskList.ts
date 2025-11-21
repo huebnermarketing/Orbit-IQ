@@ -1,93 +1,62 @@
 import { defineComponent, ref, onMounted } from 'vue';
 
-// Types
-interface Task {
-  id: number;
-  name: string;
-  status: string;
-  assigned_to?: User;
-  due_date?: string;
-  estimated_hours?: number;
-  project_id?: number;
-  completed_at?: string | null;
-}
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-
-interface Section {
-  id: string;
-  name: string;
-  tasks: Task[];
-}
-
 export default defineComponent({
   name: 'TaskList',
   props: {
     projectId: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   emits: ['task-saved'],
   setup(props, { emit }) {
-    const { $taskApi } = useNuxtApp() as any;
-    
-    // State
-    const tasks = ref<Task[]>([]);
-    const loading = ref(false);
+    const { $taskApi } = useNuxtApp();
+    const tasks = ref<any[]>([]);
     const showCreateTaskModal = ref(false);
     const showCreateSectionModal = ref(false);
     const activeFilters = ref(0);
     const newTaskName = ref<Record<string, string>>({});
 
     // User-created sections (this would come from API in real implementation)
-    const userSections = ref<Section[]>([
+    const userSections = ref<Array<{ id: string; name: string; tasks: any[] }>>([
       {
         id: '1',
         name: 'Planning',
-        tasks: []
+        tasks: [],
       },
       {
-        id: '2', 
+        id: '2',
         name: 'Development',
-        tasks: []
+        tasks: [],
       },
       {
         id: '3',
         name: 'Testing',
-        tasks: []
-      }
+        tasks: [],
+      },
     ]);
 
-    // Methods
     const loadTasks = async () => {
       try {
-        loading.value = true;
         const response = await $taskApi.getTasks({
           project_id: props.projectId,
-          include_subtasks: true
+          include_subtasks: true,
         });
         tasks.value = response.data || [];
-        
+
         // Distribute tasks to sections (in real implementation, tasks would have section_id)
         distributeTasksToSections();
       } catch (error) {
         console.error('Failed to load tasks:', error);
-      } finally {
-        loading.value = false;
       }
     };
 
     const distributeTasksToSections = () => {
       // Reset all sections
-      userSections.value.forEach(section => {
+      userSections.value.forEach((section) => {
         section.tasks = [];
       });
-      
+
       // Distribute tasks evenly across sections for demo purposes
       // In real implementation, tasks would have a section_id field
       tasks.value.forEach((task, index) => {
@@ -99,10 +68,10 @@ export default defineComponent({
       });
     };
 
-    const toggleTaskStatus = async (task: Task) => {
+    const toggleTaskStatus = async (task: any) => {
       try {
         const newStatus = task.status === 'completed' ? 'todo' : 'completed';
-        await $taskApi.updateTask(task.id.toString(), { status: newStatus });
+        await $taskApi.updateTask(task.id, { status: newStatus });
         task.status = newStatus;
         if (newStatus === 'completed') {
           task.completed_at = new Date().toISOString();
@@ -128,7 +97,7 @@ export default defineComponent({
           name: taskName.trim(),
           project_id: props.projectId,
           status: 'todo',
-          priority: 'medium'
+          priority: 'medium',
         };
 
         await $taskApi.createTask(taskData);
@@ -139,7 +108,7 @@ export default defineComponent({
       }
     };
 
-    const formatDate = (date: string) => {
+    const formatDate = (date: string): string => {
       return new Date(date).toLocaleDateString();
     };
 
@@ -150,13 +119,11 @@ export default defineComponent({
 
     return {
       tasks,
-      loading,
       showCreateTaskModal,
       showCreateSectionModal,
       activeFilters,
       newTaskName,
       userSections,
-      loadTasks,
       toggleTaskStatus,
       handleTaskSaved,
       addTaskToSection,

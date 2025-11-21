@@ -134,7 +134,7 @@ export default defineComponent({
     };
 
     // Floating UI setup for automatic repositioning
-    // Use absolute positioning like BaseMultiSelect, but with automatic repositioning
+    // Use fixed positioning to ensure flip checks against viewport, not parent container
     const { floatingStyles } = useFloatingPosition(triggerRef, dropdownRef, {
       placement: 'bottom-start',
       offset: 4,
@@ -142,7 +142,7 @@ export default defineComponent({
       autoSize: true,
       flip: true,
       shift: true,
-      strategy: 'absolute', // Use absolute positioning like BaseMultiSelect
+      strategy: 'fixed', // Use fixed positioning for better viewport-based flip detection
     });
 
     const toggleDropdown = () => {
@@ -165,8 +165,12 @@ export default defineComponent({
     };
 
     const selectOption = (value: string | number) => {
+      // Always update modelValue for v-model binding
       emit('update:modelValue', value);
-      emit('change', value);
+      // Only emit change event if the value actually changed
+      if (props.modelValue !== value) {
+        emit('change', value);
+      }
       searchQuery.value = '';
       isOpen.value = false;
     };

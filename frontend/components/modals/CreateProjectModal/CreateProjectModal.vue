@@ -39,7 +39,7 @@
               </div>
               <div>
                 <label class="flex items-center gap-1.5 text-sm font-medium text-text-primary mb-2">
-                  <span>Project Number <span class="text-error-500">*</span></span>
+                  <span>Project Code <span class="text-error-500">*</span></span>
                   <i
                     v-tooltip="tooltipConfig"
                     class="fas fa-info-circle w-4 text-text-muted hover:text-primary-500 cursor-help transition-colors focus:outline-none"
